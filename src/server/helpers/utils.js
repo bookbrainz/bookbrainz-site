@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015       Ben Ockmore
  *               2015-2017  Sean Burke
+ *               2018       Shivam Tripathi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,8 @@
 // @flow
 
 import Promise from 'bluebird';
+import _ from 'lodash';
+
 
 /**
  * Returns an API path for interacting with the given Bookshelf entity model
@@ -45,6 +48,25 @@ export function getEntityModels(orm: Object): Object {
 		Publication,
 		Publisher,
 		Work
+	};
+}
+
+/**
+ * Returns all import models defined in bookbrainz-data-js
+ *
+ * @param {object} orm - the BookBrainz ORM, initialized during app setup
+ * @returns {object} - Object mapping model name to the import model
+ */
+export function getImportModels(orm: Object): Object {
+	const {CreatorImport, EditionImport, PublicationImport, PublisherImport,
+		WorkImport} = orm;
+
+	return {
+		CreatorImport,
+		EditionImport,
+		PublicationImport,
+		PublisherImport,
+		WorkImport
 	};
 }
 
@@ -101,6 +123,26 @@ export function getEntityModelByType(orm: Object, type: string): Object {
 }
 
 /**
+ * Retrieves the Bookshelf import model with the given the model name
+ *
+ * @param  {Object} orm - The BookBrainz ORM, initialized during app setup
+ * @param  {string} type - Name or type of model
+ * @throws {Error} Throws a custom error if the param 'type' does not
+ * map to a model
+ * @returns {object} - Bookshelf model object with the type specified in the
+ * single param
+ */
+export function getImportModelByType(orm: Object, type: string): Object {
+	const importModels = getImportModels(orm);
+
+	if (!importModels[type]) {
+		throw new Error('Unrecognized import type');
+	}
+
+	return importModels[type];
+}
+
+/**
  * Regular expression for valid BookBrainz UUIDs (bbid)
  *
  * @type {RegExp}
@@ -117,6 +159,10 @@ const _bbidRegex =
  */
 export function isValidBBID(bbid: string): boolean {
 	return _bbidRegex.test(bbid);
+}
+
+export function isValidImportId(id: number): boolean {
+	return _.isFinite(id) && id > 0;
 }
 
 /**

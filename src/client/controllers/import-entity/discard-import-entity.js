@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Ben Ockmore
+ * Copyright (C) 2018 Shivam Tripathi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import PropTypes from 'prop-types';
+import DeletionImportEntityPage from
+	'../../components/pages/import-entities/discard-import-entity.js';
+import Layout from '../../containers/layout';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import {extractLayoutProps} from '../../helpers/props';
 
 
-function EntityRelationships({relationships}) {
-	return (
-		<div>
-			<h2>Relationships</h2>
-			{relationships &&
-			<ul className="list-unstyled">
-				{relationships.map((relationship) => (
-					<li
-						dangerouslySetInnerHTML={{
-							__html: relationship.rendered
-						}}
-						key={relationship.id}
-					/>
-				))}
-			</ul>
-			}
-		</div>
-	);
-}
-EntityRelationships.displayName = 'EntityRelationships';
-EntityRelationships.propTypes = {
-	relationships: PropTypes.array
-};
-EntityRelationships.defaultProps = {
-	relationships: []
-};
+const propsTarget = document.getElementById('props');
+const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 
-export default EntityRelationships;
+const markup = (
+	<Layout {...extractLayoutProps(props)}>
+		<DeletionImportEntityPage
+			importEntity={props.importEntity}
+		/>
+	</Layout>
+);
+
+ReactDOM.hydrate(markup, document.getElementById('target'));

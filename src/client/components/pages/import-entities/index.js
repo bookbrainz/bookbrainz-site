@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Ben Ockmore
+ * Copyright (C) 2018 Shivam Tripathi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import PropTypes from 'prop-types';
-import React from 'react';
+import Creator from './creator';
+import DiscardImportEntityPage from './discard-import-entity';
+import Edition from './edition';
+import Publication from './publication';
+import Publisher from './publisher';
+import Work from './work';
 
 
-function EntityRelationships({relationships}) {
-	return (
-		<div>
-			<h2>Relationships</h2>
-			{relationships &&
-			<ul className="list-unstyled">
-				{relationships.map((relationship) => (
-					<li
-						dangerouslySetInnerHTML={{
-							__html: relationship.rendered
-						}}
-						key={relationship.id}
-					/>
-				))}
-			</ul>
-			}
-		</div>
-	);
-}
-EntityRelationships.displayName = 'EntityRelationships';
-EntityRelationships.propTypes = {
-	relationships: PropTypes.array
-};
-EntityRelationships.defaultProps = {
-	relationships: []
+const importEntityPages = {
+	Creator,
+	DiscardImportEntityPage,
+	Edition,
+	Publication,
+	Publisher,
+	Work
 };
 
-export default EntityRelationships;
+export default importEntityPages;

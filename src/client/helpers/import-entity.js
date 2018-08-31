@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Ben Ockmore
+ * Copyright (C) 2018 Shivam Tripathi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import PropTypes from 'prop-types';
-import React from 'react';
+import _ from 'lodash';
 
 
-function EntityRelationships({relationships}) {
-	return (
-		<div>
-			<h2>Relationships</h2>
-			{relationships &&
-			<ul className="list-unstyled">
-				{relationships.map((relationship) => (
-					<li
-						dangerouslySetInnerHTML={{
-							__html: relationship.rendered
-						}}
-						key={relationship.id}
-					/>
-				))}
-			</ul>
-			}
-		</div>
-	);
+export function getImportLabel(importEntity) {
+	return `${_.get(importEntity, 'defaultAlias.name', '(unnamed)')} `;
 }
-EntityRelationships.displayName = 'EntityRelationships';
-EntityRelationships.propTypes = {
-	relationships: PropTypes.array
-};
-EntityRelationships.defaultProps = {
-	relationships: []
-};
 
-export default EntityRelationships;
+export function getImportUrl(importEntity) {
+	const type = importEntity.type.toLowerCase();
+	const id = importEntity.importId;
+	return `/imports/${type}/${id}`;
+}
+
+export function getImportDiscardUrl(importEntity) {
+	const type = importEntity.type.toLowerCase();
+	const id = importEntity.importId;
+	return `/imports/${type}/${id}/discard/handler`;
+}

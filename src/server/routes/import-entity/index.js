@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017  Ben Ockmore
+ * Copyright (C) 2018 Shivam Tripathi
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import PropTypes from 'prop-types';
-import React from 'react';
+import ImportCreatorRouter from './creator';
+import ImportEditionRouter from './edition';
+import ImportPublicationRouter from './publication';
+import ImportPublisherRouter from './publisher';
+import ImportRecentRouter from './recent';
+import ImportWorkRouter from './work';
+import express from 'express';
 
 
-function EntityRelationships({relationships}) {
-	return (
-		<div>
-			<h2>Relationships</h2>
-			{relationships &&
-			<ul className="list-unstyled">
-				{relationships.map((relationship) => (
-					<li
-						dangerouslySetInnerHTML={{
-							__html: relationship.rendered
-						}}
-						key={relationship.id}
-					/>
-				))}
-			</ul>
-			}
-		</div>
-	);
-}
-EntityRelationships.displayName = 'EntityRelationships';
-EntityRelationships.propTypes = {
-	relationships: PropTypes.array
-};
-EntityRelationships.defaultProps = {
-	relationships: []
-};
+const importRouter = express.Router();
 
-export default EntityRelationships;
+importRouter.use('/creator', ImportCreatorRouter);
+importRouter.use('/edition', ImportEditionRouter);
+importRouter.use('/publisher', ImportPublisherRouter);
+importRouter.use('/publication', ImportPublicationRouter);
+importRouter.use('/work', ImportWorkRouter);
+importRouter.use('/recent', ImportRecentRouter);
+
+export default importRouter;
