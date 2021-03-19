@@ -18,10 +18,7 @@
 
 import * as React from 'react';
 
-import {
-	Action,
-	updateType
-} from './actions';
+import {Action, updateType} from './actions';
 import type {List, Map} from 'immutable';
 
 import CustomInput from '../../input';
@@ -32,23 +29,22 @@ import {find as _find} from 'lodash';
 import {connect} from 'react-redux';
 import {convertMapToObject} from '../../helpers/utils';
 
-
 type LanguageOption = {
-	name: string,
-	id: number
+	name: string;
+	id: number;
 };
 
 type OwnProps = {
-	mergingEntities: any[]
+	mergingEntities: any[];
 };
 
 type StateProps = {
-	languageValues: List<LanguageOption>,
-	typeValue: number
+	languageValues: List<LanguageOption>;
+	typeValue: number;
 };
 
 type DispatchProps = {
-	onTypeChange: (value: number | null) => unknown
+	onTypeChange: (value: number | null) => unknown;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -67,16 +63,14 @@ type Props = OwnProps & StateProps & DispatchProps;
  *        a different work type is selected.
  * @returns {ReactElement} React element containing the rendered WorkSectionMerge.
  */
-function WorkSectionMerge({
-	languageValues,
-	mergingEntities,
-	typeValue,
-	onTypeChange
-}: Props) {
+function WorkSectionMerge({languageValues, mergingEntities, typeValue, onTypeChange}: Props) {
 	const typeOptions = [];
 
-	mergingEntities.forEach(entity => {
-		const typeOption = entity.workType && {label: entity.workType.label, value: entity.workType.id};
+	mergingEntities.forEach((entity) => {
+		const typeOption = entity.workType && {
+			label: entity.workType.label,
+			value: entity.workType.id
+		};
 		if (typeOption && !_find(typeOptions, ['value', typeOption.value])) {
 			typeOptions.push(typeOption);
 		}
@@ -91,12 +85,7 @@ function WorkSectionMerge({
 				onChange={onTypeChange}
 			/>
 			<CustomInput label="Languages">
-				<Select
-					disabled
-					multi
-					instanceId="languages"
-					value={languageValues}
-				/>
+				<Select disabled multi instanceId="languages" value={languageValues} />
 			</CustomInput>
 		</form>
 	);
@@ -115,8 +104,7 @@ function mapStateToProps(rootState: RootState): StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 	return {
-		onTypeChange: (value: number | null) =>
-			dispatch(updateType(value))
+		onTypeChange: (value: number | null) => dispatch(updateType(value))
 	};
 }
 

@@ -29,10 +29,7 @@ import {
 	VALID_NAME_SECTION,
 	VALID_SUBMISSION_SECTION
 } from './data';
-import {
-	testValidateDateFunc,
-	testValidatePositiveIntegerFunc
-} from './helpers';
+import {testValidateDateFunc, testValidatePositiveIntegerFunc} from './helpers';
 import {
 	validateEditionSection,
 	validateEditionSectionDepth,
@@ -53,10 +50,8 @@ import {
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
-
 
 function describeValidateEditionSectionReleaseDate() {
 	testValidateDateFunc(validateEditionSectionReleaseDate, false);
@@ -90,7 +85,6 @@ function describeValidateEditionSectionStatus() {
 	testValidatePositiveIntegerFunc(validateEditionSectionStatus, false);
 }
 
-
 function describeValidateEditionSectionLanguage() {
 	const validLanguage = {value: 1};
 
@@ -100,25 +94,19 @@ function describeValidateEditionSectionLanguage() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateEditionSectionLanguage(
-			Immutable.fromJS(validLanguage)
-		);
+		const result = validateEditionSectionLanguage(Immutable.fromJS(validLanguage));
 		expect(result).to.be.true;
 	});
 
 	it('should reject an Object with an invalid value', () => {
-		const result = validateEditionSectionLanguage(
-			{...validLanguage, value: null}
-		);
+		const result = validateEditionSectionLanguage({...validLanguage, value: null});
 		expect(result).to.be.false;
 	});
 
 	const invalidLanguage = {value: null};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateEditionSectionLanguage(
-			Immutable.fromJS(invalidLanguage)
-		);
+		const result = validateEditionSectionLanguage(Immutable.fromJS(invalidLanguage));
 		expect(result).to.be.false;
 	});
 
@@ -145,9 +133,7 @@ function describeValidateEditionSectionLanguages() {
 	});
 
 	it('should pass an Immutable.List of valid Immutable.Maps', () => {
-		const result = validateEditionSectionLanguages(
-			Immutable.fromJS(VALID_LANGUAGES)
-		);
+		const result = validateEditionSectionLanguages(Immutable.fromJS(VALID_LANGUAGES));
 		expect(result).to.be.true;
 	});
 
@@ -166,10 +152,9 @@ function describeValidateEditionSectionLanguages() {
 		expect(result).to.be.false;
 	});
 
-	it('should reject an Immutable.List containing one invalid Immutable.Map', () => { // eslint-disable-line max-len
-		const result = validateEditionSectionLanguages(
-			Immutable.fromJS(INVALID_LANGUAGES)
-		);
+	it('should reject an Immutable.List containing one invalid Immutable.Map', () => {
+		// eslint-disable-line max-len
+		const result = validateEditionSectionLanguages(Immutable.fromJS(INVALID_LANGUAGES));
 		expect(result).to.be.false;
 	});
 
@@ -199,9 +184,7 @@ function describevalidateEditionSectionEditionGroup() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateEditionSectionEditionGroup(
-			Immutable.fromJS(VALID_ENTITY)
-		);
+		const result = validateEditionSectionEditionGroup(Immutable.fromJS(VALID_ENTITY));
 		expect(result).to.be.true;
 	});
 
@@ -216,16 +199,12 @@ function describevalidateEditionSectionEditionGroup() {
 	});
 
 	it('should reject an Object with an invalid ID', () => {
-		const result = validateEditionSectionEditionGroup(
-			{...VALID_ENTITY, id: '2'}
-		);
+		const result = validateEditionSectionEditionGroup({...VALID_ENTITY, id: '2'});
 		expect(result).to.be.false;
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateEditionSectionEditionGroup(
-			Immutable.fromJS(INVALID_ENTITY)
-		);
+		const result = validateEditionSectionEditionGroup(Immutable.fromJS(INVALID_ENTITY));
 		expect(result).to.be.false;
 	});
 }
@@ -237,23 +216,17 @@ function describeValidateEditionSectionPublisher() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateEditionSectionPublisher(
-			Immutable.fromJS(VALID_ENTITY)
-		);
+		const result = validateEditionSectionPublisher(Immutable.fromJS(VALID_ENTITY));
 		expect(result).to.be.true;
 	});
 
 	it('should reject an Object with an invalid ID', () => {
-		const result = validateEditionSectionPublisher(
-			{...VALID_ENTITY, id: '2'}
-		);
+		const result = validateEditionSectionPublisher({...VALID_ENTITY, id: '2'});
 		expect(result).to.be.false;
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateEditionSectionPublisher(
-			Immutable.fromJS(INVALID_ENTITY)
-		);
+		const result = validateEditionSectionPublisher(Immutable.fromJS(INVALID_ENTITY));
 		expect(result).to.be.false;
 	});
 
@@ -290,9 +263,7 @@ function describeValidateEditionSection() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateEditionSection(
-			Immutable.fromJS(VALID_EDITION_SECTION)
-		);
+		const result = validateEditionSection(Immutable.fromJS(VALID_EDITION_SECTION));
 		expect(result).to.be.true;
 	});
 
@@ -395,13 +366,10 @@ function describeValidateEditionSection() {
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateEditionSection(
-			Immutable.fromJS(INVALID_EDITION_SECTION)
-		);
+		const result = validateEditionSection(Immutable.fromJS(INVALID_EDITION_SECTION));
 		expect(result).to.be.false;
 	});
 }
-
 
 function describeValidateForm() {
 	const validForm = {
@@ -418,10 +386,7 @@ function describeValidateForm() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(validForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(validForm), IDENTIFIER_TYPES);
 		expect(result).to.be.true;
 	});
 
@@ -441,7 +406,8 @@ function describeValidateForm() {
 			{
 				...validForm,
 				identifierEditor: INVALID_IDENTIFIERS
-			}, IDENTIFIER_TYPES
+			},
+			IDENTIFIER_TYPES
 		);
 		expect(result).to.be.false;
 	});
@@ -485,10 +451,7 @@ function describeValidateForm() {
 	};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(invalidForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(invalidForm), IDENTIFIER_TYPES);
 		expect(result).to.be.false;
 	});
 
@@ -504,62 +467,20 @@ function describeValidateForm() {
 }
 
 function tests() {
-	describe(
-		'validateEditionSectionReleaseDate',
-		describeValidateEditionSectionReleaseDate
-	);
-	describe(
-		'validateEditionSectionDepth',
-		describeValidateEditionSectionDepth
-	);
-	describe(
-		'validateEditionSectionHeight',
-		describeValidateEditionSectionHeight
-	);
-	describe(
-		'validateEditionSectionPages',
-		describeValidateEditionSectionPages
-	);
-	describe(
-		'validateEditionSectionWeight',
-		describeValidateEditionSectionWeight
-	);
-	describe(
-		'validateEditionSectionWidth',
-		describeValidateEditionSectionWidth
-	);
-	describe(
-		'validateEditionSectionFormat',
-		describeValidateEditionSectionFormat
-	);
-	describe(
-		'validateEditionSectionStatus',
-		describeValidateEditionSectionStatus
-	);
-	describe(
-		'validateEditionSectionLanguage',
-		describeValidateEditionSectionLanguage
-	);
-	describe(
-		'validateEditionSectionLanguages',
-		describeValidateEditionSectionLanguages
-	);
-	describe(
-		'validateEditionSectionEditionGroup',
-		describevalidateEditionSectionEditionGroup
-	);
-	describe(
-		'validateEditionSectionPublisher',
-		describeValidateEditionSectionPublisher
-	);
-	describe(
-		'validateEditionSection',
-		describeValidateEditionSection
-	);
-	describe(
-		'validateForm',
-		describeValidateForm
-	);
+	describe('validateEditionSectionReleaseDate', describeValidateEditionSectionReleaseDate);
+	describe('validateEditionSectionDepth', describeValidateEditionSectionDepth);
+	describe('validateEditionSectionHeight', describeValidateEditionSectionHeight);
+	describe('validateEditionSectionPages', describeValidateEditionSectionPages);
+	describe('validateEditionSectionWeight', describeValidateEditionSectionWeight);
+	describe('validateEditionSectionWidth', describeValidateEditionSectionWidth);
+	describe('validateEditionSectionFormat', describeValidateEditionSectionFormat);
+	describe('validateEditionSectionStatus', describeValidateEditionSectionStatus);
+	describe('validateEditionSectionLanguage', describeValidateEditionSectionLanguage);
+	describe('validateEditionSectionLanguages', describeValidateEditionSectionLanguages);
+	describe('validateEditionSectionEditionGroup', describevalidateEditionSectionEditionGroup);
+	describe('validateEditionSectionPublisher', describeValidateEditionSectionPublisher);
+	describe('validateEditionSection', describeValidateEditionSection);
+	describe('validateForm', describeValidateForm);
 }
 
 describe('validateEditionSection* functions', tests);

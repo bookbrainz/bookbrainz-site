@@ -19,7 +19,6 @@
 import * as commonUtils from '../../common/helpers/utils';
 import log from 'log';
 
-
 /**
  * This is a middleware function to load entity detail according to given relations
  *
@@ -51,8 +50,7 @@ export function makeEntityLoader(modelName, relations, errMessage, isBrowse) {
 			try {
 				res.locals.entity = await orm.func.entity.getEntity(orm, model, bbid, relations);
 				return next();
-			}
-			catch (err) {
+			} catch (err) {
 				log.error(err);
 				return res.status(404).send({context: err, message: errMessage});
 			}

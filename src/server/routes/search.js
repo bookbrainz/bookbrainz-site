@@ -35,7 +35,6 @@ import SearchPage from '../../client/components/pages/search';
 import express from 'express';
 import target from '../templates/target';
 
-
 const router = express.Router();
 
 /**
@@ -49,14 +48,18 @@ router.get('/', (req, res, next) => {
 	const size = req.query.size ? parseInt(req.query.size, 10) : 20;
 	const from = req.query.from ? parseInt(req.query.from, 10) : 0;
 	// get 1 more results to check nextEnabled
-	search.searchByName(orm, query, _snakeCase(type), size + 1, from)
+	search
+		.searchByName(orm, query, _snakeCase(type), size + 1, from)
 		.then((entities) => ({
-			initialResults: entities.filter(entity => !isNil(entity)),
+			initialResults: entities.filter((entity) => !isNil(entity)),
 			query
 		}))
 		.then((searchResults) => {
 			const entityTypes = _keys(commonUtils.getEntityModels(orm));
-			const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(searchResults.initialResults, size);
+			const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(
+				searchResults.initialResults,
+				size
+			);
 			searchResults.initialResults = newResultsArray;
 
 			const props = generateProps(req, res, {
@@ -70,19 +73,18 @@ router.get('/', (req, res, next) => {
 			});
 			const markup = ReactDOMServer.renderToString(
 				<Layout {...propHelpers.extractLayoutProps(props)}>
-					<SearchPage
-						user={props.user}
-						{...propHelpers.extractChildProps(props)}
-					/>
+					<SearchPage user={props.user} {...propHelpers.extractChildProps(props)} />
 				</Layout>
 			);
 
-			res.send(target({
-				markup,
-				props: escapeProps(props),
-				script: '/js/search.js',
-				title: 'Search Results'
-			}));
+			res.send(
+				target({
+					markup,
+					props: escapeProps(props),
+					script: '/js/search.js',
+					title: 'Search Results'
+				})
+			);
 		})
 		.catch(next);
 });

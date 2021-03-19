@@ -16,7 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as Immutable from 'immutable';
 import * as _ from 'lodash';
 
@@ -37,7 +36,6 @@ import {
 	UPDATE_WEIGHT,
 	UPDATE_WIDTH
 } from './actions';
-
 
 type State = Immutable.Map<string, any>;
 

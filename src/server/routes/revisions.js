@@ -27,7 +27,6 @@ import express from 'express';
 import {getOrderedRevisions} from '../helpers/revisions';
 import target from '../templates/target';
 
-
 const router = express.Router();
 
 /* GET revisions page. */
@@ -52,29 +51,32 @@ router.get('/', async (req, res, next) => {
 		 */
 		const markup = ReactDOMServer.renderToString(
 			<Layout {...propHelpers.extractLayoutProps(props)}>
-				<RevisionsPage {...propHelpers.extractChildProps(props)}/>
+				<RevisionsPage {...propHelpers.extractChildProps(props)} />
 			</Layout>
 		);
 
-		res.send(target({
-			markup,
-			props: escapeProps(props),
-			script: '/js/revisions.js',
-			title: 'Revisions'
-		}));
+		res.send(
+			target({
+				markup,
+				props: escapeProps(props),
+				script: '/js/revisions.js',
+				title: 'Revisions'
+			})
+		);
 	}
 
 	try {
 		// fetch 1 more revision than required to check nextEnabled
 		const orderedRevisions = await getOrderedRevisions(from, size + 1, orm);
-		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(orderedRevisions, size);
+		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(
+			orderedRevisions,
+			size
+		);
 		return render(newResultsArray, nextEnabled);
-	}
-	catch (err) {
+	} catch (err) {
 		return next(err);
 	}
 });
-
 
 // eslint-disable-next-line consistent-return
 router.get('/revisions', async (req, res, next) => {
@@ -85,8 +87,7 @@ router.get('/revisions', async (req, res, next) => {
 	try {
 		const orderedRevisions = await getOrderedRevisions(from, size, orm);
 		res.send(orderedRevisions);
-	}
-	catch (err) {
+	} catch (err) {
 		return next(err);
 	}
 });

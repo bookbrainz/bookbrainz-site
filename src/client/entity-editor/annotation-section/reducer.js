@@ -19,11 +19,7 @@
 import Immutable from 'immutable';
 import {UPDATE_ANNOTATION} from './actions';
 
-
-function reducer(
-	state = Immutable.Map({content: ''}),
-	action
-) {
+function reducer(state = Immutable.Map({content: ''}), action) {
 	switch (action.type) {
 		case UPDATE_ANNOTATION:
 			return state.set('content', action.value);

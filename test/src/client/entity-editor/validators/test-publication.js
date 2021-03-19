@@ -39,10 +39,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {testValidatePositiveIntegerFunc} from './helpers';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
-
 
 function describeValidateEditionGroupSectionType() {
 	testValidatePositiveIntegerFunc(validateEditionGroupSectionType, false);
@@ -60,9 +58,7 @@ function describeValidateEditionGroupSection() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateEditionGroupSection(
-			Immutable.fromJS(VALID_EDITION_GROUP_SECTION)
-		);
+		const result = validateEditionGroupSection(Immutable.fromJS(VALID_EDITION_GROUP_SECTION));
 		expect(result).to.be.true;
 	});
 
@@ -75,9 +71,7 @@ function describeValidateEditionGroupSection() {
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateEditionGroupSection(
-			Immutable.fromJS(INVALID_EDITION_GROUP_SECTION)
-		);
+		const result = validateEditionGroupSection(Immutable.fromJS(INVALID_EDITION_GROUP_SECTION));
 		expect(result).to.be.false;
 	});
 
@@ -91,7 +85,6 @@ function describeValidateEditionGroupSection() {
 		expect(result).to.be.true;
 	});
 }
-
 
 function describeValidateForm() {
 	const validForm = {
@@ -108,10 +101,7 @@ function describeValidateForm() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(validForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(validForm), IDENTIFIER_TYPES);
 		expect(result).to.be.true;
 	});
 
@@ -131,7 +121,8 @@ function describeValidateForm() {
 			{
 				...validForm,
 				identifierEditor: INVALID_IDENTIFIERS
-			}, IDENTIFIER_TYPES
+			},
+			IDENTIFIER_TYPES
 		);
 		expect(result).to.be.false;
 	});
@@ -175,10 +166,7 @@ function describeValidateForm() {
 	};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(invalidForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(invalidForm), IDENTIFIER_TYPES);
 		expect(result).to.be.false;
 	});
 
@@ -193,20 +181,10 @@ function describeValidateForm() {
 	});
 }
 
-
 function tests() {
-	describe(
-		'validateEditionGroupSectionType',
-		describeValidateEditionGroupSectionType
-	);
-	describe(
-		'validateEditionGroupSection',
-		describeValidateEditionGroupSection
-	);
-	describe(
-		'validateForm',
-		describeValidateForm
-	);
+	describe('validateEditionGroupSectionType', describeValidateEditionGroupSectionType);
+	describe('validateEditionGroupSection', describeValidateEditionGroupSection);
+	describe('validateForm', describeValidateForm);
 }
 
 describe('validateEditionGroupSection* functions', tests);

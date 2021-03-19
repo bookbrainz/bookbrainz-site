@@ -28,7 +28,6 @@ import _ from 'lodash';
 import makeImmutable from './make-immutable';
 import request from 'superagent';
 
-
 const ImmutableAsyncSelect = makeImmutable(SelectAsync);
 
 class EntitySearchFieldOption extends React.Component {
@@ -68,7 +67,7 @@ class EntitySearchFieldOption extends React.Component {
 		}
 		const id = this.isArea(entity) ? entity.id : entity.bbid;
 		const languageId = _.get(entity, ['defaultAlias', 'languageId']);
-		const language = this.props.languageOptions.find(index => index.value === languageId);
+		const language = this.props.languageOptions.find((index) => index.value === languageId);
 		return {
 			disambiguation: _.get(entity, ['disambiguation', 'comment']),
 			id,
@@ -90,19 +89,21 @@ class EntitySearchFieldOption extends React.Component {
 		if (regexpResults && regexpResults.length) {
 			manipulatedQuery = regexpResults[1];
 		}
-		const response = await request
-			.get('/search/autocomplete')
-			.query({
-				q: manipulatedQuery,
-				type: this.props.type
-			});
+		const response = await request.get('/search/autocomplete').query({
+			q: manipulatedQuery,
+			type: this.props.type
+		});
 		return {
 			options: response.body.map(this.entityToOption)
 		};
 	}
 
 	render() {
-		const labelElement = <ValidationLabel empty={this.props.empty} error={this.props.error}>{this.props.label}</ValidationLabel>;
+		const labelElement = (
+			<ValidationLabel empty={this.props.empty} error={this.props.error}>
+				{this.props.label}
+			</ValidationLabel>
+		);
 		return (
 			<CustomInput label={labelElement} tooltipText={this.props.tooltipText} {...this.props}>
 				<ImmutableAsyncSelect
@@ -126,10 +127,7 @@ EntitySearchFieldOption.propTypes = {
 	label: PropTypes.string.isRequired,
 	languageOptions: PropTypes.array,
 	tooltipText: PropTypes.string,
-	type: PropTypes.oneOfType([
-		PropTypes.string,
-		PropTypes.arrayOf(PropTypes.string)
-	]).isRequired
+	type: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired
 };
 EntitySearchFieldOption.defaultProps = {
 	empty: true,

@@ -20,17 +20,12 @@ import * as base from './base';
 
 import _ from 'lodash';
 
-
 function formatNewAnnotation(change) {
-	return base.formatChange(
-		change, 'Annotation', (side) => [side && side.content]
-	);
+	return base.formatChange(change, 'Annotation', (side) => [side && side.content]);
 }
 
 function formatNewDisambiguation(change) {
-	return base.formatChange(
-		change, 'Disambiguation', (side) => [side && side.comment]
-	);
+	return base.formatChange(change, 'Disambiguation', (side) => [side && side.comment]);
 }
 
 function formatChangedAnnotation(change) {
@@ -38,24 +33,23 @@ function formatChangedAnnotation(change) {
 }
 
 function formatChangedDisambiguation(change) {
-	return base.formatChange(
-		change, 'Disambiguation', (side) => side && [side]
-	);
+	return base.formatChange(change, 'Disambiguation', (side) => side && [side]);
 }
 
 function formatNewAliasSet(change) {
 	const {rhs} = change;
 	const changes = [];
 	if (rhs.defaultAlias && rhs.defaultAliasId) {
-		changes.push(
-			base.formatRow('N', 'Default Alias', null, [rhs.defaultAlias.name])
-		);
+		changes.push(base.formatRow('N', 'Default Alias', null, [rhs.defaultAlias.name]));
 	}
 
 	if (rhs.aliases && rhs.aliases.length) {
 		changes.push(
 			base.formatRow(
-				'N', 'Aliases', null, rhs.aliases.map((alias) => alias.name)
+				'N',
+				'Aliases',
+				null,
+				rhs.aliases.map((alias) => alias.name)
 			)
 		);
 	}
@@ -76,11 +70,7 @@ function formatAliasAddOrDelete(change) {
 function formatAliasModified(change) {
 	if (change.path.length > 3 && change.path[3] === 'name') {
 		return [
-			base.formatChange(
-				change,
-				`Alias ${change.path[2]} -> Name`,
-				(side) => side && [side]
-			)
+			base.formatChange(change, `Alias ${change.path[2]} -> Name`, (side) => side && [side])
 		];
 	}
 
@@ -96,7 +86,8 @@ function formatAliasModified(change) {
 
 	const REQUIRED_DEPTH = 4;
 	const aliasLanguageChanged =
-		change.path.length > REQUIRED_DEPTH && change.path[3] === 'language' &&
+		change.path.length > REQUIRED_DEPTH &&
+		change.path[3] === 'language' &&
 		change.path[4] === 'name';
 	if (aliasLanguageChanged) {
 		return [
@@ -123,24 +114,20 @@ function formatAliasModified(change) {
 
 function formatDefaultAliasModified(change) {
 	if (change.path.length > 2 && change.path[2] === 'name') {
-		return [
-			base.formatChange(change, 'Default Alias', (side) => side && [side])
-		];
+		return [base.formatChange(change, 'Default Alias', (side) => side && [side])];
 	}
 
 	return [];
 }
 
 function formatAlias(change) {
-	const aliasSetAdded =
-		change.kind === 'N' && _.isEqual(change.path, ['aliasSet']);
+	const aliasSetAdded = change.kind === 'N' && _.isEqual(change.path, ['aliasSet']);
 	if (aliasSetAdded) {
 		return formatNewAliasSet(change);
 	}
 
 	const aliasSetChanged =
-		change.path.length > 1 && change.path[0] === 'aliasSet' &&
-		change.path[1] === 'aliases';
+		change.path.length > 1 && change.path[0] === 'aliasSet' && change.path[1] === 'aliases';
 	if (aliasSetChanged) {
 		if (change.kind === 'A') {
 			// Alias added to or deleted from set
@@ -153,8 +140,7 @@ function formatAlias(change) {
 		}
 	}
 
-	const defaultAliasChanged =
-		_.isEqual(change.path.slice(0, 2), ['aliasSet', 'defaultAlias']);
+	const defaultAliasChanged = _.isEqual(change.path.slice(0, 2), ['aliasSet', 'defaultAlias']);
 	if (defaultAliasChanged) {
 		return formatDefaultAliasModified(change);
 	}
@@ -165,11 +151,17 @@ function formatAlias(change) {
 function formatNewIdentifierSet(change) {
 	const {rhs} = change;
 	if (rhs.identifiers && rhs.identifiers.length > 0) {
-		return [base.formatRow(
-			'N', 'Identifiers', null, rhs.identifiers.map(
-				(identifier) => `${identifier.type && identifier.type.label}: ${identifier.value}`
+		return [
+			base.formatRow(
+				'N',
+				'Identifiers',
+				null,
+				rhs.identifiers.map(
+					(identifier) =>
+						`${identifier.type && identifier.type.label}: ${identifier.value}`
+				)
 			)
-		)];
+		];
 	}
 
 	return [];
@@ -197,8 +189,11 @@ function formatIdentifierModified(change) {
 	}
 
 	const REQUIRED_DEPTH = 4;
-	if (change.path.length > REQUIRED_DEPTH && change.path[3] === 'type' &&
-			change.path[4] === 'label') {
+	if (
+		change.path.length > REQUIRED_DEPTH &&
+		change.path[3] === 'type' &&
+		change.path[4] === 'label'
+	) {
 		return [
 			base.formatChange(
 				change,
@@ -212,14 +207,14 @@ function formatIdentifierModified(change) {
 }
 
 function formatIdentifier(change) {
-	const identifierSetAdded =
-		change.kind === 'N' && _.isEqual(change.path, ['identifierSet']);
+	const identifierSetAdded = change.kind === 'N' && _.isEqual(change.path, ['identifierSet']);
 	if (identifierSetAdded) {
 		return formatNewIdentifierSet(change);
 	}
 
 	const identifierSetChanged =
-		change.path.length > 1 && change.path[0] === 'identifierSet' &&
+		change.path.length > 1 &&
+		change.path[0] === 'identifierSet' &&
 		change.path[1] === 'identifiers';
 	if (identifierSetChanged) {
 		if (change.kind === 'A') {
@@ -245,18 +240,9 @@ function formatRelationshipAdd(entity, change) {
 	}
 	const key = rhs.type && rhs.type.label ? `Relationship : ${rhs.type.label}` : 'Relationship';
 	if (rhs.sourceBbid === entity.get('bbid')) {
-		changes.push(
-			base.formatRow(
-				'N', key, null, [rhs.targetBbid]
-			)
-		);
-	}
-	else {
-		changes.push(
-			base.formatRow(
-				'N', key, null, [rhs.sourceBbid]
-			)
-		);
+		changes.push(base.formatRow('N', key, null, [rhs.targetBbid]));
+	} else {
+		changes.push(base.formatRow('N', key, null, [rhs.sourceBbid]));
 	}
 	return changes;
 }
@@ -275,18 +261,26 @@ function formatAddOrDeleteRelationshipSet(entity, change) {
 	}
 
 	allRelationships.forEach((relationship) => {
-		const key = relationship.type && relationship.type.label ? `Relationship: ${relationship.type.label}` : 'Relationship';
+		const key =
+			relationship.type && relationship.type.label
+				? `Relationship: ${relationship.type.label}`
+				: 'Relationship';
 		if (relationship.sourceBbid === entity.get('bbid')) {
 			changes.push(
 				base.formatRow(
-					change.kind, key, [relationship.targetBbid], [relationship.targetBbid]
+					change.kind,
+					key,
+					[relationship.targetBbid],
+					[relationship.targetBbid]
 				)
 			);
-		}
-		else {
+		} else {
 			changes.push(
 				base.formatRow(
-					change.kind, key, [relationship.sourceBbid], [relationship.sourceBbid]
+					change.kind,
+					key,
+					[relationship.sourceBbid],
+					[relationship.sourceBbid]
 				)
 			);
 		}
@@ -303,18 +297,9 @@ function formatRelationshipRemove(entity, change) {
 	}
 	const key = lhs.type && lhs.type.label ? `Relationship : ${lhs.type.label}` : 'Relationship';
 	if (lhs.sourceBbid === entity.get('bbid')) {
-		changes.push(
-			base.formatRow(
-				'D', key, [lhs.targetBbid], null
-			)
-		);
-	}
-	else {
-		changes.push(
-			base.formatRow(
-				'D', key, [lhs.sourceBbid], null
-			)
-		);
+		changes.push(base.formatRow('D', key, [lhs.targetBbid], null));
+	} else {
+		changes.push(base.formatRow('D', key, [lhs.sourceBbid], null));
 	}
 	return changes;
 }
@@ -398,8 +383,7 @@ export function formatEntityDiffs(diffs, entityType, entityFormatter) {
 			if (typeof diff.entityAlias.toJSON === 'function') {
 				const aliasJSON = diff.entityAlias.toJSON();
 				formattedDiff.entity.defaultAlias = aliasJSON.aliasSet.defaultAlias;
-			}
-			else {
+			} else {
 				formattedDiff.entity.defaultAlias = diff.entityAlias;
 			}
 		}
@@ -412,15 +396,11 @@ export function formatEntityDiffs(diffs, entityType, entityFormatter) {
 
 		const rawChangeSets = diff.changes.map(
 			(change) =>
-				formatEntityChange(diff.entity, change) || (
-					entityFormatter && entityFormatter(change)
-				)
+				formatEntityChange(diff.entity, change) ||
+				(entityFormatter && entityFormatter(change))
 		);
 
-		formattedDiff.changes = _.sortBy(
-			_.flatten(_.compact(rawChangeSets)),
-			'key'
-		);
+		formattedDiff.changes = _.sortBy(_.flatten(_.compact(rawChangeSets)), 'key');
 
 		return formattedDiff;
 	});

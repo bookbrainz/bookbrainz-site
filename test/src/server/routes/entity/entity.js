@@ -1,17 +1,35 @@
-import {createAuthor, createEditor, createWork, getRandomUUID, truncateEntities} from '../../../../test-helpers/create-entities';
-import {deleteRelationships, getDefaultAliasIndex, processMergeOperation} from '../../../../../src/server/routes/entity/entity';
+import {
+	createAuthor,
+	createEditor,
+	createWork,
+	getRandomUUID,
+	truncateEntities
+} from '../../../../test-helpers/create-entities';
+import {
+	deleteRelationships,
+	getDefaultAliasIndex,
+	processMergeOperation
+} from '../../../../../src/server/routes/entity/entity';
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import orm from '../../../../bookbrainz-data';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
 
-const {Author, Work, Revision, WorkRevision, WorkHeader,
-	Relationship, RelationshipSet, RelationshipType,
-	bookshelf, util} = orm;
+const {
+	Author,
+	Work,
+	Revision,
+	WorkRevision,
+	WorkHeader,
+	Relationship,
+	RelationshipSet,
+	RelationshipType,
+	bookshelf,
+	util
+} = orm;
 
 describe('getDefaultAliasIndex', () => {
 	const defaultAlias = {
@@ -109,8 +127,9 @@ describe('deleteRelationships', () => {
 			sourceEntityType: 'Author',
 			targetEntityType: 'Work'
 		};
-		const relationshipType = await new RelationshipType(relationshipTypeData)
-			.save(null, {method: 'insert'});
+		const relationshipType = await new RelationshipType(relationshipTypeData).save(null, {
+			method: 'insert'
+		});
 		relationshipTypeData.id = relationshipType.id;
 	});
 
@@ -121,7 +140,9 @@ describe('deleteRelationships', () => {
 	after(truncateEntities);
 
 	it('it should return an empty array if there are no relationships to delete', async () => {
-		author = await new Author({bbid: author.get('bbid')}).fetch({withRelated: 'relationshipSet.relationships'});
+		author = await new Author({bbid: author.get('bbid')}).fetch({
+			withRelated: 'relationshipSet.relationships'
+		});
 		const affectedEntities = await deleteRelationships(orm, null, author.toJSON());
 		expect(affectedEntities).to.have.length(0);
 	});
@@ -137,28 +158,34 @@ describe('deleteRelationships', () => {
 			typeId: 1
 		};
 		relationshipData.typeId = relationshipTypeData.id;
-		const relationship = await new Relationship(relationshipData)
-			.save(null, {method: 'insert'});
+		const relationship = await new Relationship(relationshipData).save(null, {
+			method: 'insert'
+		});
 
 		// Create Relationship Set for Author Entity
 		const authorRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationship]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationship])
+					.then(() => model)
 			);
 
 		// Create Relationship Set for Work Entity
 		const workRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationship]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationship])
+					.then(() => model)
 			);
 
 		// Create a Revision for Entities
-		const revision = await new Revision({authorId: editor.id})
-			.save(null, {method: 'insert'});
+		const revision = await new Revision({authorId: editor.id}).save(null, {
+			method: 'insert'
+		});
 
 		// Set the Entity Attributes as Required
 		author.set('revisionId', revision.id);
@@ -171,8 +198,9 @@ describe('deleteRelationships', () => {
 		await work.save(null, {method: 'update'});
 
 		// Create New Revision to delete Entity
-		const revision2 = await new Revision({authorId: editor.id})
-			.save(null, {method: 'insert'});
+		const revision2 = await new Revision({authorId: editor.id}).save(null, {
+			method: 'insert'
+		});
 
 		// Delete Work Entity
 		await new WorkRevision({
@@ -204,28 +232,34 @@ describe('deleteRelationships', () => {
 			typeId: 1
 		};
 		relationshipData.typeId = relationshipTypeData.id;
-		const relationship = await new Relationship(relationshipData)
-			.save(null, {method: 'insert'});
+		const relationship = await new Relationship(relationshipData).save(null, {
+			method: 'insert'
+		});
 
 		// Create Relationship Set for Author Entity
 		const authorRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationship]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationship])
+					.then(() => model)
 			);
 
 		// Create Relationship Set for Work Entity
 		const workRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationship]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationship])
+					.then(() => model)
 			);
 
 		// Create a Revision for Entities
-		const revision = await new Revision({authorId: editor.id})
-			.save(null, {method: 'insert'});
+		const revision = await new Revision({authorId: editor.id}).save(null, {
+			method: 'insert'
+		});
 
 		// Set the Entity Attributes as Required
 		author.set('revisionId', revision.id);
@@ -238,7 +272,9 @@ describe('deleteRelationships', () => {
 		await work.save(null, {method: 'update'});
 
 		// Fetch Refreshed Entities from database
-		author = await new Author({bbid: author.get('bbid')}).fetch({withRelated: 'relationshipSet.relationships'});
+		author = await new Author({bbid: author.get('bbid')}).fetch({
+			withRelated: 'relationshipSet.relationships'
+		});
 
 		// Get Updated Work
 		const affectedEntities = await deleteRelationships(orm, null, author.toJSON());
@@ -255,8 +291,9 @@ describe('deleteRelationships', () => {
 		const workB = await createWork(workBBBID);
 
 		// Create Revision
-		const revision = await new Revision({authorId: editor.id})
-			.save(null, {method: 'insert'});
+		const revision = await new Revision({authorId: editor.id}).save(null, {
+			method: 'insert'
+		});
 
 		// Create Relations between entity
 		const relationshipDataA = {
@@ -271,23 +308,22 @@ describe('deleteRelationships', () => {
 		};
 
 		// Create Relationships for Entities
-		const relationshipA = await new Relationship(relationshipDataA)
-			.save(null, {method: 'insert'});
+		const relationshipA = await new Relationship(relationshipDataA).save(null, {
+			method: 'insert'
+		});
 
-		const relationshipB = await new Relationship(relationshipDataB)
-			.save(null, {method: 'insert'});
+		const relationshipB = await new Relationship(relationshipDataB).save(null, {
+			method: 'insert'
+		});
 
 		// Create Relationship sets
-		const authorRelationshipSet = await new RelationshipSet()
-			.save(null, {method: 'insert'});
+		const authorRelationshipSet = await new RelationshipSet().save(null, {method: 'insert'});
 		await authorRelationshipSet.relationships().attach([relationshipA, relationshipB]);
 
-		const workARelationshipSet = await new RelationshipSet()
-			.save(null, {method: 'insert'});
+		const workARelationshipSet = await new RelationshipSet().save(null, {method: 'insert'});
 		await workARelationshipSet.relationships().attach([relationshipA]);
 
-		const workBRelationshipSet = await new RelationshipSet()
-			.save(null, {method: 'insert'});
+		const workBRelationshipSet = await new RelationshipSet().save(null, {method: 'insert'});
 		await workBRelationshipSet.relationships().attach([relationshipB]);
 
 		// Set the Entity Attributes as Required
@@ -304,7 +340,9 @@ describe('deleteRelationships', () => {
 		await workB.save(null, {method: 'update'});
 
 		// Get updated Entity
-		workA = await new Work({bbid: workA.get('bbid')}).fetch({withRelated: 'relationshipSet.relationships'});
+		workA = await new Work({bbid: workA.get('bbid')}).fetch({
+			withRelated: 'relationshipSet.relationships'
+		});
 
 		// Get list of Affected Entities
 		const affectedEntities = await deleteRelationships(orm, null, workA.toJSON());
@@ -315,7 +353,9 @@ describe('deleteRelationships', () => {
 
 		expect(affectedEntities[0].get('bbid')).to.equal(author.get('bbid'));
 		expect(affectedEntityRelationshipSet.id).to.not.equal(authorRelationshipSet.id);
-		expect(affectedEntityRelationshipSet.related('relationships').toJSON()[0].targetBbid).to.be.equal(workB.get('bbid'));
+		expect(
+			affectedEntityRelationshipSet.related('relationships').toJSON()[0].targetBbid
+		).to.be.equal(workB.get('bbid'));
 		expect(affectedEntities).to.have.length(1);
 	});
 
@@ -329,8 +369,9 @@ describe('deleteRelationships', () => {
 		const workC = await createWork(workCBBID);
 
 		// Create Revision
-		const revision = await new Revision({authorId: editor.id})
-			.save(null, {method: 'insert'});
+		const revision = await new Revision({authorId: editor.id}).save(null, {
+			method: 'insert'
+		});
 
 		// Create Relations between entity
 		const relationshipDataA = {
@@ -350,42 +391,53 @@ describe('deleteRelationships', () => {
 		};
 
 		// Create Relationships for Entities
-		const relationshipA = await new Relationship(relationshipDataA)
-			.save(null, {method: 'insert'});
+		const relationshipA = await new Relationship(relationshipDataA).save(null, {
+			method: 'insert'
+		});
 
-		const relationshipB = await new Relationship(relationshipDataB)
-			.save(null, {method: 'insert'});
+		const relationshipB = await new Relationship(relationshipDataB).save(null, {
+			method: 'insert'
+		});
 
-		const relationshipC = await new Relationship(relationshipDataC)
-			.save(null, {method: 'insert'});
+		const relationshipC = await new Relationship(relationshipDataC).save(null, {
+			method: 'insert'
+		});
 
 		// Create Relationship sets
 		const authorRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationshipA, relationshipB, relationshipC]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationshipA, relationshipB, relationshipC])
+					.then(() => model)
 			);
 
 		const workARelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationshipA]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationshipA])
+					.then(() => model)
 			);
 
 		const workBRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationshipB]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationshipB])
+					.then(() => model)
 			);
 
 		const workCRelationshipSet = await new RelationshipSet()
 			.save(null, {method: 'insert'})
-			.then(
-				(model) =>
-					model.relationships().attach([relationshipC]).then(() => model)
+			.then((model) =>
+				model
+					.relationships()
+					.attach([relationshipC])
+					.then(() => model)
 			);
 
 		// Set the Entity Attributes as Required
@@ -405,7 +457,9 @@ describe('deleteRelationships', () => {
 		await workC.save(null, {method: 'update'});
 
 		// Get updated Entity
-		author = await new Author({bbid: author.get('bbid')}).fetch({withRelated: 'relationshipSet.relationships'});
+		author = await new Author({bbid: author.get('bbid')}).fetch({
+			withRelated: 'relationshipSet.relationships'
+		});
 
 		// Get list of Affected Entities
 		const affectedEntities = await deleteRelationships(orm, null, author.toJSON());
@@ -461,9 +515,16 @@ describe('processMergeOperation', () => {
 			}
 		};
 		const trx = await bookshelf.knex.transaction();
-		const returnedEntities = await processMergeOperation(orm, trx, {mergeQueue}, author1Fetched, [author1Fetched], {});
+		const returnedEntities = await processMergeOperation(
+			orm,
+			trx,
+			{mergeQueue},
+			author1Fetched,
+			[author1Fetched],
+			{}
+		);
 		await trx.commit();
-		const returnedEntitiesBBIDs = returnedEntities.map(entity => entity.get('bbid'));
+		const returnedEntitiesBBIDs = returnedEntities.map((entity) => entity.get('bbid'));
 		expect(returnedEntitiesBBIDs).to.include.members([author1BBID, author2BBID]);
 	});
 
@@ -495,13 +556,23 @@ describe('processMergeOperation', () => {
 		const author2Relationships = await new RelationshipSet({
 			id: author2.get('relationshipSetId')
 		}).fetch({withRelated: 'relationships'});
-		const relatedEntityBBID = author2Relationships.related('relationships').toJSON()[0].targetBbid;
+		const relatedEntityBBID = author2Relationships.related('relationships').toJSON()[0]
+			.targetBbid;
 
 		const trx = await bookshelf.knex.transaction();
 		const modifiedRelationshipSets = {};
-		const returnedEntities = await processMergeOperation(orm, trx, {mergeQueue}, author1Fetched, [author1Fetched], modifiedRelationshipSets);
+		const returnedEntities = await processMergeOperation(
+			orm,
+			trx,
+			{mergeQueue},
+			author1Fetched,
+			[author1Fetched],
+			modifiedRelationshipSets
+		);
 		await trx.commit();
-		const relatedEntityNotMerged = returnedEntities.find(entity => entity.get('bbid') === relatedEntityBBID);
+		const relatedEntityNotMerged = returnedEntities.find(
+			(entity) => entity.get('bbid') === relatedEntityBBID
+		);
 		expect(relatedEntityNotMerged).to.exist;
 		expect(modifiedRelationshipSets).to.haveOwnProperty(relatedEntityBBID);
 		// Removing the only relationship of an entity should set the relationshipSetId to 'null'

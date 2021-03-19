@@ -21,7 +21,6 @@ import * as testData from '../data/test-data.js';
 import orm from './bookbrainz-data';
 import rewire from 'rewire';
 
-
 const {Editor} = orm;
 
 const Achievement = rewire('../src/server/helpers/achievement.js');
@@ -37,10 +36,11 @@ function rewireEntityVisits(threshold) {
 }
 
 function getPageVisitAttrPromise(rev) {
-	return () => new Editor({name: testData.editorAttribs.name})
-		.fetch()
-		.then((editor) => Achievement.processPageVisit(orm, editor.id))
-		.then((edit) => edit.explorer[`Explorer ${rev}`]);
+	return () =>
+		new Editor({name: testData.editorAttribs.name})
+			.fetch()
+			.then((editor) => Achievement.processPageVisit(orm, editor.id))
+			.then((edit) => edit.explorer[`Explorer ${rev}`]);
 }
 
 function expectIds(rev) {
@@ -48,9 +48,7 @@ function expectIds(rev) {
 }
 
 export default function tests() {
-	beforeEach(
-		() => testData.createEditor().then(() => testData.createExplorer())
-	);
+	beforeEach(() => testData.createEditor().then(() => testData.createExplorer()));
 	afterEach(testData.truncate);
 
 	const test1 = common.testAchievement(

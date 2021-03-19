@@ -16,19 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as React from 'react';
 import CustomInput from '../../input';
 import ValidationLabel from '../common/validation-label';
 import classNames from 'classnames';
 
-
 type Props = {
-	show?: boolean,
-	label: string,
-	empty?: boolean,
-	error?: boolean,
-	[propName: string]: any
+	show?: boolean;
+	label: string;
+	empty?: boolean;
+	error?: boolean;
+	[propName: string]: any;
 };
 
 /**
@@ -45,24 +43,16 @@ type Props = {
  * @param {string} props.label - The text to be used for the input label.
  * @returns {Object} A React component containing the rendered input.
  */
-function NumericField({
-	show,
-	label,
-	empty,
-	error,
-	...rest
-}: Props) {
-	const labelElement =
-		<ValidationLabel empty={empty} error={error}>{label}</ValidationLabel>;
+function NumericField({show, label, empty, error, ...rest}: Props) {
+	const labelElement = (
+		<ValidationLabel empty={empty} error={error}>
+			{label}
+		</ValidationLabel>
+	);
 
 	const groupClassName = classNames({hidden: !show});
 	return (
-		<CustomInput
-			groupClassName={groupClassName}
-			label={labelElement}
-			type="number"
-			{...rest}
-		/>
+		<CustomInput groupClassName={groupClassName} label={labelElement} type="number" {...rest} />
 	);
 }
 NumericField.displayName = 'NumericField';

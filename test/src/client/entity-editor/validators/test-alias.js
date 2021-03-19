@@ -17,24 +17,25 @@
  */
 
 import * as Immutable from 'immutable';
+import {INVALID_ALIAS, INVALID_ALIASES, VALID_ALIAS, VALID_ALIASES} from './data';
 import {
-	INVALID_ALIAS, INVALID_ALIASES, VALID_ALIAS, VALID_ALIASES
-} from './data';
-import {
-	testValidateBooleanFunc, testValidatePositiveIntegerFunc,
+	testValidateBooleanFunc,
+	testValidatePositiveIntegerFunc,
 	testValidateStringFunc
 } from './helpers';
 import {
-	validateAlias, validateAliasLanguage, validateAliasName,
-	validateAliasPrimary, validateAliasSortName, validateAliases
+	validateAlias,
+	validateAliasLanguage,
+	validateAliasName,
+	validateAliasPrimary,
+	validateAliasSortName,
+	validateAliases
 } from '../../../../../src/client/entity-editor/validators/common';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
-
 
 function describeValidateAliasName() {
 	testValidateStringFunc(validateAliasName);
@@ -99,7 +100,6 @@ function describeValidateAlias() {
 	});
 }
 
-
 function describeValidateAliases() {
 	it('should pass an Object of two valid Objects', () => {
 		const result = validateAliases(VALID_ALIASES);
@@ -126,7 +126,8 @@ function describeValidateAliases() {
 		expect(result).to.be.false;
 	});
 
-	it('should reject an Immutable.Map containing one invalid Immutable.Map', () => { // eslint-disable-line max-len
+	it('should reject an Immutable.Map containing one invalid Immutable.Map', () => {
+		// eslint-disable-line max-len
 		const result = validateAliases(Immutable.fromJS(INVALID_ALIASES));
 		expect(result).to.be.false;
 	});

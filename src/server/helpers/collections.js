@@ -35,19 +35,20 @@ import * as error from '../../common/helpers/error';
 export async function getOrderedCollectionsForEditorPage(from, size, entityType, req) {
 	const {Editor, UserCollection} = req.app.locals.orm;
 	// If editor isn't present, throw an error
-	await new Editor({id: req.params.id})
-		.fetch()
-		.catch(Editor.NotFoundError, () => {
-			throw new error.NotFoundError('Editor not found', req);
-		});
+	await new Editor({id: req.params.id}).fetch().catch(Editor.NotFoundError, () => {
+		throw new error.NotFoundError('Editor not found', req);
+	});
 
 	const isThisCurrentUser = req.user && parseInt(req.params.id, 10) === parseInt(req.user.id, 10);
 
 	const allCollections = await new UserCollection()
 		.query((qb) => {
-			qb.leftJoin('bookbrainz.user_collection_collaborator',
-				'bookbrainz.user_collection.id', '=',
-				'bookbrainz.user_collection_collaborator.collection_id');
+			qb.leftJoin(
+				'bookbrainz.user_collection_collaborator',
+				'bookbrainz.user_collection.id',
+				'=',
+				'bookbrainz.user_collection_collaborator.collection_id'
+			);
 		})
 		.where((builder) => {
 			if (!isThisCurrentUser) {
@@ -58,7 +59,9 @@ export async function getOrderedCollectionsForEditorPage(from, size, entityType,
 			}
 		})
 		.where((builder) => {
-			builder.where('collaborator_id', '=', req.params.id).orWhere('owner_id', '=', req.params.id);
+			builder
+				.where('collaborator_id', '=', req.params.id)
+				.orWhere('owner_id', '=', req.params.id);
 		})
 		.orderBy('created_at')
 		.fetchPage({

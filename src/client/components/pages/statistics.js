@@ -24,7 +24,6 @@ import React from 'react';
 import {startCase as _startCase} from 'lodash';
 import {genEntityIconHTMLElement} from '../../helpers/entity';
 
-
 const {PageHeader, Table} = bootstrap;
 const {formatDate} = utilsHelper;
 
@@ -41,36 +40,26 @@ function TopEditorsTable(props) {
 			<div>
 				<h2>Top 10 Editors</h2>
 			</div>
-			<Table
-				bordered
-				condensed
-				striped
-			>
+			<Table bordered condensed striped>
 				<thead>
 					<tr>
-						<th className="col-sm-1" >#</th>
-						<th className="col-sm-5" >Editor&apos;s Name</th>
-						<th className="col-sm-3" >Total Revisions</th>
-						<th className="col-sm-3" >Registration Date</th>
+						<th className="col-sm-1">#</th>
+						<th className="col-sm-5">Editor&apos;s Name</th>
+						<th className="col-sm-3">Total Revisions</th>
+						<th className="col-sm-3">Registration Date</th>
 					</tr>
 				</thead>
 				<tbody>
-					{
-						editors.map((editor, i) => (
-							<tr key={editor.id}>
-								<td>{i + 1}</td>
-								<td>
-									<a	href={`/editor/${editor.id}`}>
-										{editor.name}
-									</a>
-								</td>
-								<td>{editor.totalRevisions}</td>
-								<td>
-									{formatDate(new Date(editor.createdAt))}
-								</td>
-							</tr>
-						))
-					}
+					{editors.map((editor, i) => (
+						<tr key={editor.id}>
+							<td>{i + 1}</td>
+							<td>
+								<a href={`/editor/${editor.id}`}>{editor.name}</a>
+							</td>
+							<td>{editor.totalRevisions}</td>
+							<td>{formatDate(new Date(editor.createdAt))}</td>
+						</tr>
+					))}
 				</tbody>
 			</Table>
 		</div>
@@ -94,33 +83,27 @@ function EntityCountTable(props) {
 			<div>
 				<h2>Total Entities</h2>
 			</div>
-			<Table
-				bordered
-				condensed
-				striped
-			>
+			<Table bordered condensed striped>
 				<thead>
 					<tr>
-						<th className="col-sm-1" >#</th>
-						<th className="col-sm-5" >Entity Type</th>
-						<th className="col-sm-3" >Total</th>
-						<th className="col-sm-3" >Added in Last 30 days</th>
+						<th className="col-sm-1">#</th>
+						<th className="col-sm-5">Entity Type</th>
+						<th className="col-sm-3">Total</th>
+						<th className="col-sm-3">Added in Last 30 days</th>
 					</tr>
 				</thead>
 				<tbody>
-					{
-						allEntities.map((entity, i) => (
-							<tr key={entity.modelName}>
-								<td>{i + 1}</td>
-								<td>
-									{genEntityIconHTMLElement(entity.modelName)}
-									{_startCase(entity.modelName)}
-								</td>
-								<td>{entity.Count}</td>
-								<td>{last30DaysEntities[entity.modelName]}</td>
-							</tr>
-						))
-					}
+					{allEntities.map((entity, i) => (
+						<tr key={entity.modelName}>
+							<td>{i + 1}</td>
+							<td>
+								{genEntityIconHTMLElement(entity.modelName)}
+								{_startCase(entity.modelName)}
+							</td>
+							<td>{entity.Count}</td>
+							<td>{last30DaysEntities[entity.modelName]}</td>
+						</tr>
+					))}
 				</tbody>
 			</Table>
 		</div>
@@ -143,11 +126,8 @@ function StatisticsPage(props) {
 	return (
 		<div>
 			<PageHeader>Statistics of BookBrainz</PageHeader>
-			<TopEditorsTable editors={topEditors}/>
-			<EntityCountTable
-				allEntities={allEntities}
-				last30DaysEntities={last30DaysEntities}
-			/>
+			<TopEditorsTable editors={topEditors} />
+			<EntityCountTable allEntities={allEntities} last30DaysEntities={last30DaysEntities} />
 		</div>
 	);
 }

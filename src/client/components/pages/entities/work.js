@@ -28,11 +28,16 @@ import EntityTitle from './title';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
-const {deletedEntityMessage, getRelationshipSourceByTypeId, getLanguageAttribute, getTypeAttribute, getEntityUrl,
-	ENTITY_TYPE_ICONS, getSortNameOfDefaultAlias} = entityHelper;
+const {
+	deletedEntityMessage,
+	getRelationshipSourceByTypeId,
+	getLanguageAttribute,
+	getTypeAttribute,
+	getEntityUrl,
+	ENTITY_TYPE_ICONS,
+	getSortNameOfDefaultAlias
+} = entityHelper;
 const {Col, Row} = bootstrap;
-
 
 function WorkAttributes({work}) {
 	if (work.deleted) {
@@ -71,7 +76,6 @@ WorkAttributes.propTypes = {
 	work: PropTypes.object.isRequired
 };
 
-
 function WorkDisplayPage({entity, identifierTypes, user}) {
 	// relationshipTypeId = 10 refers the relation (<Work> is contained by <Edition>)
 	const relationshipTypeId = 10;
@@ -88,24 +92,22 @@ function WorkDisplayPage({entity, identifierTypes, user}) {
 					/>
 				</Col>
 				<Col md={10}>
-					<EntityTitle entity={entity}/>
-					<WorkAttributes work={entity}/>
+					<EntityTitle entity={entity} />
+					<WorkAttributes work={entity} />
 				</Col>
 			</Row>
-			<EntityAnnotation entity={entity}/>
-			{!entity.deleted &&
-			<React.Fragment>
-				<EditionTable
-					editions={editionsContainWork}
-					entity={entity}
-				/>
-				<EntityLinks
-					entity={entity}
-					identifierTypes={identifierTypes}
-					urlPrefix={urlPrefix}
-				/>
-			</React.Fragment>}
-			<hr className="margin-top-d40"/>
+			<EntityAnnotation entity={entity} />
+			{!entity.deleted && (
+				<React.Fragment>
+					<EditionTable editions={editionsContainWork} entity={entity} />
+					<EntityLinks
+						entity={entity}
+						identifierTypes={identifierTypes}
+						urlPrefix={urlPrefix}
+					/>
+				</React.Fragment>
+			)}
+			<hr className="margin-top-d40" />
 			<EntityFooter
 				bbid={entity.bbid}
 				deleted={entity.deleted}

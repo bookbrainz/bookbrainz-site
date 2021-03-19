@@ -20,34 +20,27 @@
 import * as React from 'react';
 import {genEntityIconHTMLElement} from '../../helpers/entity';
 
-
 type EntityProps = {
-	disambiguation?: string | null | undefined,
-	language?: string,
-	link?: string | false,
-	text: string,
-	type: string,
-	unnamedText?: string
+	disambiguation?: string | null | undefined;
+	language?: string;
+	link?: string | false;
+	text: string;
+	type: string;
+	unnamedText?: string;
 };
 
-function Entity(
-	{disambiguation, language, link, text, type, unnamedText}: EntityProps
-) {
+function Entity({disambiguation, language, link, text, type, unnamedText}: EntityProps) {
 	const nameComponent = text || <i>{unnamedText}</i>;
 	const contents = (
 		<span>
-			{
-				type && genEntityIconHTMLElement(type)
-			}
+			{type && genEntityIconHTMLElement(type)}
 			{nameComponent}
-			{
-				disambiguation &&
-				<span className="disambig margin-left-0-3"><small>({disambiguation})</small></span>
-			}
-			{
-				language &&
-				<span className="text-muted small margin-left-0-3">{language}</span>
-			}
+			{disambiguation && (
+				<span className="disambig margin-left-0-3">
+					<small>({disambiguation})</small>
+				</span>
+			)}
+			{language && <span className="text-muted small margin-left-0-3">{language}</span>}
 		</span>
 	);
 

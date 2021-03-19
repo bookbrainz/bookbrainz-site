@@ -1,7 +1,10 @@
-import {createEdition, getRandomUUID, truncateEntities} from '../../../test-helpers/create-entities';
+import {
+	createEdition,
+	getRandomUUID,
+	truncateEntities
+} from '../../../test-helpers/create-entities';
 import chai from 'chai';
 import orm from '../../../bookbrainz-data';
-
 
 const {expect} = chai;
 const {Edition} = orm;

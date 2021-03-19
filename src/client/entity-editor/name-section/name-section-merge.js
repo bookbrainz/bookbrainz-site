@@ -75,15 +75,18 @@ function NameSectionMerge({
 	const languageSelectOptions = [];
 	const disambiguationOptions = [];
 
-	mergingEntities.forEach(entity => {
+	mergingEntities.forEach((entity) => {
 		if (_.findIndex(nameOptions, ['label', entity.defaultAlias.name]) === -1) {
 			nameOptions.push({label: entity.defaultAlias.name, value: entity.defaultAlias.name});
 		}
 		if (_.findIndex(sortNameOptions, ['label', entity.defaultAlias.sortName]) === -1) {
-			sortNameOptions.push({label: entity.defaultAlias.sortName, value: entity.defaultAlias.sortName});
+			sortNameOptions.push({
+				label: entity.defaultAlias.sortName,
+				value: entity.defaultAlias.sortName
+			});
 		}
 		const matchingLanguage = languageOptions
-			.filter(language => language.id === entity.defaultAlias.languageId)
+			.filter((language) => language.id === entity.defaultAlias.languageId)
 			.map((language) => ({
 				label: language.name,
 				value: language.id
@@ -91,9 +94,14 @@ function NameSectionMerge({
 		if (_.findIndex(languageSelectOptions, ['value', matchingLanguage[0].value]) === -1) {
 			languageSelectOptions.push(matchingLanguage[0]);
 		}
-		if (!_.isNil(entity.disambiguation) &&
-			disambiguationOptions.indexOf(entity.disambiguation) === -1) {
-			disambiguationOptions.push({label: entity.disambiguation.comment, value: entity.disambiguation.comment});
+		if (
+			!_.isNil(entity.disambiguation) &&
+			disambiguationOptions.indexOf(entity.disambiguation) === -1
+		) {
+			disambiguationOptions.push({
+				label: entity.disambiguation.comment,
+				value: entity.disambiguation.comment
+			});
 		}
 	});
 
@@ -103,7 +111,9 @@ function NameSectionMerge({
 				currentValue={nameValue}
 				label="Name"
 				options={nameOptions}
-				tooltipText={`Prefered name of the ${_.capitalize(entityType)} in their original language.
+				tooltipText={`Prefered name of the ${_.capitalize(
+					entityType
+				)} in their original language.
 				Other names (full name, name in another language) are added as 'aliases'.`}
 				valueProperty="value"
 				onChange={onNameChange}
@@ -168,12 +178,9 @@ function mapDispatchToProps(dispatch) {
 		onDisambiguationChange: (option) => {
 			dispatch(debouncedUpdateDisambiguationField(option));
 		},
-		onLanguageChange: (option) =>
-			dispatch(updateLanguageField(option)),
-		onNameChange: (option) =>
-			dispatch(debouncedUpdateNameField(option)),
-		onSortNameChange: (option) =>
-			dispatch(debouncedUpdateSortNameField(option))
+		onLanguageChange: (option) => dispatch(updateLanguageField(option)),
+		onNameChange: (option) => dispatch(debouncedUpdateNameField(option)),
+		onSortNameChange: (option) => dispatch(debouncedUpdateSortNameField(option))
 	};
 }
 

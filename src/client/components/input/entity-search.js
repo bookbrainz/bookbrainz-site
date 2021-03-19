@@ -25,7 +25,6 @@ import SelectWrapper from './select-wrapper';
 import _ from 'lodash';
 import request from 'superagent';
 
-
 class EntitySearch extends React.Component {
 	constructor(props) {
 		super(props);
@@ -53,15 +52,10 @@ class EntitySearch extends React.Component {
 	renderOption(option) {
 		return (
 			<div>
-				{option.type && genEntityIconHTMLElement(option.type)}
-				{' '}
-				{option.text}
-				{
-					option.disambiguation &&
-					<span className="disambig">
-						({option.disambiguation})
-					</span>
-				}
+				{option.type && genEntityIconHTMLElement(option.type)} {option.text}
+				{option.disambiguation && (
+					<span className="disambig">({option.disambiguation})</span>
+				)}
 			</div>
 		);
 	}
@@ -77,7 +71,7 @@ class EntitySearch extends React.Component {
 				labelAttribute="text"
 				loadOptions={this.fetchOptions}
 				optionRenderer={this.renderOption}
-				ref={(ref) => this.select = ref}
+				ref={(ref) => (this.select = ref)}
 				{...props}
 			/>
 		);

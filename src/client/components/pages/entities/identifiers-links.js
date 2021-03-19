@@ -20,7 +20,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 function IdentifierLink({typeId, value}) {
 	let link;
 	// All identifiers type IDs have been taken from database.
@@ -107,7 +106,10 @@ function IdentifierLink({typeId, value}) {
 	}
 
 	return (
-		<a href={link} rel="noopener noreferrer" target="_blank"> {value} </a>
+		<a href={link} rel="noopener noreferrer" target="_blank">
+			{' '}
+			{value}{' '}
+		</a>
 	);
 }
 

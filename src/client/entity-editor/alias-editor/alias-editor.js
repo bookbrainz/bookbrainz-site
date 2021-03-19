@@ -27,7 +27,6 @@ import React from 'react';
 import classNames from 'classnames';
 import {connect} from 'react-redux';
 
-
 /**
  * Container component. The AliasEditor component contains a number of AliasRow
  * elements, and renders these inside a modal, which appears when the show
@@ -46,41 +45,28 @@ import {connect} from 'react-redux';
  *        visible.
  * @returns {ReactElement} React element containing the rendered AliasEditor.
  */
-const AliasEditor = ({
-	aliases,
-	languageOptions,
-	onAddAlias,
-	onClose,
-	show
-}) => {
+const AliasEditor = ({aliases, languageOptions, onAddAlias, onClose, show}) => {
 	const languageOptionsForDisplay = languageOptions.map((language) => ({
 		label: language.name,
 		value: language.id
 	}));
 
-	const noAliasesTextClass =
-		classNames('text-center', {hidden: aliases.size});
+	const noAliasesTextClass = classNames('text-center', {hidden: aliases.size});
 
 	const helpText = `Variant names for an entity such as alternate spelling, different script, stylistic representation, acronyms, etc.
 		Refer to the help page for more details and examples.`;
 	const helpIconElement = (
 		<OverlayTrigger
 			delayShow={50}
-			overlay={<Tooltip id="alias-editor-tooltip">{helpText}</Tooltip>}
-		>
-			<FontAwesomeIcon
-				className="fa-sm"
-				icon={faQuestionCircle}
-			/>
+			overlay={<Tooltip id="alias-editor-tooltip">{helpText}</Tooltip>}>
+			<FontAwesomeIcon className="fa-sm" icon={faQuestionCircle} />
 		</OverlayTrigger>
 	);
 
 	return (
 		<Modal bsSize="large" show={show} onHide={onClose}>
 			<Modal.Header>
-				<Modal.Title>
-					Alias Editor {helpIconElement}
-				</Modal.Title>
+				<Modal.Title>Alias Editor {helpIconElement}</Modal.Title>
 			</Modal.Header>
 
 			<Modal.Body>
@@ -88,21 +74,21 @@ const AliasEditor = ({
 					<p className="text-muted">This entity has no aliases</p>
 				</div>
 				<div>
-					{
-						aliases.map((alias, rowId) => (
+					{aliases
+						.map((alias, rowId) => (
 							<AliasRow
 								index={rowId}
 								// eslint-disable-next-line react/no-array-index-key
 								key={rowId}
 								languageOptions={languageOptionsForDisplay}
 							/>
-						)).toArray()
-					}
+						))
+						.toArray()}
 				</div>
 				<Row>
 					<Col className="text-right" md={3} mdOffset={9}>
 						<Button bsStyle="success" onClick={onAddAlias}>
-							<FontAwesomeIcon icon={faPlus}/>
+							<FontAwesomeIcon icon={faPlus} />
 							<span>&nbsp;Add alias</span>
 						</Button>
 					</Col>
@@ -110,7 +96,9 @@ const AliasEditor = ({
 			</Modal.Body>
 
 			<Modal.Footer>
-				<Button bsStyle="primary" onClick={onClose}>Close</Button>
+				<Button bsStyle="primary" onClick={onClose}>
+					Close
+				</Button>
 			</Modal.Footer>
 		</Modal>
 	);

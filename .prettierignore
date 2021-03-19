@@ -1,0 +1,8 @@
+*.md
+node_modules
+package-lock.json
+coverage
+webpack.client.js
+config
+.vscode
+/src/client/stylesheets/

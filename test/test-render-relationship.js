@@ -18,7 +18,6 @@
 import {expect} from 'chai';
 import renderRelationship from '../src/server/helpers/render';
 
-
 const relationshipTests = {
 	emptyLinkPhrase: {
 		rel: {
@@ -124,26 +123,27 @@ const relationshipTests = {
 function makeRelationshipTest(test) {
 	return () => {
 		if ('error' in test) {
-			expect(() => renderRelationship(test.rel))
-				.to.throw(test.error);
-		}
-		else {
+			expect(() => renderRelationship(test.rel)).to.throw(test.error);
+		} else {
 			expect(renderRelationship(test.rel)).to.equal(test.renderedRel);
 		}
 	};
 }
 
 describe('renderRelationship', () => {
-	it('renders a fully specified relationship',
-	   makeRelationshipTest(relationshipTests.fullySpecified));
-	it('renders a fully specified relationship with numeric bbids',
-	   makeRelationshipTest(relationshipTests.fullySpecifiedWithNumericBbids));
-	it('renders a relationship where the source entity is unnamed',
-	   makeRelationshipTest(relationshipTests.unnamedSource));
-	it('works with an empty link phrase',
-	   makeRelationshipTest(relationshipTests.emptyLinkPhrase));
-	it('throws on null entities',
-	   makeRelationshipTest(relationshipTests.nullEntities));
-	it('throws on a null link phrase',
-	   makeRelationshipTest(relationshipTests.nullLinkPhrase));
+	it(
+		'renders a fully specified relationship',
+		makeRelationshipTest(relationshipTests.fullySpecified)
+	);
+	it(
+		'renders a fully specified relationship with numeric bbids',
+		makeRelationshipTest(relationshipTests.fullySpecifiedWithNumericBbids)
+	);
+	it(
+		'renders a relationship where the source entity is unnamed',
+		makeRelationshipTest(relationshipTests.unnamedSource)
+	);
+	it('works with an empty link phrase', makeRelationshipTest(relationshipTests.emptyLinkPhrase));
+	it('throws on null entities', makeRelationshipTest(relationshipTests.nullEntities));
+	it('throws on a null link phrase', makeRelationshipTest(relationshipTests.nullLinkPhrase));
 });

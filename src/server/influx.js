@@ -15,12 +15,7 @@ function init(app, config) {
 					duration: Influx.FieldType.INTEGER
 				},
 				measurement: 'response_times',
-				tags: [
-					'domain',
-					'path',
-					'status',
-					'verb'
-				]
+				tags: ['domain', 'path', 'status', 'verb']
 			}
 		],
 		username: 'grafana'
@@ -43,9 +38,7 @@ function init(app, config) {
 				}
 			};
 
-			influx.writePoints([
-				data
-			]).catch(err => {
+			influx.writePoints([data]).catch((err) => {
 				log.error(`Error saving data to InfluxDB! ${err.stack}`);
 			});
 		});

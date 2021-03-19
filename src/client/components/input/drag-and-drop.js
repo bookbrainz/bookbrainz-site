@@ -20,7 +20,6 @@ import CustomInput from '../../input';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 class DragAndDrop extends React.Component {
 	constructor() {
 		super();
@@ -59,8 +58,7 @@ class DragAndDrop extends React.Component {
 
 		try {
 			data = JSON.parse(ev.dataTransfer.getData('text'));
-		}
-		catch (err) {
+		} catch (err) {
 			return;
 		}
 		this.addChild(data);
@@ -76,21 +74,14 @@ class DragAndDrop extends React.Component {
 				className="well col-sm-4"
 				onClick={this.handleClick}
 				onDragOver={this.handleDragOver}
-				onDrop={this.handleDrop}
-			>
+				onDrop={this.handleDrop}>
 				<CustomInput
 					name={this.props.name}
 					type="hidden"
 					value={this.state.achievement.id}
 				/>
-				<img
-					className="center-block"
-					height="100px"
-					src={this.state.achievement.src}
-				/>
-				<div className="center-block h3">
-					{this.state.achievement.name}
-				</div>
+				<img className="center-block" height="100px" src={this.state.achievement.src} />
+				<div className="center-block h3">{this.state.achievement.name}</div>
 			</div>
 		);
 	}

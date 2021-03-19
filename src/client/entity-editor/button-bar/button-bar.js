@@ -17,10 +17,7 @@
  */
 
 import {Col, Row} from 'react-bootstrap';
-import {
-	showAliasEditor,
-	showIdentifierEditor
-} from './actions';
+import {showAliasEditor, showIdentifierEditor} from './actions';
 import {validateAliases, validateIdentifiers} from '../validators/common';
 
 import AliasButton from './alias-button';
@@ -93,7 +90,8 @@ function mapStateToProps(rootState, {identifierTypes}) {
 	return {
 		aliasesInvalid: !validateAliases(rootState.get('aliasEditor')),
 		identifiersInvalid: !validateIdentifiers(
-			rootState.get('identifierEditor'), identifierTypes
+			rootState.get('identifierEditor'),
+			identifierTypes
 		),
 		numAliases: rootState.get('aliasEditor').size,
 		numIdentifiers: rootState.get('identifierEditor').size

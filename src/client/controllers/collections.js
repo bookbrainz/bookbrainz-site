@@ -23,13 +23,12 @@ import Layout from '../containers/layout';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
 const propsTarget = document.getElementById('props');
 const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 const markup = (
 	<AppContainer>
 		<Layout {...extractLayoutProps(props)}>
-			<CollectionsPage {...extractChildProps(props)}/>
+			<CollectionsPage {...extractChildProps(props)} />
 		</Layout>
 	</AppContainer>
 );

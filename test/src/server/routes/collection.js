@@ -8,12 +8,10 @@ import chaiHttp from 'chai-http';
 import orm from '../../../bookbrainz-data';
 import {v4 as uuidv4} from 'uuid';
 
-
 chai.use(chaiHttp);
 chai.use(assertArrays);
 const {expect} = chai;
 const {UserCollection, UserCollectionCollaborator, UserCollectionItem} = orm;
-
 
 describe('POST /collection/create', () => {
 	let agent;
@@ -21,8 +19,7 @@ describe('POST /collection/create', () => {
 	before(async () => {
 		try {
 			collectionOwner = await createEditor(123456);
-		}
-		catch (error) {
+		} catch (error) {
 			// console.log(error);
 		}
 		// The `agent` now has the sessionid cookie saved, and will send it
@@ -84,7 +81,7 @@ describe('POST /collection/create', () => {
 			privacy: 'public'
 		};
 		const res = await agent.post('/collection/create/handler').send(data);
-		await new Promise(resolve => setTimeout(resolve, 500));
+		await new Promise((resolve) => setTimeout(resolve, 500));
 		await refreshIndex();
 		const searchResults = await searchByName(orm, data.name, 'Collection', '10', '0');
 
@@ -102,7 +99,9 @@ describe('POST /collection/create', () => {
 		const response = await agent.post('/collection/create/handler').send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Invalid entity type: ${data.entityType} does not exist`);
+		expect(response.res.statusMessage).to.equal(
+			`Invalid entity type: ${data.entityType} does not exist`
+		);
 	});
 
 	it('should throw error for empty collection name', async () => {
@@ -115,7 +114,9 @@ describe('POST /collection/create', () => {
 		const response = await agent.post('/collection/create/handler').send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal('Invalid collection name: Empty string not allowed');
+		expect(response.res.statusMessage).to.equal(
+			'Invalid collection name: Empty string not allowed'
+		);
 	});
 
 	it('should throw error for invalid collaborator id (string)', async () => {
@@ -129,7 +130,9 @@ describe('POST /collection/create', () => {
 		const response = await agent.post('/collection/create/handler').send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Invalid collaborator id: ${data.collaborators[0].id} not valid`);
+		expect(response.res.statusMessage).to.equal(
+			`Invalid collaborator id: ${data.collaborators[0].id} not valid`
+		);
 	});
 
 	it('should throw error for invalid collaborator id (negative number)', async () => {
@@ -143,7 +146,9 @@ describe('POST /collection/create', () => {
 		const response = await agent.post('/collection/create/handler').send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Invalid collaborator id: ${data.collaborators[0].id} not valid`);
+		expect(response.res.statusMessage).to.equal(
+			`Invalid collaborator id: ${data.collaborators[0].id} not valid`
+		);
 	});
 
 	it('should throw error for incorrect collaborator id (collaborator does not exist)', async () => {
@@ -157,7 +162,9 @@ describe('POST /collection/create', () => {
 		const response = await agent.post('/collection/create/handler').send(data);
 
 		expect(response.status).to.equal(404);
-		expect(response.res.statusMessage).to.equal(`Collaborator ${data.collaborators[0].id} does not exist`);
+		expect(response.res.statusMessage).to.equal(
+			`Collaborator ${data.collaborators[0].id} does not exist`
+		);
 	});
 
 	it('should correctly add collaborators in the collection', async () => {
@@ -171,12 +178,19 @@ describe('POST /collection/create', () => {
 			privacy: 'public'
 		};
 		const res = await agent.post('/collection/create/handler').send(data);
-		const collection = await new UserCollection({id: res.body.id}).fetch({withRelated: ['collaborators']});
+		const collection = await new UserCollection({id: res.body.id}).fetch({
+			withRelated: ['collaborators']
+		});
 		const collectionJSON = collection.toJSON();
-		const collaboratorIds = collectionJSON.collaborators.map(collaborator => collaborator.collaboratorId);
+		const collaboratorIds = collectionJSON.collaborators.map(
+			(collaborator) => collaborator.collaboratorId
+		);
 
 		expect(res.status).to.equal(200);
-		expect(collaboratorIds).to.be.containingAllOf([collaborator1.get('id'), collaborator2.get('id')]);
+		expect(collaboratorIds).to.be.containingAllOf([
+			collaborator1.get('id'),
+			collaborator2.get('id')
+		]);
 	});
 });
 
@@ -186,8 +200,7 @@ describe('POST collection/edit', () => {
 	before(async () => {
 		try {
 			loggedInUser = await createEditor(123456);
-		}
-		catch (error) {
+		} catch (error) {
 			// console.log(error);
 		}
 		// The `agent` now has the sessionid cookie saved, and will send it
@@ -203,7 +216,9 @@ describe('POST collection/edit', () => {
 			privacy: 'public'
 		};
 		const res = await agent.post('/collection/create/handler').send(data);
-		const collection = await new UserCollection({id: res.body.id}).fetch({withRelated: ['collaborators']});
+		const collection = await new UserCollection({id: res.body.id}).fetch({
+			withRelated: ['collaborators']
+		});
 		collectionJSON = collection.toJSON();
 		await generateIndex(orm);
 	});
@@ -225,7 +240,9 @@ describe('POST collection/edit', () => {
 		};
 
 		const res = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(newData);
-		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({withRelated: ['collaborators']});
+		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({
+			withRelated: ['collaborators']
+		});
 		const updatedCollectionJSON = updatedCollection.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -233,7 +250,9 @@ describe('POST collection/edit', () => {
 		expect(updatedCollectionJSON.entityType).to.equal(newData.entityType);
 		expect(updatedCollectionJSON.description).to.equal(newData.description);
 		expect(updatedCollectionJSON.collaborators.length).to.equal(1);
-		expect(updatedCollectionJSON.collaborators[0].collaboratorId).to.equal(newCollaborator.get('id'));
+		expect(updatedCollectionJSON.collaborators[0].collaboratorId).to.equal(
+			newCollaborator.get('id')
+		);
 	});
 
 	it('should correctly update the collection to Edition-Group type and return 200 status code', async () => {
@@ -247,7 +266,9 @@ describe('POST collection/edit', () => {
 		};
 
 		const res = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(newData);
-		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({withRelated: ['collaborators']});
+		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({
+			withRelated: ['collaborators']
+		});
 		const updatedCollectionJSON = updatedCollection.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -255,7 +276,9 @@ describe('POST collection/edit', () => {
 		expect(updatedCollectionJSON.entityType).to.equal('EditionGroup');
 		expect(updatedCollectionJSON.description).to.equal(newData.description);
 		expect(updatedCollectionJSON.collaborators.length).to.equal(1);
-		expect(updatedCollectionJSON.collaborators[0].collaboratorId).to.equal(newCollaborator.get('id'));
+		expect(updatedCollectionJSON.collaborators[0].collaboratorId).to.equal(
+			newCollaborator.get('id')
+		);
 	});
 
 	it('should correctly add a new collaborator and return 200 status code', async () => {
@@ -269,13 +292,20 @@ describe('POST collection/edit', () => {
 		};
 
 		const res = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(newData);
-		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({withRelated: ['collaborators']});
+		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({
+			withRelated: ['collaborators']
+		});
 		const updatedCollectionJSON = updatedCollection.toJSON();
 
 		expect(res.status).to.equal(200);
 		expect(updatedCollectionJSON.collaborators.length).to.equal(2);
-		const collaboratorIds = updatedCollectionJSON.collaborators.map(collaborator => collaborator.collaboratorId);
-		expect(collaboratorIds).to.be.containingAllOf([oldCollaborator.get('id'), newCollaborator.get('id')]);
+		const collaboratorIds = updatedCollectionJSON.collaborators.map(
+			(collaborator) => collaborator.collaboratorId
+		);
+		expect(collaboratorIds).to.be.containingAllOf([
+			oldCollaborator.get('id'),
+			newCollaborator.get('id')
+		]);
 	});
 
 	it('should correctly remove a collaborator and return 200 status code', async () => {
@@ -288,7 +318,9 @@ describe('POST collection/edit', () => {
 		};
 
 		const res = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(newData);
-		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({withRelated: ['collaborators']});
+		const updatedCollection = await new UserCollection({id: collectionJSON.id}).fetch({
+			withRelated: ['collaborators']
+		});
 		const updatedCollectionJSON = updatedCollection.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -303,7 +335,7 @@ describe('POST collection/edit', () => {
 			privacy: 'public'
 		};
 		await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(newData);
-		await new Promise(resolve => setTimeout(resolve, 500));
+		await new Promise((resolve) => setTimeout(resolve, 500));
 		await refreshIndex();
 		const searchResults = await searchByName(orm, newData.name, 'Collection', '10', '0');
 		expect(searchResults[0].id).to.equal(collectionJSON.id);
@@ -318,10 +350,14 @@ describe('POST collection/edit', () => {
 			name: 'collectionName',
 			privacy: 'public'
 		};
-		const response = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(data);
+		const response = await agent
+			.post(`/collection/${collectionJSON.id}/edit/handler`)
+			.send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Invalid entity type: ${data.entityType} does not exist`);
+		expect(response.res.statusMessage).to.equal(
+			`Invalid entity type: ${data.entityType} does not exist`
+		);
 	});
 
 	it('should throw error for empty collection name', async () => {
@@ -332,10 +368,14 @@ describe('POST collection/edit', () => {
 			name: '',
 			privacy: 'public'
 		};
-		const response = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(data);
+		const response = await agent
+			.post(`/collection/${collectionJSON.id}/edit/handler`)
+			.send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal('Invalid collection name: Empty string not allowed');
+		expect(response.res.statusMessage).to.equal(
+			'Invalid collection name: Empty string not allowed'
+		);
 	});
 
 	it('should throw error when trying to edit entityType of a non empty collection', async () => {
@@ -352,9 +392,13 @@ describe('POST collection/edit', () => {
 			name: 'collectionName',
 			privacy: 'public'
 		};
-		const response = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(data);
+		const response = await agent
+			.post(`/collection/${collectionJSON.id}/edit/handler`)
+			.send(data);
 		expect(response).to.have.status(400);
-		expect(response.res.statusMessage).to.equal('Trying to change entityType of a non empty collection');
+		expect(response.res.statusMessage).to.equal(
+			'Trying to change entityType of a non empty collection'
+		);
 	});
 
 	it('should throw error for invalid collaborator id (string)', async () => {
@@ -365,10 +409,14 @@ describe('POST collection/edit', () => {
 			name: 'collectionName',
 			privacy: 'public'
 		};
-		const response = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(data);
+		const response = await agent
+			.post(`/collection/${collectionJSON.id}/edit/handler`)
+			.send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Invalid collaborator id: ${data.collaborators[0].id} not valid`);
+		expect(response.res.statusMessage).to.equal(
+			`Invalid collaborator id: ${data.collaborators[0].id} not valid`
+		);
 	});
 
 	it('should throw error for invalid collaborator id (negative number)', async () => {
@@ -379,10 +427,14 @@ describe('POST collection/edit', () => {
 			name: 'collection name',
 			privacy: 'public'
 		};
-		const response = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(data);
+		const response = await agent
+			.post(`/collection/${collectionJSON.id}/edit/handler`)
+			.send(data);
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Invalid collaborator id: ${data.collaborators[0].id} not valid`);
+		expect(response.res.statusMessage).to.equal(
+			`Invalid collaborator id: ${data.collaborators[0].id} not valid`
+		);
 	});
 
 	it('should throw error for incorrect collaborator id (collaborator does not exist)', async () => {
@@ -393,10 +445,14 @@ describe('POST collection/edit', () => {
 			name: 'collection name',
 			privacy: 'public'
 		};
-		const response = await agent.post(`/collection/${collectionJSON.id}/edit/handler`).send(data);
+		const response = await agent
+			.post(`/collection/${collectionJSON.id}/edit/handler`)
+			.send(data);
 
 		expect(response.status).to.equal(404);
-		expect(response.res.statusMessage).to.equal(`Collaborator ${data.collaborators[0].id} does not exist`);
+		expect(response.res.statusMessage).to.equal(
+			`Collaborator ${data.collaborators[0].id} does not exist`
+		);
 	});
 
 	it('should throw error when unauthorized user tries to edit the collection', async () => {
@@ -413,10 +469,14 @@ describe('POST collection/edit', () => {
 			...data,
 			name: 'new collection name'
 		};
-		const response = await agent.post(`/collection/${collection.get('id')}/edit/handler`).send(newData);
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/edit/handler`)
+			.send(newData);
 
 		expect(response).to.have.status(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit/delete this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit/delete this collection'
+		);
 	});
 
 	it('should throw error when collaborator tries to edit the collection', async () => {
@@ -439,10 +499,14 @@ describe('POST collection/edit', () => {
 			...data,
 			name: 'new collection name'
 		};
-		const response = await agent.post(`/collection/${collection.get('id')}/edit/handler`).send(newData);
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/edit/handler`)
+			.send(newData);
 
 		expect(response).to.have.status(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit/delete this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit/delete this collection'
+		);
 	});
 });
 
@@ -452,8 +516,7 @@ describe('POST /collection/collectionID/delete', () => {
 	before(async () => {
 		try {
 			loggedInUser = await createEditor(123456);
-		}
-		catch (error) {
+		} catch (error) {
 			// console.log(error);
 		}
 		// The `agent` now has the sessionid cookie saved, and will send it
@@ -477,10 +540,14 @@ describe('POST /collection/collectionID/delete', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		await generateIndex(orm);
 		const res = await agent.post(`/collection/${collection.get('id')}/delete/handler`).send();
-		const collections = await new UserCollection().where('id', collection.get('id')).fetchAll({require: false});
+		const collections = await new UserCollection()
+			.where('id', collection.get('id'))
+			.fetchAll({require: false});
 		const collectionsJSON = collections.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -495,7 +562,9 @@ describe('POST /collection/collectionID/delete', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		await generateIndex(orm);
 		const author1 = await createAuthor();
 		const author2 = await createAuthor();
@@ -509,8 +578,12 @@ describe('POST /collection/collectionID/delete', () => {
 		});
 		const res = await agent.post(`/collection/${collection.get('id')}/delete/handler`).send();
 
-		const collections = await new UserCollection().where('id', collection.get('id')).fetchAll({require: false});
-		const items = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const collections = await new UserCollection()
+			.where('id', collection.get('id'))
+			.fetchAll({require: false});
+		const items = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const collectionsJSON = collections.toJSON();
 		const itemsJSON = items.toJSON();
 
@@ -529,7 +602,9 @@ describe('POST /collection/collectionID/delete', () => {
 		};
 		const collaborator1 = await createEditor();
 		const collaborator2 = await createEditor();
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		await generateIndex(orm);
 		await new UserCollectionCollaborator({
 			collaboratorId: collaborator1.get('id'),
@@ -541,8 +616,12 @@ describe('POST /collection/collectionID/delete', () => {
 		});
 
 		const res = await agent.post(`/collection/${collection.get('id')}/delete/handler`).send();
-		const collections = await new UserCollection().where('id', res.body.id).fetchAll({require: false});
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const collections = await new UserCollection()
+			.where('id', res.body.id)
+			.fetchAll({require: false});
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const collaboratorsJSON = collaborators.toJSON();
 		const collectionsJSON = collections.toJSON();
 
@@ -561,16 +640,24 @@ describe('POST /collection/collectionID/delete', () => {
 			public: true
 		};
 
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		await generateIndex(orm);
 		// here loggedInUser is neither owner nor collaborator
-		const response = await agent.post(`/collection/${collection.get('id')}/delete/handler`).send();
-		const collections = await new UserCollection().where('id', collection.get('id')).fetchAll({require: false});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/delete/handler`)
+			.send();
+		const collections = await new UserCollection()
+			.where('id', collection.get('id'))
+			.fetchAll({require: false});
 		const collectionsJSON = collections.toJSON();
 
 		expect(collectionsJSON.length).to.equal(1);
 		expect(response).to.have.status(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit/delete this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit/delete this collection'
+		);
 	});
 
 	it('should not allow collaborator to delete the collection', async () => {
@@ -582,20 +669,28 @@ describe('POST /collection/collectionID/delete', () => {
 			ownerId: owner.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		await generateIndex(orm);
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
 			collectionId: collection.get('id')
 		});
 
-		const response = await agent.post(`/collection/${collection.get('id')}/delete/handler`).send();
-		const collections = await new UserCollection().where('id', collection.get('id')).fetchAll({require: false});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/delete/handler`)
+			.send();
+		const collections = await new UserCollection()
+			.where('id', collection.get('id'))
+			.fetchAll({require: false});
 		const collectionsJSON = collections.toJSON();
 
 		expect(collectionsJSON.length).to.equal(1);
 		expect(response).to.have.status(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit/delete this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit/delete this collection'
+		);
 	});
 
 	it('should remove collection from ES index', async () => {
@@ -606,14 +701,18 @@ describe('POST /collection/collectionID/delete', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		await generateIndex(orm);
 		const oldResult = await searchByName(orm, collectionData.name, 'Collection', 10, 0);
 		const res = await agent.post(`/collection/${collection.get('id')}/delete/handler`).send();
-		await new Promise(resolve => setTimeout(resolve, 500));
+		await new Promise((resolve) => setTimeout(resolve, 500));
 		await refreshIndex();
 		const newResult = await searchByName(orm, collectionData.name, 'Collection', 10, 0);
-		const collections = await new UserCollection().where('id', collection.get('id')).fetchAll({require: false});
+		const collections = await new UserCollection()
+			.where('id', collection.get('id'))
+			.fetchAll({require: false});
 		const collectionsJSON = collections.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -624,15 +723,13 @@ describe('POST /collection/collectionID/delete', () => {
 	});
 });
 
-
 describe('POST /collection/:collectionID/add', () => {
 	let agent;
 	let loggedInUser;
 	before(async () => {
 		try {
 			loggedInUser = await createEditor(123456);
-		}
-		catch (error) {
+		} catch (error) {
 			// console.log(error);
 		}
 		// The `agent` now has the sessionid cookie saved, and will send it
@@ -655,13 +752,17 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const data = {
 			bbids: [author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const itemJSON = item.toJSON();
 		expect(res.status).to.equal(200);
 		expect(itemJSON.length).to.equal(1);
@@ -678,7 +779,9 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: owner.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
@@ -689,7 +792,9 @@ describe('POST /collection/:collectionID/add', () => {
 			bbids: [author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -707,7 +812,9 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
@@ -718,7 +825,9 @@ describe('POST /collection/:collectionID/add', () => {
 			bbids: [author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -735,19 +844,23 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const author2 = await createAuthor();
 		const data = {
 			bbids: [author.get('bbid'), author2.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(res.status).to.equal(200);
 		expect(itemJSON.length).to.equal(2);
-		const itemsBBID = itemJSON.map(currentItem => currentItem.bbid);
+		const itemsBBID = itemJSON.map((currentItem) => currentItem.bbid);
 		expect(itemsBBID.length).to.equal(2);
 		expect(itemsBBID).to.be.containingAllOf([author.get('bbid'), author2.get('bbid')]);
 	});
@@ -760,13 +873,17 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const data = {
 			bbids: [author.get('bbid'), author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -784,17 +901,23 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const data = {
 			bbids: [author.get('bbid')]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(response.status).to.equal(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit this collection'
+		);
 		expect(itemJSON.length).to.equal(0);
 	});
 
@@ -807,17 +930,23 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: owner.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const data = {
 			bbids: [author.get('bbid')]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(response.status).to.equal(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit this collection'
+		);
 		expect(itemJSON.length).to.equal(0);
 	});
 
@@ -829,12 +958,16 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const data = {
 			bbids: ['not-a-bbid']
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const itemJSON = item.toJSON();
 		expect(response).to.have.status(400);
 		expect(response.res.statusMessage).to.equal(`Invalid BBID ${data.bbids[0]}`);
@@ -849,15 +982,21 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const data = {
 			bbids: [uuidv4()]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const itemJSON = item.toJSON();
 		expect(response).to.have.status(404);
-		expect(response.res.statusMessage).to.equal(`${collectionData.entityType} ${data.bbids[0]} does not exist`);
+		expect(response.res.statusMessage).to.equal(
+			`${collectionData.entityType} ${data.bbids[0]} does not exist`
+		);
 		expect(itemJSON.length).to.equal(0);
 	});
 
@@ -869,17 +1008,23 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const data = {
 			bbids: [author.get('bbid')]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const itemJSON = item.toJSON();
 
 		expect(response).to.have.status(400);
-		expect(response.res.statusMessage).to.equal(`Cannot add an entity of type Author to a collection of type ${collectionData.entityType}`);
+		expect(response.res.statusMessage).to.equal(
+			`Cannot add an entity of type Author to a collection of type ${collectionData.entityType}`
+		);
 		expect(itemJSON.length).to.equal(0);
 	});
 
@@ -891,12 +1036,16 @@ describe('POST /collection/:collectionID/add', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const data = {
 			bbids: []
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const itemJSON = item.toJSON();
 		expect(response).to.have.status(400);
 		expect(response.res.statusMessage).to.equal('BBIDs array is empty');
@@ -904,15 +1053,13 @@ describe('POST /collection/:collectionID/add', () => {
 	});
 });
 
-
 describe('POST /collection/:collectionID/remove', () => {
 	let agent;
 	let loggedInUser;
 	before(async () => {
 		try {
 			loggedInUser = await createEditor(123456);
-		}
-		catch (error) {
+		} catch (error) {
 			// console.log(error);
 		}
 		// The `agent` now has the sessionid cookie saved, and will send it
@@ -935,7 +1082,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		await new UserCollectionItem({
 			bbid: author.get('bbid'),
@@ -945,7 +1094,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -960,7 +1111,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		await new UserCollectionItem({
 			bbid: author.get('bbid'),
@@ -970,7 +1123,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: ['not-a-bbid']
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(response.status).to.equal(400);
@@ -986,7 +1141,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		await new UserCollectionItem({
 			bbid: author.get('bbid'),
@@ -997,11 +1154,15 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author2.get('bbid')]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(response.status).to.equal(400);
-		expect(response.res.statusMessage).to.equal(`Entity ${data.bbids[0]} is not in collection ${collection.get('id')}`);
+		expect(response.res.statusMessage).to.equal(
+			`Entity ${data.bbids[0]} is not in collection ${collection.get('id')}`
+		);
 		expect(itemJSON.length).to.equal(1);
 	});
 
@@ -1014,7 +1175,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: owner.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
@@ -1030,7 +1193,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 		expect(res.status).to.equal(200);
 		expect(itemJSON.length).to.equal(0);
@@ -1045,7 +1210,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
@@ -1061,7 +1228,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 		expect(res.status).to.equal(200);
 		expect(itemJSON.length).to.equal(0);
@@ -1075,7 +1244,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		const author2 = await createAuthor();
 		await new UserCollectionItem({
@@ -1090,7 +1261,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author.get('bbid'), author2.get('bbid')]
 		};
 		const res = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 
 		expect(res.status).to.equal(200);
@@ -1106,7 +1279,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		// add author to this collection
 		await new UserCollectionItem({
@@ -1117,10 +1292,14 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author.get('bbid')]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 		expect(response.status).to.equal(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit this collection'
+		);
 		expect(itemJSON.length).to.equal(1);
 	});
 
@@ -1133,7 +1312,9 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: owner.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const author = await createAuthor();
 		// add author to this collection
 		await new UserCollectionItem({
@@ -1144,10 +1325,14 @@ describe('POST /collection/:collectionID/remove', () => {
 			bbids: [author.get('bbid')]
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/remove`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({require: false});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({require: false});
 		const itemJSON = item.toJSON();
 		expect(response.status).to.equal(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to edit this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to edit this collection'
+		);
 		expect(itemJSON.length).to.equal(1);
 	});
 
@@ -1159,12 +1344,16 @@ describe('POST /collection/:collectionID/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: true
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const data = {
 			bbids: []
 		};
 		const response = await agent.post(`/collection/${collection.get('id')}/add`).send(data);
-		const item = await new UserCollectionItem().where('collection_id', collection.get('id')).fetchAll({});
+		const item = await new UserCollectionItem()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const itemJSON = item.toJSON();
 		expect(response).to.have.status(400);
 		expect(response.res.statusMessage).to.equal('BBIDs array is empty');
@@ -1178,8 +1367,7 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 	before(async () => {
 		try {
 			loggedInUser = await createEditor(123456);
-		}
-		catch (error) {
+		} catch (error) {
 			// console.log(error);
 		}
 		// The `agent` now has the sessionid cookie saved, and will send it
@@ -1204,7 +1392,9 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
@@ -1214,8 +1404,12 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 		const postData = {
 			collaboratorIds: [loggedInUser.get('id')]
 		};
-		const response = await agent.post(`/collection/${collection.get('id')}/collaborator/remove`).send(postData);
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/collaborator/remove`)
+			.send(postData);
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const collaboratorsJSON = collaborators.toJSON();
 		expect(response).to.have.status(200);
 		expect(collaboratorsJSON.length).to.equal(0);
@@ -1230,7 +1424,9 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const collaborator1 = await createEditor();
 		const collaborator2 = await createEditor();
 		// make logged in user collaborator of this collection
@@ -1247,8 +1443,12 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			collaboratorIds: [collaborator1.get('id'), collaborator2.get('id')]
 		};
 
-		const response = await agent.post(`/collection/${collection.get('id')}/collaborator/remove`).send(postData);
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/collaborator/remove`)
+			.send(postData);
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const collaboratorsJSON = collaborators.toJSON();
 		expect(response).to.have.status(200);
 		expect(collaboratorsJSON.length).to.equal(0);
@@ -1263,7 +1463,9 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
 			collaboratorId: loggedInUser.get('id'),
@@ -1280,13 +1482,19 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 		};
 
 		// loggedIn user is trying to remove collaborator2
-		const response = await agent.post(`/collection/${collection.get('id')}/collaborator/remove`).send(postData);
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/collaborator/remove`)
+			.send(postData);
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const collaboratorsJSON = collaborators.toJSON();
 		// eslint-disable-next-line no-console
 		console.log(response.res.statusMessage);
 		expect(response).to.have.status(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to remove collaborators from this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to remove collaborators from this collection'
+		);
 		expect(collaboratorsJSON.length).to.equal(2);
 	});
 
@@ -1299,7 +1507,9 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const collaborator1 = await createEditor();
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
@@ -1311,8 +1521,12 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			collaboratorIds: []
 		};
 
-		const response = await agent.post(`/collection/${collection.get('id')}/collaborator/remove`).send(postData);
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/collaborator/remove`)
+			.send(postData);
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const collaboratorsJSON = collaborators.toJSON();
 		expect(response).to.have.status(400);
 		expect(response.res.statusMessage).to.equal('CollaboratorIds array is empty');
@@ -1328,7 +1542,9 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			ownerId: loggedInUser.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const collaborator1 = await createEditor();
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
@@ -1340,11 +1556,17 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			collaboratorIds: [1234]
 		};
 
-		const response = await agent.post(`/collection/${collection.get('id')}/collaborator/remove`).send(postData);
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/collaborator/remove`)
+			.send(postData);
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const collaboratorsJSON = collaborators.toJSON();
 		expect(response).to.have.status(400);
-		expect(response.res.statusMessage).to.equal(`User 1234 is not a collaborator of collection ${collection.get('id')}`);
+		expect(response.res.statusMessage).to.equal(
+			`User 1234 is not a collaborator of collection ${collection.get('id')}`
+		);
 		expect(collaboratorsJSON.length).to.equal(1);
 	});
 
@@ -1357,7 +1579,9 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			ownerId: owner.get('id'),
 			public: false
 		};
-		const collection = await new UserCollection(collectionData).save(null, {method: 'insert'});
+		const collection = await new UserCollection(collectionData).save(null, {
+			method: 'insert'
+		});
 		const collaborator1 = await createEditor();
 		// make logged in user collaborator of this collection
 		await new UserCollectionCollaborator({
@@ -1369,11 +1593,17 @@ describe('POST /collection/collectionID/collaborator/remove', () => {
 			collaboratorIds: [collaborator1.get('id')]
 		};
 
-		const response = await agent.post(`/collection/${collection.get('id')}/collaborator/remove`).send(postData);
-		const collaborators = await new UserCollectionCollaborator().where('collection_id', collection.get('id')).fetchAll({});
+		const response = await agent
+			.post(`/collection/${collection.get('id')}/collaborator/remove`)
+			.send(postData);
+		const collaborators = await new UserCollectionCollaborator()
+			.where('collection_id', collection.get('id'))
+			.fetchAll({});
 		const collaboratorsJSON = collaborators.toJSON();
 		expect(response).to.have.status(403);
-		expect(response.res.statusMessage).to.equal('You do not have permission to remove collaborators from this collection');
+		expect(response.res.statusMessage).to.equal(
+			'You do not have permission to remove collaborators from this collection'
+		);
 		expect(collaboratorsJSON.length).to.equal(1);
 	});
 });

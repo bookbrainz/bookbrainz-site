@@ -25,10 +25,8 @@ import _ from 'lodash';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {genEntityIconHTMLElement} from '../../../helpers/entity';
 
-
 const {Button, DropdownButton, MenuItem, Table} = bootstrap;
 const {formatDate} = utilsHelper;
-
 
 class CollectionsTable extends React.Component {
 	constructor(props) {
@@ -47,128 +45,99 @@ class CollectionsTable extends React.Component {
 	}
 
 	render() {
-		const {showLastModified, showOwner, showIfOwnerOrCollaborator, showPrivacy, results, tableHeading} = this.props;
+		const {
+			showLastModified,
+			showOwner,
+			showIfOwnerOrCollaborator,
+			showPrivacy,
+			results,
+			tableHeading
+		} = this.props;
 		const entityTypeSelect = (
 			<DropdownButton
 				bsStyle="primary"
 				id="entity-type-select"
 				title={_.startCase(this.state.type) || 'Entity Type'}
-				onSelect={this.handleEntitySelect}
-			>
+				onSelect={this.handleEntitySelect}>
 				{this.props.entityTypes.map((entityType) => (
-					<MenuItem
-						eventKey={entityType}
-						key={entityType}
-					>
+					<MenuItem eventKey={entityType} key={entityType}>
 						{genEntityIconHTMLElement(entityType)}
 						{_.startCase(entityType)}
 					</MenuItem>
 				))}
-				<MenuItem divider/>
-				<MenuItem
-					eventKey={null}
-					key="allTypes"
-				>
+				<MenuItem divider />
+				<MenuItem eventKey={null} key="allTypes">
 					All Types
 				</MenuItem>
 			</DropdownButton>
 		);
 		const newCollectionButton = (
-			<Button
-				bsStyle="warning"
-				href="/collection/create"
-				type="button"
-			>
-				<FontAwesomeIcon icon={faPlus}/>
+			<Button bsStyle="warning" href="/collection/create" type="button">
+				<FontAwesomeIcon icon={faPlus} />
 				&nbsp;Create Collection
 			</Button>
 		);
 		return (
 			<div>
 				<div>
-					<h1 className="text-center">
-						{tableHeading}
-					</h1>
+					<h1 className="text-center">{tableHeading}</h1>
 					<div className="text-right">
 						{newCollectionButton}
 						{entityTypeSelect}
 					</div>
 				</div>
-				<hr className="thin"/>
-				{
-					results.length > 0 ?
-						<Table
-							responsive
-							className="table table-striped"
-						>
-							<thead>
-								<tr>
-									<th className="col-sm-2">Name</th>
-									<th className="col-sm-4">Description</th>
-									<th className="col-sm-2">Entity Type</th>
-									{
-										showPrivacy ?
-											<th className="col-sm-2">Privacy</th> : null
-									}
-									{
-										showIfOwnerOrCollaborator ?
-											<th className="col-sm-2">Collaborator/Owner</th> : null
-									}
-									{
-										showOwner ?
-											<th className="col-sm-2">Owner</th> : null
+				<hr className="thin" />
+				{results.length > 0 ? (
+					<Table responsive className="table table-striped">
+						<thead>
+							<tr>
+								<th className="col-sm-2">Name</th>
+								<th className="col-sm-4">Description</th>
+								<th className="col-sm-2">Entity Type</th>
+								{showPrivacy ? <th className="col-sm-2">Privacy</th> : null}
+								{showIfOwnerOrCollaborator ? (
+									<th className="col-sm-2">Collaborator/Owner</th>
+								) : null}
+								{showOwner ? <th className="col-sm-2">Owner</th> : null}
+								{showLastModified ? (
+									<th className="col-sm-2">Last Modified</th>
+								) : null}
+							</tr>
+						</thead>
 
-									}
-									{
-										showLastModified ?
-											<th className="col-sm-2">Last Modified</th> : null
-									}
+						<tbody>
+							{results.map((collection) => (
+								<tr key={collection.id}>
+									<td>
+										<a href={`/collection/${collection.id}`}>
+											{collection.name}
+										</a>
+									</td>
+									<td>{collection.description}</td>
+									<td>{collection.entityType}</td>
+									{showPrivacy ? (
+										<td>{collection.public ? 'Public' : 'Private'}</td>
+									) : null}
+									{showIfOwnerOrCollaborator ? (
+										<td>{collection.isOwner ? 'Owner' : 'Collaborator'}</td>
+									) : null}
+									{showOwner ? <td>{collection.owner.name}</td> : null}
+									{showLastModified ? (
+										<td>
+											{formatDate(new Date(collection.lastModified), true)}
+										</td>
+									) : null}
 								</tr>
-							</thead>
-
-							<tbody>
-								{
-									results.map((collection) => (
-										<tr key={collection.id}>
-											<td>
-												<a
-													href={`/collection/${collection.id}`}
-												>
-													{collection.name}
-												</a>
-											</td>
-											<td>{collection.description}</td>
-											<td>{collection.entityType}</td>
-											{
-												showPrivacy ?
-													<td>{collection.public ? 'Public' : 'Private'}</td> : null
-											}
-											{
-												showIfOwnerOrCollaborator ?
-													<td>{collection.isOwner ? 'Owner' : 'Collaborator'}</td> : null
-											}
-											{
-												showOwner ?
-													<td>{collection.owner.name}</td> : null
-
-											}
-											{
-												showLastModified ?
-													<td>{formatDate(new Date(collection.lastModified), true)}</td> : null
-											}
-										</tr>
-									))
-								}
-							</tbody>
-						</Table> :
-
-						<div>
-							<h4> No collections to show</h4>
-							<hr className="wide"/>
-						</div>
-				}
+							))}
+						</tbody>
+					</Table>
+				) : (
+					<div>
+						<h4> No collections to show</h4>
+						<hr className="wide" />
+					</div>
+				)}
 			</div>
-
 		);
 	}
 }
@@ -191,8 +160,6 @@ CollectionsTable.defaultProps = {
 	tableHeading: 'Collections'
 };
 
-
 CollectionsTable.displayName = 'CollectionsTable';
-
 
 export default CollectionsTable;

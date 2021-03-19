@@ -37,10 +37,7 @@ import {debounceUpdateAnnotation} from './actions';
  * @returns {ReactElement} React element containing the rendered
  *          AnnotationSection.
  */
-function AnnotationSection({
-	annotation,
-	onAnnotationChange
-}) {
+function AnnotationSection({annotation, onAnnotationChange}) {
 	const annotationLabel = (
 		<span>
 			Annotation
@@ -50,9 +47,7 @@ function AnnotationSection({
 
 	return (
 		<div>
-			<h2>
-				Annotation
-			</h2>
+			<h2>Annotation</h2>
 			<Row>
 				<Col md={6} mdOffset={3}>
 					<CustomInput
@@ -63,13 +58,17 @@ function AnnotationSection({
 						type="textarea"
 						onChange={onAnnotationChange}
 					/>
-					{
-						annotation && annotation.lastRevision &&
-						<p className="small text-muted">Last modified: {formatDate(new Date(annotation.lastRevision.createdAt))}</p>
-					}
+					{annotation && annotation.lastRevision && (
+						<p className="small text-muted">
+							Last modified: {formatDate(new Date(annotation.lastRevision.createdAt))}
+						</p>
+					)}
 					<p className="help-block">
-						Annotations allow you to enter freeform data that does not otherwise fit in the above form.
-						<b> Do not submit any copyrighted text here.</b> The contents will be made available to the public under <a href="https://musicbrainz.org/doc/About/Data_License">open licenses</a>.
+						Annotations allow you to enter freeform data that does not otherwise fit in
+						the above form.
+						<b> Do not submit any copyrighted text here.</b> The contents will be made
+						available to the public under{' '}
+						<a href="https://musicbrainz.org/doc/About/Data_License">open licenses</a>.
 					</p>
 				</Col>
 			</Row>
@@ -88,11 +87,9 @@ function mapStateToProps(rootState) {
 	};
 }
 
-
 function mapDispatchToProps(dispatch) {
 	return {
-		onAnnotationChange: (event) =>
-			dispatch(debounceUpdateAnnotation(event.target.value))
+		onAnnotationChange: (event) => dispatch(debounceUpdateAnnotation(event.target.value))
 	};
 }
 

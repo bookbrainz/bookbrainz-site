@@ -28,7 +28,6 @@ import ReactSelect from 'react-select';
 import SelectWrapper from '../input/select-wrapper';
 import request from 'superagent';
 
-
 const {Alert, Button, PageHeader} = bootstrap;
 
 class RegistrationForm extends React.Component {
@@ -59,7 +58,8 @@ class RegistrationForm extends React.Component {
 			waiting: true
 		});
 
-		request.post('/register/handler')
+		request
+			.post('/register/handler')
 			.send(data)
 			.then(() => {
 				window.location.href = '/auth';
@@ -86,11 +86,10 @@ class RegistrationForm extends React.Component {
 	render() {
 		let errorComponent = null;
 		if (this.state.error) {
-			errorComponent =
-				<Alert bsStyle="danger">{this.state.error}</Alert>;
+			errorComponent = <Alert bsStyle="danger">{this.state.error}</Alert>;
 		}
 
-		const loadingComponent = this.state.waiting ? <LoadingSpinner/> : null;
+		const loadingComponent = this.state.waiting ? <LoadingSpinner /> : null;
 
 		const initialGender = this.props.gender && this.props.gender.id;
 
@@ -98,24 +97,20 @@ class RegistrationForm extends React.Component {
 			<div>
 				<PageHeader>Register</PageHeader>
 				<div>
-					Great! You successfully logged in to MusicBrainz and
-					are now just one step away from becoming a BookBrainz
-					editor. The following form allows you to specify
-					additional information that will let other users know
-					a little bit more about you. When you’re done, just
-					click the blue button at the bottom of the page.
+					Great! You successfully logged in to MusicBrainz and are now just one step away
+					from becoming a BookBrainz editor. The following form allows you to specify
+					additional information that will let other users know a little bit more about
+					you. When you’re done, just click the blue button at the bottom of the page.
 				</div>
 				<div className="row">
 					{loadingComponent}
 					<div className="col-md-6 col-md-offset-3">
 						<form
 							className="whole-page-form form-horizontal"
-							onSubmit={this.handleSubmit}
-						>
+							onSubmit={this.handleSubmit}>
 							<p>
-								Firstly, please check that your display
-								name is correct. This is the name that
-								other editors will get to know you by.
+								Firstly, please check that your display name is correct. This is the
+								name that other editors will get to know you by.
 							</p>
 							<CustomInput
 								className="form-control"
@@ -123,14 +118,13 @@ class RegistrationForm extends React.Component {
 								label="Display Name"
 								labelClassName="col-md-4"
 								placeholder="Display Name"
-								ref={(ref) => this.displayName = ref}
+								ref={(ref) => (this.displayName = ref)}
 								type="text"
 								wrapperClassName="col-md-4"
 								onChange={this.handleChange}
 							/>
 							<p>
-								And, optionally, set a gender
-								that will be displayed on your profile
+								And, optionally, set a gender that will be displayed on your profile
 								page.
 							</p>
 							<SelectWrapper
@@ -143,18 +137,17 @@ class RegistrationForm extends React.Component {
 								labelClassName="col-md-4"
 								options={this.props.genders}
 								placeholder="Select gender…"
-								ref={(ref) => this.gender = ref}
+								ref={(ref) => (this.gender = ref)}
 								wrapperClassName="col-md-4"
 							/>
-							<hr/>
+							<hr />
 							{errorComponent}
 							<div className="text-center">
 								<Button
 									bsSize="large"
 									bsStyle="primary"
 									disabled={!this.state.valid}
-									type="submit"
-								>
+									type="submit">
 									Looks good, sign me up!
 								</Button>
 							</div>

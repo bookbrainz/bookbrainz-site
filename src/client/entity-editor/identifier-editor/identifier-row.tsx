@@ -16,19 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as React from 'react';
 import * as data from '../../helpers/data';
 
 import {
-	Action, debouncedUpdateIdentifierValue, removeIdentifierRow,
+	Action,
+	debouncedUpdateIdentifierValue,
+	removeIdentifierRow,
 	updateIdentifierType
 } from './actions';
 import {Button, Col, Row} from 'react-bootstrap';
-import {
-	IdentifierType,
-	validateIdentifierValue
-} from '../validators/common';
+import {IdentifierType, validateIdentifierValue} from '../validators/common';
 import CustomInput from '../../input';
 import type {Dispatch} from 'redux';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -37,21 +35,20 @@ import ValueField from './value-field';
 import {connect} from 'react-redux';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 
-
 type OwnProps = {
-	index: number,
-	typeOptions: Array<IdentifierType>
+	index: number;
+	typeOptions: Array<IdentifierType>;
 };
 
 type StateProps = {
-	valueValue: string,
-	typeValue: number
+	valueValue: string;
+	typeValue: number;
 };
 
 type DispatchProps = {
-	onTypeChange: (obj: {value: number}) => unknown,
-	onRemoveButtonClick: () => unknown,
-	onValueChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown
+	onTypeChange: (obj: {value: number}) => unknown;
+	onRemoveButtonClick: () => unknown;
+	onValueChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown;
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -98,9 +95,7 @@ function IdentifierRow({
 					<ValueField
 						defaultValue={valueValue}
 						empty={!valueValue && typeValue === null}
-						error={!validateIdentifierValue(
-							valueValue, typeValue, typeOptions
-						)}
+						error={!validateIdentifierValue(valueValue, typeValue, typeOptions)}
 						onChange={onValueChange}
 					/>
 				</Col>
@@ -119,19 +114,17 @@ function IdentifierRow({
 						block
 						bsStyle="danger"
 						className="margin-top-d15"
-						onClick={onRemoveButtonClick}
-					>
-						<FontAwesomeIcon icon={faTimes}/>
+						onClick={onRemoveButtonClick}>
+						<FontAwesomeIcon icon={faTimes} />
 						<span>&nbsp;Remove</span>
 					</Button>
 				</Col>
 			</Row>
-			<hr/>
+			<hr />
 		</div>
 	);
 }
 IdentifierRow.displayName = 'IdentifierEditor.Identifier';
-
 
 function handleValueChange(
 	dispatch: Dispatch<Action>,
@@ -139,18 +132,13 @@ function handleValueChange(
 	index: number,
 	types: Array<IdentifierType>
 ) {
-	const guessedType =
-		data.guessIdentifierType(event.target.value, types);
+	const guessedType = data.guessIdentifierType(event.target.value, types);
 	if (guessedType) {
-		const result = new RegExp(guessedType.detectionRegex)
-			.exec(event.target.value);
+		const result = new RegExp(guessedType.detectionRegex).exec(event.target.value);
 		event.target.value = result[1];
 	}
-	return dispatch(
-		debouncedUpdateIdentifierValue(index, event.target.value, guessedType)
-	);
+	return dispatch(debouncedUpdateIdentifierValue(index, event.target.value, guessedType));
 }
-
 
 function mapStateToProps(rootState, {index}: OwnProps): StateProps {
 	const state = rootState.get('identifierEditor');
@@ -159,7 +147,6 @@ function mapStateToProps(rootState, {index}: OwnProps): StateProps {
 		valueValue: state.getIn([index, 'value'])
 	};
 }
-
 
 function mapDispatchToProps(
 	dispatch: Dispatch<Action>,

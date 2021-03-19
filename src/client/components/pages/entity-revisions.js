@@ -23,7 +23,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import RevisionsTable from './parts/revisions-table';
 
-
 /**
  * The class is derived from the React Component base class and
  * renders the 'Entity RevisionsPage' page.
@@ -62,7 +61,7 @@ class EntityRevisions extends React.Component {
 				Revision History
 				<h3>
 					for&nbsp;
-					<a href={getEntityUrl(entity)} >
+					<a href={getEntityUrl(entity)}>
 						{genEntityIconHTMLElement(entity.type)}
 						{getEntityLabel(entity)}
 					</a>
@@ -70,7 +69,6 @@ class EntityRevisions extends React.Component {
 			</div>
 		);
 	}
-
 
 	/**
 	 * Renders the EntityRevisions page, which is a list of all the revisions

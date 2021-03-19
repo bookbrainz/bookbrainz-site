@@ -40,10 +40,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {testValidatePositiveIntegerFunc} from './helpers';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
-
 
 function describeValidateWorkSectionLanguage() {
 	const validLanguage = {value: 1};
@@ -54,25 +52,19 @@ function describeValidateWorkSectionLanguage() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateWorkSectionLanguage(
-			Immutable.fromJS(validLanguage)
-		);
+		const result = validateWorkSectionLanguage(Immutable.fromJS(validLanguage));
 		expect(result).to.be.true;
 	});
 
 	it('should reject an Object with an invalid value', () => {
-		const result = validateWorkSectionLanguage(
-			{...validLanguage, value: 'bad'}
-		);
+		const result = validateWorkSectionLanguage({...validLanguage, value: 'bad'});
 		expect(result).to.be.false;
 	});
 
 	const invalidLanguage = {value: 'bad'};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateWorkSectionLanguage(
-			Immutable.fromJS(invalidLanguage)
-		);
+		const result = validateWorkSectionLanguage(Immutable.fromJS(invalidLanguage));
 		expect(result).to.be.false;
 	});
 
@@ -104,9 +96,7 @@ function describeValidateWorkSection() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateWorkSection(
-			Immutable.fromJS(VALID_WORK_SECTION)
-		);
+		const result = validateWorkSection(Immutable.fromJS(VALID_WORK_SECTION));
 		expect(result).to.be.true;
 	});
 
@@ -127,9 +117,7 @@ function describeValidateWorkSection() {
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateWorkSection(
-			Immutable.fromJS(INVALID_WORK_SECTION)
-		);
+		const result = validateWorkSection(Immutable.fromJS(INVALID_WORK_SECTION));
 		expect(result).to.be.false;
 	});
 
@@ -159,10 +147,7 @@ function describeValidateForm() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(validForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(validForm), IDENTIFIER_TYPES);
 		expect(result).to.be.true;
 	});
 
@@ -182,7 +167,8 @@ function describeValidateForm() {
 			{
 				...validForm,
 				identifierEditor: INVALID_IDENTIFIERS
-			}, IDENTIFIER_TYPES
+			},
+			IDENTIFIER_TYPES
 		);
 		expect(result).to.be.false;
 	});
@@ -226,10 +212,7 @@ function describeValidateForm() {
 	};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(invalidForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(invalidForm), IDENTIFIER_TYPES);
 		expect(result).to.be.false;
 	});
 
@@ -244,24 +227,11 @@ function describeValidateForm() {
 	});
 }
 
-
 function tests() {
-	describe(
-		'validateWorkSectionLanguage',
-		describeValidateWorkSectionLanguage
-	);
-	describe(
-		'validateWorkSectionType',
-		describeValidateWorkSectionType
-	);
-	describe(
-		'validateWorkSection',
-		describeValidateWorkSection
-	);
-	describe(
-		'validateForm',
-		describeValidateForm
-	);
+	describe('validateWorkSectionLanguage', describeValidateWorkSectionLanguage);
+	describe('validateWorkSectionType', describeValidateWorkSectionType);
+	describe('validateWorkSection', describeValidateWorkSection);
+	describe('validateForm', describeValidateForm);
 }
 
 describe('validateWorkSection* functions', tests);

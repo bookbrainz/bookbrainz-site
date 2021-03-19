@@ -20,7 +20,6 @@ import express from 'express';
 import passport from 'passport';
 import status from 'http-status';
 
-
 const router = express.Router();
 
 // eslint-disable-next-line no-process-env
@@ -54,14 +53,15 @@ router.get('/cb', (req, res, next) => {
 			const lastLoginDate = new Date().toISOString();
 			// Query for update activeAt with current login timestamp
 			try {
-				await Editor.where({id: req.user.id}).save({activeAt: lastLoginDate}, {patch: true});
-			}
-			catch (error) {
+				await Editor.where({id: req.user.id}).save(
+					{activeAt: lastLoginDate},
+					{patch: true}
+				);
+			} catch (error) {
 				return next(error);
 			}
 
-			const redirectTo =
-				req.session.redirectTo ? req.session.redirectTo : '/';
+			const redirectTo = req.session.redirectTo ? req.session.redirectTo : '/';
 			req.session.redirectTo = null;
 			return res.redirect(redirectTo);
 		});

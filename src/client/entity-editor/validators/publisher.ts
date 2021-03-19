@@ -18,12 +18,13 @@
 
 import {dateIsBefore, get, validateDate, validatePositiveInteger} from './base';
 import {
-	validateAliases, validateIdentifiers, validateNameSection,
+	validateAliases,
+	validateIdentifiers,
+	validateNameSection,
 	validateSubmissionSection
 } from './common';
 import _ from 'lodash';
 import type {_IdentifierType} from '../../../types';
-
 
 export function validatePublisherSectionArea(value: any): boolean {
 	if (!value) {
@@ -38,9 +39,7 @@ export function validatePublisherSectionBeginDate(value: any) {
 	return {errorMessage, isValid};
 }
 
-export function validatePublisherSectionEndDate(
-	beginValue: any, endValue: any, ended: boolean
-) {
+export function validatePublisherSectionEndDate(beginValue: any, endValue: any, ended: boolean) {
 	if (ended === false) {
 		return {errorMessage: 'Dissolved date will be ignored', isValid: true};
 	}
@@ -63,13 +62,14 @@ export function validatePublisherSectionType(value: any): boolean {
 	return validatePositiveInteger(value);
 }
 
-
 export function validatePublisherSection(data: any): boolean {
 	return (
 		validatePublisherSectionArea(get(data, 'area', null)) &&
 		validatePublisherSectionBeginDate(get(data, 'beginDate', '')).isValid &&
 		validatePublisherSectionEndDate(
-			get(data, 'beginDate', ''), get(data, 'endDate', ''), get(data, 'ended', null)
+			get(data, 'beginDate', ''),
+			get(data, 'endDate', ''),
+			get(data, 'ended', null)
 		).isValid &&
 		validatePublisherSectionEnded(get(data, 'ended', null)) &&
 		validatePublisherSectionType(get(data, 'type', null))
@@ -77,13 +77,12 @@ export function validatePublisherSection(data: any): boolean {
 }
 
 export function validateForm(
-	formData: any, identifierTypes?: Array<_IdentifierType> | null | undefined
+	formData: any,
+	identifierTypes?: Array<_IdentifierType> | null | undefined
 ): boolean {
 	const conditions = [
 		validateAliases(get(formData, 'aliasEditor', {})),
-		validateIdentifiers(
-			get(formData, 'identifierEditor', {}), identifierTypes
-		),
+		validateIdentifiers(get(formData, 'identifierEditor', {}), identifierTypes),
 		validateNameSection(get(formData, 'nameSection', {})),
 		validatePublisherSection(get(formData, 'publisherSection', {})),
 		validateSubmissionSection(get(formData, 'submissionSection', {}))

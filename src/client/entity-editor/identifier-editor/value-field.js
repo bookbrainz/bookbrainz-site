@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ValidationLabel from '../common/validation-label';
 
-
 /**
  * Presentational component. Renders a text input field for setting the value
  * of an identifier, with an associated ValidationLabel.
@@ -34,20 +33,14 @@ import ValidationLabel from '../common/validation-label';
  * @returns {ReactElement} A React component containing the rendered input
  *          component.
  */
-function ValueField({
-	error,
-	empty,
-	...rest
-}) {
+function ValueField({error, empty, ...rest}) {
 	const label = (
 		<ValidationLabel empty={empty} error={error}>
 			Value
 		</ValidationLabel>
 	);
 
-	return (
-		<CustomInput autoFocus label={label} type="text" {...rest}/>
-	);
+	return <CustomInput autoFocus label={label} type="text" {...rest} />;
 }
 ValueField.displayName = 'ValueField';
 ValueField.propTypes = {

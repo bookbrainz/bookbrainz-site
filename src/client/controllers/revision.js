@@ -23,18 +23,13 @@ import ReactDOM from 'react-dom';
 import RevisionPage from '../components/pages/revision';
 import {extractLayoutProps} from '../helpers/props';
 
-
 const propsTarget = document.getElementById('props');
 const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 
 const markup = (
 	<AppContainer>
 		<Layout {...extractLayoutProps(props)}>
-			<RevisionPage
-				diffs={props.diffs}
-				revision={props.revision}
-				user={props.user}
-			/>
+			<RevisionPage diffs={props.diffs} revision={props.revision} user={props.user} />
 		</Layout>
 	</AppContainer>
 );

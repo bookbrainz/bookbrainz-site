@@ -21,7 +21,6 @@ import * as search from '../../common/helpers/search';
 import {camelCase, differenceWith, isEqual, toLower, upperFirst} from 'lodash';
 import {BadRequestError} from '../../common/helpers/error';
 
-
 /**
  * A handler for create or edit actions on collections.
  * @param {object} req - request object
@@ -43,9 +42,11 @@ export async function collectionCreateOrEditHandler(req, res, next) {
 				ownerId: req.user.id
 			});
 			method = 'insert';
-		}
-		else {
-			if (res.locals.collection?.items?.length && (upperFirst(camelCase(req.body.entityType)) !== res.locals.collection.entityType)) {
+		} else {
+			if (
+				res.locals.collection?.items?.length &&
+				upperFirst(camelCase(req.body.entityType)) !== res.locals.collection.entityType
+			) {
 				throw new BadRequestError('Trying to change entityType of a non empty collection');
 			}
 			newCollection = await new UserCollection({id: req.params.collectionId}).fetch({
@@ -92,9 +93,7 @@ export async function collectionCreateOrEditHandler(req, res, next) {
 			const collectionPromiseForES = new Promise((resolve) => {
 				const collectionForES = {
 					aliasSet: {
-						aliases: [
-							{name: newCollection.get('name')}
-						]
+						aliases: [{name: newCollection.get('name')}]
 					},
 					bbid: newCollection.get('id'),
 					id: newCollection.get('id'),
@@ -105,8 +104,7 @@ export async function collectionCreateOrEditHandler(req, res, next) {
 			return handler.sendPromiseResult(res, collectionPromiseForES, search.indexEntity);
 		}
 		return res.send(newCollection.toJSON());
-	}
-	catch (err) {
+	} catch (err) {
 		return next(err);
 	}
 }

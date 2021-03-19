@@ -25,14 +25,14 @@ import SearchField from './parts/search-field';
 import SearchResults from './parts/search-results';
 
 type Props = {
-	entityTypes: any[],
-	from?: number,
-	initialResults?: any[],
-	nextEnabled: boolean,
-	query?: string,
-	resultsPerPage?: number,
-	type?: string,
-	user: Record<string, unknown>
+	entityTypes: any[];
+	from?: number;
+	initialResults?: any[];
+	nextEnabled: boolean;
+	query?: string;
+	resultsPerPage?: number;
+	type?: string;
+	user: Record<string, unknown>;
 };
 
 type State = {
@@ -143,10 +143,7 @@ class SearchPage extends React.Component<Props, State> {
 					type={type}
 					onSearch={this.handleSearch}
 				/>
-				<SearchResults
-					results={this.state.results}
-					user={this.props.user}
-				/>
+				<SearchResults results={this.state.results} user={this.props.user} />
 				<PagerElement
 					from={this.props.from}
 					nextEnabled={this.props.nextEnabled}

@@ -3,10 +3,8 @@
  * License: MIT
  */
 
-
 import passport from 'passport';
 import util from 'util';
-
 
 function StrategyMock(options, verify) {
 	this.name = 'mock';
@@ -27,13 +25,11 @@ StrategyMock.prototype.authenticate = function authenticate(req) {
 		this.verify(user, (err, resident) => {
 			if (err) {
 				this.fail(err);
-			}
-			else {
+			} else {
 				this.success(resident);
 			}
 		});
-	}
-	else {
+	} else {
 		this.fail('Unauthorized');
 	}
 };

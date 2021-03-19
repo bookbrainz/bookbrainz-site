@@ -46,7 +46,6 @@ import {connect} from 'react-redux';
 import {entityTypeProperty} from '../../helpers/react-validators';
 import {getEntityDisambiguation} from '../../helpers/entity';
 
-
 /**
  * Container component. The NameSection component contains input fields for
  * setting the name of an entity. It also allows setting of the entity's
@@ -96,8 +95,10 @@ class NameSection extends React.Component {
 
 	componentDidUpdate(prevProps) {
 		const {nameValue, searchForExistingEditionGroup} = this.props;
-		if (prevProps.searchForExistingEditionGroup === searchForExistingEditionGroup ||
-			searchForExistingEditionGroup === false) {
+		if (
+			prevProps.searchForExistingEditionGroup === searchForExistingEditionGroup ||
+			searchForExistingEditionGroup === false
+		) {
 			return;
 		}
 		this.searchForMatchindEditionGroups(nameValue);
@@ -118,7 +119,11 @@ class NameSection extends React.Component {
 		} = this.props;
 		// Search for Edition Groups that match the name, if the entity is an Edition
 		// Will react to name changes and searchForExistingEditionGroup (which reacts to editionGroupBBID field)
-		if (_.toLower(entityType) === 'edition' && searchForExistingEditionGroup && !_.isNil(nameValue)) {
+		if (
+			_.toLower(entityType) === 'edition' &&
+			searchForExistingEditionGroup &&
+			!_.isNil(nameValue)
+		) {
 			onNameChangeCheckIfEditionGroupExists(nameValue);
 		}
 	}
@@ -149,7 +154,6 @@ class NameSection extends React.Component {
 
 		const warnIfExists = !_.isEmpty(exactMatches);
 
-
 		return (
 			<div>
 				<h2>{`What is the ${_.startCase(entityType)} called?`}</h2>
@@ -158,17 +162,17 @@ class NameSection extends React.Component {
 						<Col md={6} mdOffset={3}>
 							<NameField
 								defaultValue={nameValue}
-								empty={isAliasEmpty(
-									nameValue, sortNameValue, languageValue
-								)}
+								empty={isAliasEmpty(nameValue, sortNameValue, languageValue)}
 								error={!validateNameSectionName(nameValue)}
 								inputRef={this.updateNameFieldInputRef}
-								tooltipText={`Official name of the ${_.startCase(entityType)} in its original language.
+								tooltipText={`Official name of the ${_.startCase(
+									entityType
+								)} in its original language.
 								Names in other languages should be added as aliases.`}
-								warn={(isRequiredDisambiguationEmpty(
+								warn={isRequiredDisambiguationEmpty(
 									warnIfExists,
 									disambiguationDefaultValue
-								))}
+								)}
 								onChange={this.handleNameChange}
 							/>
 						</Col>
@@ -176,50 +180,54 @@ class NameSection extends React.Component {
 							{isRequiredDisambiguationEmpty(
 								warnIfExists,
 								disambiguationDefaultValue
-							) ?
+							) ? (
 								<Alert bsStyle="warning">
 									We found the following&nbsp;
-									{_.startCase(entityType)}{exactMatches.length > 1 ? 's' : ''} with
-									exactly the same name or alias:
-									<br/><small className="help-block">Click on a name to open it (Ctrl/Cmd + click to open in a new tab)</small>
+									{_.startCase(entityType)}
+									{exactMatches.length > 1 ? 's' : ''} with exactly the same name
+									or alias:
+									<br />
+									<small className="help-block">
+										Click on a name to open it (Ctrl/Cmd + click to open in a
+										new tab)
+									</small>
 									<ListGroup className="margin-top-1 margin-bottom-1">
-										{exactMatches.map((match) =>
-											(
-												<ListGroupItem
-													bsStyle="warning"
-													href={`/${_.kebabCase(entityType)}/${match.bbid}`}
-													key={`${match.bbid}`}
-													rel="noopener noreferrer" target="_blank"
-												>
-													{match.defaultAlias.name} {getEntityDisambiguation(match)}
-												</ListGroupItem>
-											))}
+										{exactMatches.map((match) => (
+											<ListGroupItem
+												bsStyle="warning"
+												href={`/${_.kebabCase(entityType)}/${match.bbid}`}
+												key={`${match.bbid}`}
+												rel="noopener noreferrer"
+												target="_blank">
+												{match.defaultAlias.name}{' '}
+												{getEntityDisambiguation(match)}
+											</ListGroupItem>
+										))}
 									</ListGroup>
 									If you are sure your entry is different, please fill the
-									disambiguation field below to help us differentiate between them.
-								</Alert> : null
-							}
+									disambiguation field below to help us differentiate between
+									them.
+								</Alert>
+							) : null}
 						</Col>
 					</Row>
-					{
-						!warnIfExists &&
-						!_.isEmpty(searchResults) &&
+					{!warnIfExists && !_.isEmpty(searchResults) && (
 						<Row>
 							<Col md={6} mdOffset={3}>
-								If the {_.startCase(entityType)} you want to add appears in the results
-								below, click on it to inspect it before adding a possible duplicate.<br/>
+								If the {_.startCase(entityType)} you want to add appears in the
+								results below, click on it to inspect it before adding a possible
+								duplicate.
+								<br />
 								<small>Ctrl/Cmd + click to open in a new tab</small>
-								<SearchResults condensed results={searchResults}/>
+								<SearchResults condensed results={searchResults} />
 							</Col>
 						</Row>
-					}
+					)}
 					<Row>
 						<Col md={6} mdOffset={3}>
 							<SortNameField
 								defaultValue={sortNameValue}
-								empty={isAliasEmpty(
-									nameValue, sortNameValue, languageValue
-								)}
+								empty={isAliasEmpty(nameValue, sortNameValue, languageValue)}
 								error={!validateNameSectionSortName(sortNameValue)}
 								storedNameValue={nameValue}
 								onChange={onSortNameChange}
@@ -229,9 +237,7 @@ class NameSection extends React.Component {
 					<Row>
 						<Col md={6} mdOffset={3}>
 							<LanguageField
-								empty={isAliasEmpty(
-									nameValue, sortNameValue, languageValue
-								)}
+								empty={isAliasEmpty(nameValue, sortNameValue, languageValue)}
 								error={!validateNameSectionLanguage(languageValue)}
 								instanceId="language"
 								options={languageOptionsForDisplay}
@@ -245,13 +251,13 @@ class NameSection extends React.Component {
 						<Col md={6} mdOffset={3}>
 							<DisambiguationField
 								defaultValue={disambiguationDefaultValue}
-								error={isRequiredDisambiguationEmpty(
-									warnIfExists,
-									disambiguationDefaultValue
-								) ||
-								!validateNameSectionDisambiguation(
-									disambiguationDefaultValue
-								)}
+								error={
+									isRequiredDisambiguationEmpty(
+										warnIfExists,
+										disambiguationDefaultValue
+									) ||
+									!validateNameSectionDisambiguation(disambiguationDefaultValue)
+								}
 								required={warnIfExists}
 								onChange={onDisambiguationChange}
 							/>
@@ -291,15 +297,13 @@ NameSection.defaultProps = {
 	searchResults: null
 };
 
-
 function mapStateToProps(rootState) {
 	const state = rootState.get('nameSection');
 	const editionSectionState = rootState.get('editionSection');
-	const searchForExistingEditionGroup = Boolean(editionSectionState) &&
-	(
-		!editionSectionState.get('editionGroup') ||
-		editionSectionState.get('editionGroupRequired')
-	);
+	const searchForExistingEditionGroup =
+		Boolean(editionSectionState) &&
+		(!editionSectionState.get('editionGroup') ||
+			editionSectionState.get('editionGroupRequired'));
 	return {
 		disambiguationDefaultValue: state.get('disambiguation'),
 		exactMatches: state.get('exactMatches'),
@@ -316,12 +320,17 @@ function mapDispatchToProps(dispatch, {entity, entityType}) {
 	return {
 		onDisambiguationChange: (event) =>
 			dispatch(debouncedUpdateDisambiguationField(event.target.value)),
-		onLanguageChange: (value) =>
-			dispatch(updateLanguageField(value && value.value)),
-		onNameChange: (value) =>
-			dispatch(debouncedUpdateNameField(value)),
+		onLanguageChange: (value) => dispatch(updateLanguageField(value && value.value)),
+		onNameChange: (value) => dispatch(debouncedUpdateNameField(value)),
 		onNameChangeCheckIfEditionGroupExists: _.debounce((value) => {
-			dispatch(checkIfNameExists(value, entityBBID, 'EditionGroup', UPDATE_WARN_IF_EDITION_GROUP_EXISTS));
+			dispatch(
+				checkIfNameExists(
+					value,
+					entityBBID,
+					'EditionGroup',
+					UPDATE_WARN_IF_EDITION_GROUP_EXISTS
+				)
+			);
 		}, 1500),
 		onNameChangeCheckIfExists: _.debounce((value) => {
 			dispatch(checkIfNameExists(value, entityBBID, entityType));
@@ -329,8 +338,7 @@ function mapDispatchToProps(dispatch, {entity, entityType}) {
 		onNameChangeSearchName: _.debounce((value) => {
 			dispatch(searchName(value, entityBBID, entityType));
 		}, 500),
-		onSortNameChange: (event) =>
-			dispatch(debouncedUpdateSortNameField(event.target.value))
+		onSortNameChange: (event) => dispatch(debouncedUpdateSortNameField(event.target.value))
 	};
 }
 

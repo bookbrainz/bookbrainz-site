@@ -27,11 +27,9 @@ import log from 'log';
 import passport from 'passport';
 import status from 'http-status';
 
-
 async function _linkMBAccount(orm, bbUserJSON, mbUserJSON) {
 	const {Editor} = orm;
-	const fetchedEditor = await new Editor({id: bbUserJSON.id})
-		.fetch({require: true});
+	const fetchedEditor = await new Editor({id: bbUserJSON.id}).fetch({require: true});
 
 	return fetchedEditor.save({
 		cachedMetabrainzName: mbUserJSON.sub,
@@ -41,8 +39,7 @@ async function _linkMBAccount(orm, bbUserJSON, mbUserJSON) {
 
 function _getAccountByMBUserId(orm, mbUserJSON) {
 	const {Editor} = orm;
-	return new Editor({metabrainzUserId: mbUserJSON.metabrainz_user_id})
-		.fetch({require: true});
+	return new Editor({metabrainzUserId: mbUserJSON.metabrainz_user_id}).fetch({require: true});
 }
 
 function _updateCachedMBName(bbUserModel, mbUserJSON) {
@@ -55,33 +52,31 @@ export function init(app) {
 		let strategy;
 		// eslint-disable-next-line no-process-env
 		if (process.env.NODE_ENV === 'test') {
-			strategy = new StrategyMock({userId: 123456},
-				async (user, done) => {
-					try {
-						const linkedUser = await new orm.Editor({id: user.id})
-							.fetch({require: true});
+			strategy = new StrategyMock({userId: 123456}, async (user, done) => {
+				try {
+					const linkedUser = await new orm.Editor({id: user.id}).fetch({
+						require: true
+					});
 
-						// Logged in, associate
-						return done(null, linkedUser.toJSON());
-					}
-					catch (err) {
-						return done(err, false);
-					}
-				});
-		}
-		else {
+					// Logged in, associate
+					return done(null, linkedUser.toJSON());
+				} catch (err) {
+					return done(err, false);
+				}
+			});
+		} else {
 			strategy = new MusicBrainzOAuth.Strategy(
 				_.assign(
 					{
 						passReqToCallback: true,
 						scope: 'profile'
-					}, config.musicbrainz
+					},
+					config.musicbrainz
 				),
 				async (req, accessToken, refreshToken, profile, done) => {
 					try {
 						if (req.user) {
-							const linkedUser =
-								await _linkMBAccount(orm, req.user, profile);
+							const linkedUser = await _linkMBAccount(orm, req.user, profile);
 
 							// Logged in, associate
 							return done(null, linkedUser.toJSON());
@@ -93,8 +88,7 @@ export function init(app) {
 						await _updateCachedMBName(fetchedUser, profile);
 
 						return done(null, fetchedUser.toJSON());
-					}
-					catch (err) {
+					} catch (err) {
 						return done(null, false, profile);
 					}
 				}
@@ -113,9 +107,11 @@ export function init(app) {
 		app.use(passport.initialize());
 		app.use(passport.session());
 		return true;
-	}
-	catch (strategyError) {
-		log.error('Error setting up OAuth strategy %s. You will not be able to log in', strategyError.message);
+	} catch (strategyError) {
+		log.error(
+			'Error setting up OAuth strategy %s. You will not be able to log in',
+			strategyError.message
+		);
 		return null;
 	}
 }
@@ -144,19 +140,23 @@ export function isCollectionOwner(req, res, next) {
 	}
 
 	throw new error.PermissionDeniedError(
-		'You do not have permission to edit/delete this collection', req
+		'You do not have permission to edit/delete this collection',
+		req
 	);
 }
 
 export function isCollectionOwnerOrCollaborator(req, res, next) {
 	const {collection} = res.locals;
-	if (req.user.id === collection.ownerId ||
-		collection.collaborators.filter(collaborator => collaborator.id === req.user.id).length) {
+	if (
+		req.user.id === collection.ownerId ||
+		collection.collaborators.filter((collaborator) => collaborator.id === req.user.id).length
+	) {
 		return next();
 	}
 
 	throw new error.PermissionDeniedError(
-		'You do not have permission to edit this collection', req
+		'You do not have permission to edit this collection',
+		req
 	);
 }
 
@@ -169,6 +169,7 @@ export function isAuthenticatedForCollectionView(req, res, next) {
 		return isCollectionOwnerOrCollaborator(req, res, next);
 	}
 	throw new error.PermissionDeniedError(
-		'You do not have permission to view this collection', req
+		'You do not have permission to view this collection',
+		req
 	);
 }

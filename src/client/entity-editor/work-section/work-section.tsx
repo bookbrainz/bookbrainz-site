@@ -16,14 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as React from 'react';
 
-import {
-	Action,
-	updateLanguages,
-	updateType
-} from './actions';
+import {Action, updateLanguages, updateType} from './actions';
 import {Col, Row} from 'react-bootstrap';
 import type {List, Map} from 'immutable';
 
@@ -34,37 +29,36 @@ import Select from 'react-select';
 import {connect} from 'react-redux';
 import makeImmutable from '../common/make-immutable';
 
-
 const ImmutableLanguageField = makeImmutable(LanguageField);
 
 type WorkType = {
-	label: string,
-	id: number
+	label: string;
+	id: number;
 };
 
 type LanguageOption = {
-	name: string,
-	id: number
+	name: string;
+	id: number;
 };
 
 type DisplayLanguageOption = {
-	label: string,
-	value: number
+	label: string;
+	value: number;
 };
 
 type OwnProps = {
-	languageOptions: Array<LanguageOption>,
-	workTypes: Array<WorkType>
+	languageOptions: Array<LanguageOption>;
+	workTypes: Array<WorkType>;
 };
 
 type StateProps = {
-	languageValues: List<LanguageOption>,
-	typeValue: number
+	languageValues: List<LanguageOption>;
+	typeValue: number;
 };
 
 type DispatchProps = {
-	onLanguagesChange: (arg: Array<DisplayLanguageOption>) => unknown,
-	onTypeChange: (arg: {value: number} | null) => unknown
+	onLanguagesChange: (arg: Array<DisplayLanguageOption>) => unknown;
+	onTypeChange: (arg: {value: number} | null) => unknown;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -102,19 +96,13 @@ function WorkSection({
 
 	return (
 		<form>
-			<h2>
-				What else do you know about the Work?
-			</h2>
+			<h2>What else do you know about the Work?</h2>
 			<p className="text-muted">
-				All fields optional — leave something blank if you don&rsquo;t
-				know it
+				All fields optional — leave something blank if you don&rsquo;t know it
 			</p>
 			<Row>
 				<Col md={6} mdOffset={3}>
-					<CustomInput
-						label="Type"
-						tooltipText="Literary form or structure of the work"
-					>
+					<CustomInput label="Type" tooltipText="Literary form or structure of the work">
 						<Select
 							instanceId="workType"
 							options={workTypesForDisplay}
@@ -156,8 +144,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 	return {
 		onLanguagesChange: (values: Array<DisplayLanguageOption>) =>
 			dispatch(updateLanguages(values)),
-		onTypeChange: (value: {value: number} | null) =>
-			dispatch(updateType(value && value.value))
+		onTypeChange: (value: {value: number} | null) => dispatch(updateType(value && value.value))
 	};
 }
 

@@ -16,7 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import AuthorSection from './author-section/author-section';
 import AuthorSectionMerge from './author-section/author-section-merge';
 import EditionGroupSection from './edition-group-section/edition-group-section';
@@ -41,23 +40,20 @@ import relationshipSectionReducer from './relationship-editor/reducer';
 import submissionSectionReducer from './submission-section/reducer';
 import {validateForm as validateAuthorForm} from './validators/author';
 import {validateForm as validateEditionForm} from './validators/edition';
-import {
-	validateForm as validateEditionGroupForm
-} from './validators/edition-group';
+import {validateForm as validateEditionGroupForm} from './validators/edition-group';
 import {validateForm as validatePublisherForm} from './validators/publisher';
 import {validateForm as validateWorkForm} from './validators/work';
 import workSectionReducer from './work-section/reducer';
 
-
 export function isAliasEmpty(
-	nameValue: string, sortNameValue: string, languageValue: number | null | undefined
+	nameValue: string,
+	sortNameValue: string,
+	languageValue: number | null | undefined
 ): boolean {
 	return !(nameValue.length || sortNameValue.length || languageValue);
 }
 
-export function isRequiredDisambiguationEmpty(
-	required: boolean, disambiguation: string
-): boolean {
+export function isRequiredDisambiguationEmpty(required: boolean, disambiguation: string): boolean {
 	return required ? !disambiguation : false;
 }
 
@@ -132,7 +128,6 @@ export function createRootReducer(entityType: string) {
 type ReduxWindow = typeof window & {__REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any};
 export function shouldDevToolsBeInjected(): boolean {
 	return Boolean(
-		typeof window === 'object' &&
-		(window as ReduxWindow).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+		typeof window === 'object' && (window as ReduxWindow).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 	);
 }

@@ -21,7 +21,6 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import status from 'http-status';
 
-
 chai.use(chaiHttp);
 const {expect} = chai;
 

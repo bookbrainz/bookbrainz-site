@@ -23,7 +23,16 @@
 
 import * as bootstrap from 'react-bootstrap';
 import {
-	faChartLine, faGripVertical, faInfo, faListUl, faPlus, faQuestionCircle, faSearch, faSignInAlt, faSignOutAlt, faUserCircle
+	faChartLine,
+	faGripVertical,
+	faInfo,
+	faListUl,
+	faPlus,
+	faQuestionCircle,
+	faSearch,
+	faSignInAlt,
+	faSignOutAlt,
+	faUserCircle
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Footer from './../components/footer';
@@ -31,7 +40,6 @@ import MergeQueue from '../components/pages/parts/merge-queue';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {genEntityIconHTMLElement} from '../helpers/entity';
-
 
 const {Alert, MenuItem, Nav, Navbar, NavItem, NavDropdown} = bootstrap;
 
@@ -53,8 +61,7 @@ class Layout extends React.Component {
 	handleDropdownToggle(newValue) {
 		if (this.state.keepMenuOpen) {
 			this.setState({keepMenuOpen: false, menuOpen: true});
-		}
-		else {
+		} else {
 			this.setState({menuOpen: newValue});
 		}
 	}
@@ -86,7 +93,7 @@ class Layout extends React.Component {
 						)}
 					</a>
 				</Navbar.Brand>
-				<Navbar.Toggle/>
+				<Navbar.Toggle />
 			</Navbar.Header>
 		);
 	}
@@ -100,21 +107,19 @@ class Layout extends React.Component {
 		 */
 		const createDropdownTitle = (
 			<span>
-				<FontAwesomeIcon icon={faPlus}/>
+				<FontAwesomeIcon icon={faPlus} />
 				{'  Add'}
 			</span>
 		);
 
 		const userDropdownTitle = user && (
 			<span>
-				<FontAwesomeIcon icon={faUserCircle}/>
+				<FontAwesomeIcon icon={faUserCircle} />
 				{`  ${user.name}`}
 			</span>
 		);
 
-		const disableSignUp = this.props.disableSignUp ?
-			{disabled: true} :
-			{};
+		const disableSignUp = this.props.disableSignUp ? {disabled: true} : {};
 
 		return (
 			<Navbar.Collapse id="bs-example-navbar-collapse-1">
@@ -127,8 +132,7 @@ class Layout extends React.Component {
 							title={createDropdownTitle}
 							onMouseDown={this.handleMouseDown}
 							onSelect={this.handleDropdownClick}
-							onToggle={this.handleDropdownToggle}
-						>
+							onToggle={this.handleDropdownToggle}>
 							<MenuItem href="/work/create">
 								{genEntityIconHTMLElement('Work')}
 								Work
@@ -141,7 +145,7 @@ class Layout extends React.Component {
 								{genEntityIconHTMLElement('EditionGroup')}
 								Edition Group
 							</MenuItem>
-							<MenuItem divider/>
+							<MenuItem divider />
 							<MenuItem href="/author/create">
 								{genEntityIconHTMLElement('Author')}
 								Author
@@ -155,14 +159,13 @@ class Layout extends React.Component {
 							eventKey={2}
 							id="user-dropdown"
 							title={userDropdownTitle}
-							onMouseDown={this.handleMouseDown}
-						>
+							onMouseDown={this.handleMouseDown}>
 							<MenuItem href={`/editor/${user.id}`}>
-								<FontAwesomeIcon fixedWidth icon={faInfo}/>
+								<FontAwesomeIcon fixedWidth icon={faInfo} />
 								{' Profile'}
 							</MenuItem>
 							<MenuItem {...disableSignUp} href="/logout">
-								<FontAwesomeIcon fixedWidth icon={faSignOutAlt}/>
+								<FontAwesomeIcon fixedWidth icon={faSignOutAlt} />
 								{' Sign Out'}
 							</MenuItem>
 						</NavDropdown>
@@ -170,41 +173,37 @@ class Layout extends React.Component {
 				) : (
 					<Nav pullRight>
 						<NavItem {...disableSignUp} href="/auth">
-							<FontAwesomeIcon icon={faSignInAlt}/>
+							<FontAwesomeIcon icon={faSignInAlt} />
 							{' Sign In / Register'}
 						</NavItem>
 					</Nav>
 				)}
 				<Nav pullRight>
 					<NavItem href="/help">
-						<FontAwesomeIcon icon={faQuestionCircle}/>
+						<FontAwesomeIcon icon={faQuestionCircle} />
 						{' Help '}
 					</NavItem>
 				</Nav>
 				<Nav pullRight>
 					<NavItem href="/statistics">
-						<FontAwesomeIcon icon={faChartLine}/>
+						<FontAwesomeIcon icon={faChartLine} />
 						{' Statistics '}
 					</NavItem>
 				</Nav>
 				<Nav pullRight>
 					<NavItem href="/collections">
-						<FontAwesomeIcon icon={faGripVertical}/>
+						<FontAwesomeIcon icon={faGripVertical} />
 						{' Collections '}
 					</NavItem>
 				</Nav>
 				<Nav pullRight>
 					<NavItem href="/revisions">
-						<FontAwesomeIcon icon={faListUl}/>
+						<FontAwesomeIcon icon={faListUl} />
 						{' Revisions '}
 					</NavItem>
 				</Nav>
 				{!(homepage || hideSearch) && (
-					<form
-						action="/search"
-						className="navbar-form navbar-right"
-						role="search"
-					>
+					<form action="/search" className="navbar-form navbar-right" role="search">
 						<div className="form-group">
 							<div className="input-group">
 								<input
@@ -214,11 +213,8 @@ class Layout extends React.Component {
 									type="text"
 								/>
 								<span className="input-group-btn">
-									<button
-										className="btn btn-success"
-										type="submit"
-									>
-										<FontAwesomeIcon icon={faSearch}/>
+									<button className="btn btn-success" type="submit">
+										<FontAwesomeIcon icon={faSearch} />
 									</button>
 								</span>
 							</div>
@@ -240,29 +236,24 @@ class Layout extends React.Component {
 		} = this.props;
 
 		// Shallow merges parents props into child components
-		const childNode = homepage ?
-			children :
-			(
-				<div className="container" id="content">
-					{requiresJS && (
-						<div>
-							<noscript>
-								<div className="alert alert-danger" role="alert">
-									This page will not function correctly without
-									JavaScript! Please enable JavaScript to use this
-									page.
-								</div>
-							</noscript>
-						</div>
-					)}
-					{children}
-					{mergeQueue ?
-						<MergeQueue
-							mergeQueue={mergeQueue}
-						/> : null
-					}
-				</div>
-			);
+		const childNode = homepage ? (
+			children
+		) : (
+			<div className="container" id="content">
+				{requiresJS && (
+					<div>
+						<noscript>
+							<div className="alert alert-danger" role="alert">
+								This page will not function correctly without JavaScript! Please
+								enable JavaScript to use this page.
+							</div>
+						</noscript>
+					</div>
+				)}
+				{children}
+				{mergeQueue ? <MergeQueue mergeQueue={mergeQueue} /> : null}
+			</div>
+		);
 
 		const alerts = this.props.alerts.map((alert, idx) => (
 			// eslint-disable-next-line react/no-array-index-key
@@ -282,10 +273,7 @@ class Layout extends React.Component {
 				</Navbar>
 				{alerts}
 				{childNode}
-				<Footer
-					repositoryUrl={repositoryUrl}
-					siteRevision={siteRevision}
-				/>
+				<Footer repositoryUrl={repositoryUrl} siteRevision={siteRevision} />
 			</div>
 		);
 	}

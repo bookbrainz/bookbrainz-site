@@ -9,7 +9,6 @@ import SelectWrapper from '../../input/select-wrapper';
 import _ from 'lodash';
 import request from 'superagent';
 
-
 const {Alert, Col, Button, Modal} = bootstrap;
 
 class AddToCollectionModal extends React.Component {
@@ -51,10 +50,9 @@ class AddToCollectionModal extends React.Component {
 	toggleRow(collectionId) {
 		const oldSelected = this.state.selectedCollections;
 		let newSelected;
-		if (oldSelected.find(selectedId => selectedId === collectionId)) {
-			newSelected = oldSelected.filter(selectedId => selectedId !== collectionId);
-		}
-		else {
+		if (oldSelected.find((selectedId) => selectedId === collectionId)) {
+			newSelected = oldSelected.filter((selectedId) => selectedId !== collectionId);
+		} else {
 			newSelected = [...oldSelected, collectionId];
 		}
 		this.setState({
@@ -65,11 +63,12 @@ class AddToCollectionModal extends React.Component {
 	async getCollections() {
 		try {
 			// Get all collections of the user (unlikely that a user will have more than 10000 collections
-			const req = await request.get(`/editor/${this.props.userId}/collections/collections?type=${this.props.entityType}&size=10000`);
+			const req = await request.get(
+				`/editor/${this.props.userId}/collections/collections?type=${this.props.entityType}&size=10000`
+			);
 			const collections = req.body;
 			return collections;
-		}
-		catch (err) {
+		} catch (err) {
 			return this.setState({
 				message: {
 					text: 'Sorry, we could not fetch your collections ',
@@ -87,20 +86,18 @@ class AddToCollectionModal extends React.Component {
 				const promiseArray = [];
 				selectedCollections.forEach((collectionId) => {
 					const submissionURL = `/collection/${collectionId}/add`;
-					promiseArray.push(
-						request.post(submissionURL)
-							.send({bbids})
-					);
+					promiseArray.push(request.post(submissionURL).send({bbids}));
 				});
 				await Promise.all(promiseArray);
 				this.setState({selectedCollections: []}, () => {
 					this.props.closeModalAndShowMessage({
-						text: `Successfully added to selected collection${selectedCollections.length > 1 ? 's' : ''}`,
+						text: `Successfully added to selected collection${
+							selectedCollections.length > 1 ? 's' : ''
+						}`,
 						type: 'success'
 					});
 				});
-			}
-			catch (err) {
+			} catch (err) {
 				this.setState({
 					message: {
 						text: 'Something went wrong! Please try again later',
@@ -108,8 +105,7 @@ class AddToCollectionModal extends React.Component {
 					}
 				});
 			}
-		}
-		else {
+		} else {
 			this.setState({
 				message: {
 					text: 'No collection selected',
@@ -133,7 +129,8 @@ class AddToCollectionModal extends React.Component {
 		if (!this.isValid()) {
 			this.setState({
 				message: {
-					text: 'The form is incomplete. Please fill in a name and privacy option before continuing.',
+					text:
+						'The form is incomplete. Please fill in a name and privacy option before continuing.',
 					type: 'danger'
 				}
 			});
@@ -152,26 +149,32 @@ class AddToCollectionModal extends React.Component {
 			privacy
 		};
 		const {bbids} = this.props;
-		request.post('/collection/create/handler')
+		request
+			.post('/collection/create/handler')
 			.send(data)
-			.then((res) => {
-				request.post(`/collection/${res.body.id}/add`)
-					.send({bbids}).then(() => {
-						this.setState({selectedCollections: []}, () => {
-							this.props.closeModalAndShowMessage({
-								text: `Successfully added to your new collection: ${name}`,
-								type: 'success'
+			.then(
+				(res) => {
+					request
+						.post(`/collection/${res.body.id}/add`)
+						.send({bbids})
+						.then(() => {
+							this.setState({selectedCollections: []}, () => {
+								this.props.closeModalAndShowMessage({
+									text: `Successfully added to your new collection: ${name}`,
+									type: 'success'
+								});
 							});
 						});
+				},
+				(error) => {
+					this.setState({
+						message: {
+							text: 'Something went wrong! Please try again later',
+							type: 'danger'
+						}
 					});
-			}, (error) => {
-				this.setState({
-					message: {
-						text: 'Something went wrong! Please try again later',
-						type: 'danger'
-					}
-				});
-			});
+				}
+			);
 	}
 
 	isValid() {
@@ -194,33 +197,33 @@ class AddToCollectionModal extends React.Component {
 			existingCollections = (
 				<div>
 					<h4>
-						Select the collection in which you want to add this entity or create a new collection
+						Select the collection in which you want to add this entity or create a new
+						collection
 					</h4>
 					<div className="addToCollectionModal-body">
-						{
-							this.state.collectionsAvailable.map((collection) => ((
-								<div key={collection.id}>
-									<input
-										checked={this.state.selectedCollections.find(selectedId => selectedId === collection.id)}
-										id={collection.id}
-										type="checkbox"
-										onChange={() => this.toggleRow(collection.id)}
-									/>
-									<label className="label-checkbox" htmlFor={collection.id}>
-										{collection.name}
-									</label>
-								</div>
-							)))
-						}
+						{this.state.collectionsAvailable.map((collection) => (
+							<div key={collection.id}>
+								<input
+									checked={this.state.selectedCollections.find(
+										(selectedId) => selectedId === collection.id
+									)}
+									id={collection.id}
+									type="checkbox"
+									onChange={() => this.toggleRow(collection.id)}
+								/>
+								<label className="label-checkbox" htmlFor={collection.id}>
+									{collection.name}
+								</label>
+							</div>
+						))}
 					</div>
 				</div>
 			);
-		}
-		else {
+		} else {
 			existingCollections = (
 				<div>
-					Oops, looks like you do not yet have any collection of {this.props.entityType}s .
-					Click on the button below to create a new collection
+					Oops, looks like you do not yet have any collection of {this.props.entityType}s
+					. Click on the button below to create a new collection
 				</div>
 			);
 		}
@@ -230,20 +233,12 @@ class AddToCollectionModal extends React.Component {
 		}));
 		const collectionForm = (
 			<div>
-				<Col
-					id="collectionForm"
-				>
-					<form
-						className="padding-sides-0 addToCollectionModal-body"
-					>
-						<CustomInput
-							label="Name"
-							ref={(ref) => this.name = ref}
-							type="text"
-						/>
+				<Col id="collectionForm">
+					<form className="padding-sides-0 addToCollectionModal-body">
+						<CustomInput label="Name" ref={(ref) => (this.name = ref)} type="text" />
 						<CustomInput
 							label="Description"
-							ref={(ref) => this.description = ref}
+							ref={(ref) => (this.description = ref)}
 							type="textarea"
 						/>
 						<SelectWrapper
@@ -253,7 +248,7 @@ class AddToCollectionModal extends React.Component {
 							labelAttribute="name"
 							options={privacyOptions}
 							placeholder="Select Privacy"
-							ref={(ref) => this.privacy = ref}
+							ref={(ref) => (this.privacy = ref)}
 						/>
 					</form>
 				</Col>
@@ -261,57 +256,49 @@ class AddToCollectionModal extends React.Component {
 		);
 
 		return (
-			<Modal
-				scrollable
-				show={this.props.show}
-				onHide={this.props.handleCloseModal}
-			>
+			<Modal scrollable show={this.props.show} onHide={this.props.handleCloseModal}>
 				<Modal.Header closeButton>
 					<Modal.Title>
 						{this.state.showCollectionForm ? 'Create' : 'Select'} Collection
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					{
-						this.state.showCollectionForm ? collectionForm : existingCollections
-					}
+					{this.state.showCollectionForm ? collectionForm : existingCollections}
 					{messageComponent}
 				</Modal.Body>
 				<Modal.Footer>
-					{
-						this.state.showCollectionForm ?
-							<Button
-								bsStyle="primary"
-								onClick={this.handleShowAllCollections}
-							>
-								Select from collections
-							</Button> :
-							<Button
-								bsStyle="warning"
-								onClick={this.handleShowCollectionForm}
-							>
-								<FontAwesomeIcon icon={faPlus}/>
-								&nbsp;New collection
-							</Button>
-					}
-					{
-						this.state.showCollectionForm ?
-							<Button bsStyle="success" onClick={this.handleAddToNewCollection}>
-								<FontAwesomeIcon icon={faPlus}/> Add to new collection
-							</Button> :
-							<Button bsStyle="success" disabled={!this.state.collectionsAvailable.length} onClick={this.handleAddToCollection}>
-								<FontAwesomeIcon icon={faPlus}/>Add to selected collection{this.state.selectedCollections.length > 1 ? 's' : null}
-							</Button>
-					}
+					{this.state.showCollectionForm ? (
+						<Button bsStyle="primary" onClick={this.handleShowAllCollections}>
+							Select from collections
+						</Button>
+					) : (
+						<Button bsStyle="warning" onClick={this.handleShowCollectionForm}>
+							<FontAwesomeIcon icon={faPlus} />
+							&nbsp;New collection
+						</Button>
+					)}
+					{this.state.showCollectionForm ? (
+						<Button bsStyle="success" onClick={this.handleAddToNewCollection}>
+							<FontAwesomeIcon icon={faPlus} /> Add to new collection
+						</Button>
+					) : (
+						<Button
+							bsStyle="success"
+							disabled={!this.state.collectionsAvailable.length}
+							onClick={this.handleAddToCollection}>
+							<FontAwesomeIcon icon={faPlus} />
+							Add to selected collection
+							{this.state.selectedCollections.length > 1 ? 's' : null}
+						</Button>
+					)}
 					<Button bsStyle="danger" onClick={this.props.handleCloseModal}>
-						<FontAwesomeIcon icon={faTimes}/> Close
+						<FontAwesomeIcon icon={faTimes} /> Close
 					</Button>
 				</Modal.Footer>
 			</Modal>
 		);
 	}
 }
-
 
 AddToCollectionModal.displayName = 'AddToCollectionModal';
 AddToCollectionModal.propTypes = {

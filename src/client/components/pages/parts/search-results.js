@@ -19,14 +19,17 @@
 
 import * as bootstrap from 'react-bootstrap';
 
-import {differenceBy as _differenceBy, kebabCase as _kebabCase, startCase as _startCase} from 'lodash';
+import {
+	differenceBy as _differenceBy,
+	kebabCase as _kebabCase,
+	startCase as _startCase
+} from 'lodash';
 
 import AddToCollectionModal from './add-to-collection-modal';
 import CallToAction from './call-to-action';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {genEntityIconHTMLElement} from '../../../helpers/entity';
-
 
 const {Alert, Badge, Button, ButtonGroup, Row, Table} = bootstrap;
 
@@ -64,8 +67,7 @@ class SearchResults extends React.Component {
 	handleShowModal() {
 		if (this.props.user) {
 			this.setState({showModal: true});
-		}
-		else {
+		} else {
 			this.setState({
 				message: {
 					text: 'You need to be logged in',
@@ -90,10 +92,9 @@ class SearchResults extends React.Component {
 		// eslint-disable-next-line react/no-access-state-in-setstate
 		const oldSelected = this.state.selected;
 		let newSelected;
-		if (oldSelected.find(selected => selected.bbid === entity.bbid)) {
-			newSelected = oldSelected.filter(selected => selected.bbid !== entity.bbid);
-		}
-		else {
+		if (oldSelected.find((selected) => selected.bbid === entity.bbid)) {
+			newSelected = oldSelected.filter((selected) => selected.bbid !== entity.bbid);
+		} else {
 			newSelected = [...oldSelected, entity];
 		}
 		this.setState({
@@ -108,13 +109,14 @@ class SearchResults extends React.Component {
 	handleAddToCollection() {
 		const selectedEntities = this.state.selected;
 		if (selectedEntities.length) {
-			const areAllEntitiesOfSameType = selectedEntities.every(entity => entity.type === selectedEntities[0].type);
+			const areAllEntitiesOfSameType = selectedEntities.every(
+				(entity) => entity.type === selectedEntities[0].type
+			);
 			const entityTypes = ['Author', 'Edition', 'EditionGroup', 'Publisher', 'Work'];
 			if (areAllEntitiesOfSameType) {
 				if (entityTypes.includes(selectedEntities[0].type)) {
 					this.setState({message: {}, showModal: true});
-				}
-				else {
+				} else {
 					this.setState({
 						message: {
 							text: `${selectedEntities[0].type} cannot be added to a collection`,
@@ -122,8 +124,7 @@ class SearchResults extends React.Component {
 						}
 					});
 				}
-			}
-			else {
+			} else {
 				this.setState({
 					message: {
 						text: 'Selected entities should be of same type',
@@ -131,8 +132,7 @@ class SearchResults extends React.Component {
 					}
 				});
 			}
-		}
-		else {
+		} else {
 			this.setState({
 				message: {
 					text: 'Nothing Selected',
@@ -147,19 +147,19 @@ class SearchResults extends React.Component {
 		if (noResults) {
 			return (
 				<div className="text-center">
-					<hr className="thin"/>
-					<h2 style={{color: '#754e37'}}>
-						No results found
-					</h2>
-					{
-						!this.props.condensed &&
+					<hr className="thin" />
+					<h2 style={{color: '#754e37'}}>No results found</h2>
+					{!this.props.condensed && (
 						<Row>
-							<small>Make sure the spelling is correct, and that you have selected the correct type in the search bar.</small>
-							<hr className="wide"/>
+							<small>
+								Make sure the spelling is correct, and that you have selected the
+								correct type in the search bar.
+							</small>
+							<hr className="wide" />
 							<h3>Are we missing an entry?</h3>
-							<CallToAction/>
+							<CallToAction />
 						</Row>
-					}
+					)}
 				</div>
 			);
 		}
@@ -168,50 +168,57 @@ class SearchResults extends React.Component {
 			if (!result) {
 				return null;
 			}
-			const name = result.defaultAlias ? result.defaultAlias.name :
-				'(unnamed)';
+			const name = result.defaultAlias ? result.defaultAlias.name : '(unnamed)';
 
-			const aliases = !this.props.condensed && result.aliasSet &&
-				Array.isArray(result.aliasSet.aliases) && result.aliasSet.aliases;
+			const aliases =
+				!this.props.condensed &&
+				result.aliasSet &&
+				Array.isArray(result.aliasSet.aliases) &&
+				result.aliasSet.aliases;
 
-			const secondaryAliases = !this.props.condensed && aliases &&
-				_differenceBy(aliases, [result.defaultAlias], 'id').map(alias => alias.name).join(', ');
+			const secondaryAliases =
+				!this.props.condensed &&
+				aliases &&
+				_differenceBy(aliases, [result.defaultAlias], 'id')
+					.map((alias) => alias.name)
+					.join(', ');
 
-			const disambiguation = result.disambiguation ? <small>({result.disambiguation.comment})</small> : '';
+			const disambiguation = result.disambiguation ? (
+				<small>({result.disambiguation.comment})</small>
+			) : (
+				''
+			);
 			// No redirect link for Area entity results
-			const link = result.type === 'Area' ?
-				`//musicbrainz.org/area/${result.bbid}` :
-				`/${_kebabCase(result.type)}/${result.bbid}`;
+			const link =
+				result.type === 'Area'
+					? `//musicbrainz.org/area/${result.bbid}`
+					: `/${_kebabCase(result.type)}/${result.bbid}`;
 
 			/* eslint-disable react/jsx-no-bind */
 			return (
 				<tr key={result.bbid}>
-					{
-						!this.props.condensed &&
+					{!this.props.condensed && (
 						<td>
-							{
-								this.props.user ?
-									<input
-										checked={this.state.selected.find(selected => selected.bbid === result.bbid)}
-										className="checkboxes"
-										type="checkbox"
-										onChange={() => this.toggleRow(result)}
-									/> : null
-							}
-							{genEntityIconHTMLElement(result.type)}{_startCase(result.type)}
+							{this.props.user ? (
+								<input
+									checked={this.state.selected.find(
+										(selected) => selected.bbid === result.bbid
+									)}
+									className="checkboxes"
+									type="checkbox"
+									onChange={() => this.toggleRow(result)}
+								/>
+							) : null}
+							{genEntityIconHTMLElement(result.type)}
+							{_startCase(result.type)}
 						</td>
-					}
+					)}
 					<td>
 						<a href={link}>
 							{name} {disambiguation}
 						</a>
 					</td>
-					{
-						!this.props.condensed &&
-						<td>
-							{secondaryAliases}
-						</td>
-					}
+					{!this.props.condensed && <td>{secondaryAliases}</td>}
 				</tr>
 			);
 		});
@@ -222,32 +229,22 @@ class SearchResults extends React.Component {
 
 		return (
 			<div>
-				{
-					this.props.user ?
-						<div>
-							<AddToCollectionModal
-								bbids={this.state.selected.map(selected => selected.bbid)}
-								closeModalAndShowMessage={this.closeModalAndShowMessage}
-								entityType={this.state.selected[0]?.type}
-								handleCloseModal={this.onCloseModal}
-								show={this.state.showModal}
-								userId={this.props.user.id}
-							/>
-						</div> : null
-				}
-				{
-					!this.props.condensed &&
-					<h3 style={{color: '#754e37'}}>
-						Search Results
-					</h3>
-				}
-				<hr className="thin"/>
-				<Table
-					responsive
-					className={tableCssClasses}
-				>
-					{
-						!this.props.condensed &&
+				{this.props.user ? (
+					<div>
+						<AddToCollectionModal
+							bbids={this.state.selected.map((selected) => selected.bbid)}
+							closeModalAndShowMessage={this.closeModalAndShowMessage}
+							entityType={this.state.selected[0]?.type}
+							handleCloseModal={this.onCloseModal}
+							show={this.state.showModal}
+							userId={this.props.user.id}
+						/>
+					</div>
+				) : null}
+				{!this.props.condensed && <h3 style={{color: '#754e37'}}>Search Results</h3>}
+				<hr className="thin" />
+				<Table responsive className={tableCssClasses}>
+					{!this.props.condensed && (
 						<thead>
 							<tr>
 								<th className="col-sm-3">Type</th>
@@ -255,44 +252,36 @@ class SearchResults extends React.Component {
 								<th className="col-sm-4">Aliases</th>
 							</tr>
 						</thead>
-					}
-					<tbody>
-						{results}
-					</tbody>
+					)}
+					<tbody>{results}</tbody>
 				</Table>
-				{
-					this.state.message.text ?
-						<Alert
-							bsStyle={this.state.message.type}
-							className="margin-top-1"
-							onDismiss={this.handleAlertDismiss}
-						>
-							{this.state.message.text}
-						</Alert> : null
-
-				}
-				{
-					this.props.user ?
-						<ButtonGroup>
-							<Button
-								bsStyle="primary"
-								disabled={!this.state.selected.length}
-								type="button"
-								onClick={this.handleAddToCollection}
-							>
-								{genEntityIconHTMLElement('Collection')}
-									Add to Collection
-							</Button>
-							<Button
-								bsStyle="warning"
-								disabled={!this.state.selected.length}
-								type="button"
-								onClick={this.handleClearSelected}
-							>
-								Clear <Badge>{this.state.selected.length}</Badge> selected
-							</Button>
-						</ButtonGroup> : null
-				}
+				{this.state.message.text ? (
+					<Alert
+						bsStyle={this.state.message.type}
+						className="margin-top-1"
+						onDismiss={this.handleAlertDismiss}>
+						{this.state.message.text}
+					</Alert>
+				) : null}
+				{this.props.user ? (
+					<ButtonGroup>
+						<Button
+							bsStyle="primary"
+							disabled={!this.state.selected.length}
+							type="button"
+							onClick={this.handleAddToCollection}>
+							{genEntityIconHTMLElement('Collection')}
+							Add to Collection
+						</Button>
+						<Button
+							bsStyle="warning"
+							disabled={!this.state.selected.length}
+							type="button"
+							onClick={this.handleClearSelected}>
+							Clear <Badge>{this.state.selected.length}</Badge> selected
+						</Button>
+					</ButtonGroup>
+				) : null}
 			</div>
 		);
 	}

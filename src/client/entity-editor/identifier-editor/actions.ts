@@ -24,11 +24,11 @@ export const HIDE_IDENTIFIER_EDITOR = 'HIDE_IDENTIFIER_EDITOR';
 export const REMOVE_EMPTY_IDENTIFIERS = 'REMOVE_EMPTY_IDENTIFIERS';
 
 export type Action = {
-	type: string,
-	payload?: unknown,
+	type: string;
+	payload?: unknown;
 	meta?: {
-		debounce?: string
-	}
+		debounce?: string;
+	};
 };
 
 /**
@@ -93,7 +93,9 @@ export function removeIdentifierRow(rowId: number): Action {
  * @returns {Action} The resulting UPDATE_IDENTIFIER_VALUE action.
  */
 export function debouncedUpdateIdentifierValue(
-	rowId: number, value: string, suggestedType: number
+	rowId: number,
+	value: string,
+	suggestedType: number
 ): Action {
 	return {
 		meta: {debounce: 'keystroke'},

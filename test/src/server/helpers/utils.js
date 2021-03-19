@@ -1,7 +1,6 @@
 import chai from 'chai';
 import {getNextEnabledAndResultsArray} from '../../../../src/server/helpers/utils';
 
-
 const {expect} = chai;
 
 describe('getNextEnabledAndResultsArray', () => {

@@ -21,7 +21,6 @@ import PagerElement from './parts/pager';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 class CollectionsPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -70,7 +69,6 @@ class CollectionsPage extends React.Component {
 		);
 	}
 }
-
 
 CollectionsPage.displayName = 'CollectionsPage';
 CollectionsPage.propTypes = {

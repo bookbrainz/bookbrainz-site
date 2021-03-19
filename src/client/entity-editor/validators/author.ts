@@ -16,7 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import {dateIsBefore, get, validateDate, validatePositiveInteger} from './base';
 import {
 	validateAliases,
@@ -28,7 +27,6 @@ import {
 import _ from 'lodash';
 import type {_IdentifierType} from '../../../types';
 import {labelsForAuthor} from '../../helpers/utils';
-
 
 export function validateAuthorSectionBeginArea(value: any): boolean {
 	if (!value) {
@@ -51,9 +49,7 @@ export function validateAuthorSectionEndArea(value: any): boolean {
 	return validatePositiveInteger(get(value, 'id', null), true);
 }
 
-export function validateAuthorSectionEndDate(
-	beginValue: any, endValue: any, authorType?: string
-) {
+export function validateAuthorSectionEndDate(beginValue: any, endValue: any, authorType?: string) {
 	const {isValid, errorMessage} = validateDate(endValue);
 	const isGroup = authorType === 'Group';
 	const {beginDateLabel, endDateLabel} = labelsForAuthor(isGroup);
@@ -63,7 +59,10 @@ export function validateAuthorSectionEndDate(
 			return {errorMessage: '', isValid: true};
 		}
 
-		return {errorMessage: `${endDateLabel} must be greater than ${beginDateLabel}`, isValid: false};
+		return {
+			errorMessage: `${endDateLabel} must be greater than ${beginDateLabel}`,
+			isValid: false
+		};
 	}
 	return {errorMessage, isValid};
 }
@@ -85,9 +84,8 @@ export function validateAuthorSection(data: any): boolean {
 		validateAuthorSectionBeginArea(get(data, 'beginArea', null)) &&
 		validateAuthorSectionBeginDate(get(data, 'beginDate', '')).isValid &&
 		validateAuthorSectionEndArea(get(data, 'endArea', null)) &&
-		validateAuthorSectionEndDate(
-			get(data, 'beginDate', ''), get(data, 'endDate', '')
-		).isValid &&
+		validateAuthorSectionEndDate(get(data, 'beginDate', ''), get(data, 'endDate', ''))
+			.isValid &&
 		validateAuthorSectionEnded(get(data, 'ended', null)) &&
 		validateAuthorSectionType(get(data, 'gender', null)) &&
 		validateAuthorSectionType(get(data, 'type', null))
@@ -95,13 +93,12 @@ export function validateAuthorSection(data: any): boolean {
 }
 
 export function validateForm(
-	formData: any, identifierTypes?: Array<_IdentifierType> | null | undefined
+	formData: any,
+	identifierTypes?: Array<_IdentifierType> | null | undefined
 ): boolean {
 	const conditions = [
 		validateAliases(get(formData, 'aliasEditor', {})),
-		validateIdentifiers(
-			get(formData, 'identifierEditor', {}), identifierTypes
-		),
+		validateIdentifiers(get(formData, 'identifierEditor', {}), identifierTypes),
 		validateNameSection(get(formData, 'nameSection', {})),
 		validateAuthorSection(get(formData, 'authorSection', {})),
 		validateSubmissionSection(get(formData, 'submissionSection', {}))

@@ -16,15 +16,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import {get, validatePositiveInteger} from './base';
 import {
-	validateAliases, validateIdentifiers, validateNameSection,
+	validateAliases,
+	validateIdentifiers,
+	validateNameSection,
 	validateSubmissionSection
 } from './common';
 import _ from 'lodash';
 import type {_IdentifierType} from '../../../types';
-
 
 export function validateWorkSectionType(value: any): boolean {
 	return validatePositiveInteger(value);
@@ -46,13 +46,12 @@ export function validateWorkSection(data: any): boolean {
 }
 
 export function validateForm(
-	formData: any, identifierTypes?: Array<_IdentifierType> | null | undefined
+	formData: any,
+	identifierTypes?: Array<_IdentifierType> | null | undefined
 ): boolean {
 	const conditions = [
 		validateAliases(get(formData, 'aliasEditor', {})),
-		validateIdentifiers(
-			get(formData, 'identifierEditor', {}), identifierTypes
-		),
+		validateIdentifiers(get(formData, 'identifierEditor', {}), identifierTypes),
 		validateNameSection(get(formData, 'nameSection', {})),
 		validateWorkSection(get(formData, 'workSection', {})),
 		validateSubmissionSection(get(formData, 'submissionSection', {}))

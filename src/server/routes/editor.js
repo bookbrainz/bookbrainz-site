@@ -41,7 +41,6 @@ import {getOrderedCollectionsForEditorPage} from '../helpers/collections';
 import {getOrderedRevisionForEditorPage} from '../helpers/revisions';
 import target from '../templates/target';
 
-
 const router = express.Router();
 
 router.get('/edit', auth.isAuthenticated, async (req, res, next) => {
@@ -71,13 +70,14 @@ router.get('/edit', auth.isAuthenticated, async (req, res, next) => {
 	// "require: true", so only that can throw a NotFoundError, which is why the
 	// other two model fetch operations have no error handling.
 	const [editorModel, titleUnlockModel, genderModel] = await Promise.all([
-		editorModelPromise, titleUnlockModelPromise, gendersModelPromise
+		editorModelPromise,
+		titleUnlockModelPromise,
+		gendersModelPromise
 	]).catch(next);
 
 	// Convert the requested models to JSON structures.
 	const editorJSON = editorModel.toJSON();
-	const titleJSON =
-		titleUnlockModel === null ? {} : titleUnlockModel.toJSON();
+	const titleJSON = titleUnlockModel === null ? {} : titleUnlockModel.toJSON();
 	const genderJSON = genderModel ? genderModel.toJSON() : [];
 
 	// Populate the props to be passed to React with the fetched and formatted
@@ -91,20 +91,18 @@ router.get('/edit', auth.isAuthenticated, async (req, res, next) => {
 	// Render the DOM
 	const markup = ReactDOMServer.renderToString(
 		<Layout {...propHelpers.extractLayoutProps(props)}>
-			<ProfileForm
-				editor={props.editor}
-				genders={props.genders}
-				titles={props.titles}
-			/>
+			<ProfileForm editor={props.editor} genders={props.genders} titles={props.titles} />
 		</Layout>
 	);
 
 	// Send the rendered DOM, the props and the script to the client
-	res.send(target({
-		markup,
-		props: escapeProps(props),
-		script: '/js/editor/edit.js'
-	}));
+	res.send(
+		target({
+			markup,
+			props: escapeProps(props),
+			script: '/js/editor/edit.js'
+		})
+	);
 });
 
 function isCurrentUser(reqUserID, sessionUser) {
@@ -124,17 +122,18 @@ router.post('/edit/handler', auth.isAuthenticatedForHandler, (req, res) => {
 		if (!isCurrentUser(req.body.id, req.user)) {
 			// Edit is for a user other than the current one
 			throw new error.PermissionDeniedError(
-				'You do not have permission to edit that user', req
+				'You do not have permission to edit that user',
+				req
 			);
 		}
 
-		const editor = await Editor
-			.forge({id: parseInt(req.user.id, 10)})
+		const editor = await Editor.forge({id: parseInt(req.user.id, 10)})
 			.fetch({require: true})
 			.catch(Editor.NotFoundError, () => {
 				throw new error.NotFoundError('Editor not found', req);
 			});
-		if (editor.get('areaId') === req.body.areaId &&
+		if (
+			editor.get('areaId') === req.body.areaId &&
 			editor.get('bio') === req.body.bio &&
 			editor.get('name') === req.body.name &&
 			editor.get('titleUnlockId') === req.body.title
@@ -150,7 +149,7 @@ router.post('/edit/handler', auth.isAuthenticatedForHandler, (req, res) => {
 				name: req.body.name,
 				titleUnlockId: req.body.title
 			})
-			.catch(err => {
+			.catch((err) => {
 				if (err.constraint === 'editor_name_key') {
 					throw new error.ConflictError('Name already in use');
 				}
@@ -160,9 +159,7 @@ router.post('/edit/handler', auth.isAuthenticatedForHandler, (req, res) => {
 		const editorJSON = modifiedEditor.toJSON();
 		return {
 			aliasSet: {
-				aliases: [
-					{name: editorJSON.name}
-				]
+				aliases: [{name: editorJSON.name}]
 			},
 			bbid: editorJSON.id,
 			type: 'Editor'
@@ -178,11 +175,10 @@ async function getEditorTitleJSON(editorJSON, TitleUnlock) {
 		return editorJSON;
 	}
 
-	const titleUnlockModel = await new TitleUnlock({id: unlockID})
-		.fetch({
-			require: false,
-			withRelated: ['title']
-		});
+	const titleUnlockModel = await new TitleUnlock({id: unlockID}).fetch({
+		require: false,
+		withRelated: ['title']
+	});
 
 	if (titleUnlockModel !== null) {
 		editorJSON.title = titleUnlockModel.relations.title.attributes;
@@ -225,8 +221,8 @@ export async function getEditorActivity(editorId, startDate, Revision, endDate =
 		});
 
 	const revisionJSON = revisions ? revisions.toJSON() : [];
-	const revisionDates = revisionJSON.map(
-		(revision) => format(new Date(revision.createdAt), 'LLL-yy')
+	const revisionDates = revisionJSON.map((revision) =>
+		format(new Date(revision.createdAt), 'LLL-yy')
 	);
 	const revisionsCount = _.countBy(revisionDates);
 
@@ -234,7 +230,7 @@ export async function getEditorActivity(editorId, startDate, Revision, endDate =
 		end: endDate,
 		start: startDate
 	})
-		.map(month => format(new Date(month), 'LLL-yy'))
+		.map((month) => format(new Date(month), 'LLL-yy'))
 		.reduce((accumulator, month) => {
 			accumulator[month] = 0;
 			return accumulator;
@@ -270,13 +266,16 @@ router.get('/:id', async (req, res, next) => {
 			withRelated: ['achievement']
 		});
 
-	const [achievementCol, editorJSON] = await Promise.all(
-		[achievementColPromise, editorJSONPromise]
-	).catch(next);
+	const [achievementCol, editorJSON] = await Promise.all([
+		achievementColPromise,
+		editorJSONPromise
+	]).catch(next);
 
-	editorJSON.activityData =
-		await getEditorActivity(editorJSON.id, editorJSON.createdAt, Revision)
-			.catch(next);
+	editorJSON.activityData = await getEditorActivity(
+		editorJSON.id,
+		editorJSON.createdAt,
+		Revision
+	).catch(next);
 
 	const achievementJSON = achievementColToEditorGetJSON(achievementCol);
 
@@ -287,25 +286,22 @@ router.get('/:id', async (req, res, next) => {
 	});
 
 	const markup = ReactDOMServer.renderToString(
-		<Layout {...propHelpers.extractLayoutProps(props)} >
-			<EditorContainer
-				{...propHelpers.extractEditorProps(props)}
-			>
-				<ProfileTab
-					user={props.user}
-					{...propHelpers.extractChildProps(props)}
-				/>
+		<Layout {...propHelpers.extractLayoutProps(props)}>
+			<EditorContainer {...propHelpers.extractEditorProps(props)}>
+				<ProfileTab user={props.user} {...propHelpers.extractChildProps(props)} />
 			</EditorContainer>
 		</Layout>
 	);
 
-	res.send(target({
-		markup,
-		page: 'profile',
-		props: escapeProps(props),
-		script: '/js/editor/editor.js',
-		title: `${props.editor.name}'s Profile`
-	}));
+	res.send(
+		target({
+			markup,
+			page: 'profile',
+			props: escapeProps(props),
+			script: '/js/editor/editor.js',
+			title: `${props.editor.name}'s Profile`
+		})
+	);
 });
 
 // eslint-disable-next-line consistent-return
@@ -313,22 +309,23 @@ router.get('/:id/revisions', async (req, res, next) => {
 	const DEFAULT_MAX_REVISIONS = 20;
 	const DEFAULT_REVISION_OFFSET = 0;
 
-	const size =
-		req.query.size ? parseInt(req.query.size, 10) : DEFAULT_MAX_REVISIONS;
-	const from =
-		req.query.from ? parseInt(req.query.from, 10) : DEFAULT_REVISION_OFFSET;
+	const size = req.query.size ? parseInt(req.query.size, 10) : DEFAULT_MAX_REVISIONS;
+	const from = req.query.from ? parseInt(req.query.from, 10) : DEFAULT_REVISION_OFFSET;
 
 	try {
 		// get 1 more result to check nextEnabled
-		const orderedRevisionsPromise =
-			getOrderedRevisionForEditorPage(from, size + 1, req);
+		const orderedRevisionsPromise = getOrderedRevisionForEditorPage(from, size + 1, req);
 		const editorJSONPromise = getIdEditorJSONPromise(req.params.id, req);
 
-		const [orderedRevisions, editorJSON] =
-			await Promise.all([orderedRevisionsPromise, editorJSONPromise]);
+		const [orderedRevisions, editorJSON] = await Promise.all([
+			orderedRevisionsPromise,
+			editorJSONPromise
+		]);
 
-		const {newResultsArray, nextEnabled} =
-			utils.getNextEnabledAndResultsArray(orderedRevisions, size);
+		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(
+			orderedRevisions,
+			size
+		);
 
 		const props = generateProps(req, res, {
 			editor: editorJSON,
@@ -343,41 +340,34 @@ router.get('/:id/revisions', async (req, res, next) => {
 
 		const markup = ReactDOMServer.renderToString(
 			<Layout {...propHelpers.extractLayoutProps(props)}>
-				<EditorContainer
-					{...propHelpers.extractEditorProps(props)}
-				>
-					<EditorRevisionPage
-						{...propHelpers.extractChildProps(props)}
-					/>
+				<EditorContainer {...propHelpers.extractEditorProps(props)}>
+					<EditorRevisionPage {...propHelpers.extractChildProps(props)} />
 				</EditorContainer>
 			</Layout>
 		);
 
-		res.send(target({
-			markup,
-			page: 'revisions',
-			props: escapeProps(props),
-			script: '/js/editor/editor.js',
-			title: `${props.editor.name}'s Revisions`
-		}));
-	}
-	catch (err) {
+		res.send(
+			target({
+				markup,
+				page: 'revisions',
+				props: escapeProps(props),
+				script: '/js/editor/editor.js',
+				title: `${props.editor.name}'s Revisions`
+			})
+		);
+	} catch (err) {
 		return next(err);
 	}
 });
-
 
 router.get('/:id/revisions/revisions', async (req, res, next) => {
 	const DEFAULT_MAX_REVISIONS = 20;
 	const DEFAULT_REVISION_OFFSET = 0;
 
-	const size =
-		req.query.size ? parseInt(req.query.size, 10) : DEFAULT_MAX_REVISIONS;
-	const from =
-		req.query.from ? parseInt(req.query.from, 10) : DEFAULT_REVISION_OFFSET;
+	const size = req.query.size ? parseInt(req.query.size, 10) : DEFAULT_MAX_REVISIONS;
+	const from = req.query.from ? parseInt(req.query.from, 10) : DEFAULT_REVISION_OFFSET;
 
-	const orderedRevisions =
-		await getOrderedRevisionForEditorPage(from, size, req).catch(next);
+	const orderedRevisions = await getOrderedRevisionForEditorPage(from, size, req).catch(next);
 
 	res.send(orderedRevisions);
 });
@@ -403,23 +393,21 @@ router.get('/:id/achievements', async (req, res, next) => {
 	const userId = parseInt(req.params.id, 10);
 	const isOwner = isCurrentUser(userId, req.user);
 
-	const editorJSONPromise = getIdEditorJSONPromise(userId, req)
-		.catch(next);
+	const editorJSONPromise = getIdEditorJSONPromise(userId, req).catch(next);
 
 	const unlocksPromise = new AchievementUnlock()
 		.where('editor_id', userId)
 		.fetchAll({require: false});
 
-	const achievementTypesPromise = new AchievementType()
-		.orderBy('id', 'ASC')
-		.fetchAll();
+	const achievementTypesPromise = new AchievementType().orderBy('id', 'ASC').fetchAll();
 
 	const [unlocks, editorJSON, achievementTypes] = await Promise.all([
-		unlocksPromise, editorJSONPromise, achievementTypesPromise
+		unlocksPromise,
+		editorJSONPromise,
+		achievementTypesPromise
 	]);
 
-	const achievementJSON =
-		setAchievementUnlockedField(achievementTypes, unlocks);
+	const achievementJSON = setAchievementUnlockedField(achievementTypes, unlocks);
 
 	const props = generateProps(req, res, {
 		achievement: achievementJSON,
@@ -430,9 +418,7 @@ router.get('/:id/achievements', async (req, res, next) => {
 
 	const markup = ReactDOMServer.renderToString(
 		<Layout {...propHelpers.extractLayoutProps(props)}>
-			<EditorContainer
-				{...propHelpers.extractEditorProps(props)}
-			>
+			<EditorContainer {...propHelpers.extractEditorProps(props)}>
 				<AchievementsTab
 					achievement={props.achievement}
 					editor={props.editor}
@@ -442,12 +428,14 @@ router.get('/:id/achievements', async (req, res, next) => {
 		</Layout>
 	);
 
-	res.send(target({
-		markup,
-		props: escapeProps(props),
-		script: '/js/editor/achievement.js',
-		title: `${props.editor.name}'s Achievements`
-	}));
+	res.send(
+		target({
+			markup,
+			props: escapeProps(props),
+			script: '/js/editor/achievement.js',
+			title: `${props.editor.name}'s Achievements`
+		})
+	);
 });
 
 async function rankUpdate(orm, editorId, bodyRank, rank) {
@@ -457,9 +445,7 @@ async function rankUpdate(orm, editorId, bodyRank, rank) {
 	const unlockToUnrank = await new AchievementUnlock({
 		editorId,
 		profileRank: rank
-	})
-		.fetch({require: false});
-
+	}).fetch({require: false});
 
 	// If there's a match, then unset the rank on the unlock, and save
 	if (unlockToUnrank !== null) {
@@ -474,15 +460,13 @@ async function rankUpdate(orm, editorId, bodyRank, rank) {
 	const unlockToRank = await new AchievementUnlock({
 		achievementId: parseInt(bodyRank, 10),
 		editorId
-	})
-		.fetch({require: true});
+	}).fetch({require: true});
 
 	// TODO: this can throw, so missing error handling (but so was old code)
 
 	// And set the rank on the achievement and save it
 	return unlockToRank.set('profileRank', rank).save();
 }
-
 
 router.post('/:id/achievements/', auth.isAuthenticated, (req, res) => {
 	const {orm} = req.app.locals;
@@ -498,9 +482,7 @@ router.post('/:id/achievements/', auth.isAuthenticated, (req, res) => {
 		const rankTwoPromise = rankUpdate(orm, userId, req.body.rank2, 2);
 		const rankThreePromise = rankUpdate(orm, userId, req.body.rank3, 3);
 
-		const rankJSON = await Promise.all([
-			rankOnePromise, rankTwoPromise, rankThreePromise
-		]);
+		const rankJSON = await Promise.all([rankOnePromise, rankTwoPromise, rankThreePromise]);
 
 		res.redirect(`/editor/${req.params.id}`);
 
@@ -510,7 +492,6 @@ router.post('/:id/achievements/', auth.isAuthenticated, (req, res) => {
 	handler.sendPromiseResult(res, runAsync());
 });
 
-
 // eslint-disable-next-line consistent-return
 router.get('/:id/collections', async (req, res, next) => {
 	const {Editor, TitleUnlock} = req.app.locals.orm;
@@ -518,10 +499,8 @@ router.get('/:id/collections', async (req, res, next) => {
 	const DEFAULT_MAX_COLLECTIONS = 20;
 	const DEFAULT_COLLECTION_OFFSET = 0;
 
-	const size =
-		req.query.size ? parseInt(req.query.size, 10) : DEFAULT_MAX_COLLECTIONS;
-	const from =
-		req.query.from ? parseInt(req.query.from, 10) : DEFAULT_COLLECTION_OFFSET;
+	const size = req.query.size ? parseInt(req.query.size, 10) : DEFAULT_MAX_COLLECTIONS;
+	const from = req.query.from ? parseInt(req.query.from, 10) : DEFAULT_COLLECTION_OFFSET;
 
 	const type = req.query.type ? req.query.type : null;
 
@@ -532,8 +511,16 @@ router.get('/:id/collections', async (req, res, next) => {
 		}
 
 		// fetch 1 more collections than required to check nextEnabled
-		const orderedCollections = await getOrderedCollectionsForEditorPage(from, size + 1, type, req);
-		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(orderedCollections, size);
+		const orderedCollections = await getOrderedCollectionsForEditorPage(
+			from,
+			size + 1,
+			type,
+			req
+		);
+		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(
+			orderedCollections,
+			size
+		);
 		const editor = await new Editor({id: req.params.id}).fetch();
 		const editorJSON = await getEditorTitleJSON(editor.toJSON(), TitleUnlock);
 
@@ -551,25 +538,22 @@ router.get('/:id/collections', async (req, res, next) => {
 		});
 		const markup = ReactDOMServer.renderToString(
 			<Layout {...propHelpers.extractLayoutProps(props)}>
-				<EditorContainer
-					{...propHelpers.extractEditorProps(props)}
-				>
-					<CollectionsPage
-						{...propHelpers.extractChildProps(props)}
-					/>
+				<EditorContainer {...propHelpers.extractEditorProps(props)}>
+					<CollectionsPage {...propHelpers.extractChildProps(props)} />
 				</EditorContainer>
 			</Layout>
 		);
 
-		res.send(target({
-			markup,
-			page: 'collections',
-			props: escapeProps(props),
-			script: '/js/editor/editor.js',
-			title: `${props.editor.name}'s Collections`
-		}));
-	}
-	catch (err) {
+		res.send(
+			target({
+				markup,
+				page: 'collections',
+				props: escapeProps(props),
+				script: '/js/editor/editor.js',
+				title: `${props.editor.name}'s Collections`
+			})
+		);
+	} catch (err) {
 		return next(err);
 	}
 });
@@ -587,8 +571,7 @@ router.get('/:id/collections/collections', async (req, res, next) => {
 
 		const orderedCollections = await getOrderedCollectionsForEditorPage(from, size, type, req);
 		res.send(orderedCollections);
-	}
-	catch (err) {
+	} catch (err) {
 		return next(err);
 	}
 });

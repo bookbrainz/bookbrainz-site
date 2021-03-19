@@ -20,7 +20,6 @@ import DragAndDropImage from '../../input/drag-and-drop-image';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 class Achievement extends React.Component {
 	constructor(props) {
 		super(props);
@@ -42,8 +41,7 @@ class Achievement extends React.Component {
 					style={{zIndex: 2}}
 				/>
 			);
-		}
-		else {
+		} else {
 			imgElement = (
 				<img
 					alt={this.state.achievement.name}
@@ -55,13 +53,9 @@ class Achievement extends React.Component {
 		}
 		return (
 			<div className="row well">
-				<div className="col-sm-2">
-					{imgElement}
-				</div>
+				<div className="col-sm-2">{imgElement}</div>
 				<div className="col-sm-8">
-					<div className="h2">
-						{this.state.achievement.name}
-					</div>
+					<div className="h2">{this.state.achievement.name}</div>
 					<p>{this.state.achievement.description}</p>
 				</div>
 			</div>

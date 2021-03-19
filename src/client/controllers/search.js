@@ -23,17 +23,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SearchPage from '../components/pages/search';
 
-
 const propsTarget = document.getElementById('props');
 const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 
 const markup = (
 	<AppContainer>
 		<Layout {...extractLayoutProps(props)}>
-			<SearchPage
-				user={props.user}
-				{...extractChildProps(props)}
-			/>
+			<SearchPage user={props.user} {...extractChildProps(props)} />
 		</Layout>
 	</AppContainer>
 );

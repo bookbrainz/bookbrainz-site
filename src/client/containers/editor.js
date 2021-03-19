@@ -23,7 +23,6 @@ import * as bootstrap from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 const {Col, Nav, NavItem, Row} = bootstrap;
 
 function EditorContainer(props) {
@@ -33,48 +32,32 @@ function EditorContainer(props) {
 		<div>
 			<Row>
 				<Col md={12}>
-					{editor.title ?
+					{editor.title ? (
 						<div>
-							<a
-								href=" "
-								title={editor.title.description}
-							>
-								<h1>
-									{`${editor.title.title} ${editor.name}`}
-								</h1>
+							<a href=" " title={editor.title.description}>
+								<h1>{`${editor.title.title} ${editor.name}`}</h1>
 							</a>
-						</div> :
-						<h1>
-							{editor.name}
-						</h1>
-					}
+						</div>
+					) : (
+						<h1>{editor.name}</h1>
+					)}
 				</Col>
 			</Row>
 			<Row>
 				<Col md={12}>
 					<Nav bsStyle="tabs">
-						<NavItem
-							active={tabActive === 0}
-							href={`/editor/${editor.id}`}
-						>
+						<NavItem active={tabActive === 0} href={`/editor/${editor.id}`}>
 							Profile
 						</NavItem>
-						<NavItem
-							active={tabActive === 1}
-							href={`/editor/${editor.id}/revisions`}
-						>
+						<NavItem active={tabActive === 1} href={`/editor/${editor.id}/revisions`}>
 							Revisions
 						</NavItem>
 						<NavItem
 							active={tabActive === 2}
-							href={`/editor/${editor.id}/achievements`}
-						>
+							href={`/editor/${editor.id}/achievements`}>
 							Achievements
 						</NavItem>
-						<NavItem
-							active={tabActive === 3}
-							href={`/editor/${editor.id}/collections`}
-						>
+						<NavItem active={tabActive === 3} href={`/editor/${editor.id}/collections`}>
 							Collections
 						</NavItem>
 					</Nav>

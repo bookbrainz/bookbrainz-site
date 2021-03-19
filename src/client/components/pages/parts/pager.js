@@ -24,7 +24,6 @@ import React from 'react';
 import {isFunction} from 'lodash';
 import request from 'superagent';
 
-
 const {Pager, Button, ButtonGroup, DropdownButton, MenuItem} = bootstrap;
 
 class PagerElement extends React.Component {
@@ -103,10 +102,14 @@ class PagerElement extends React.Component {
 		// fetch 1 more result than size to check nextEnabled
 		searchParams.set('size', newSize + 1);
 
-		request.get(`${this.props.paginationUrl}?${searchParams.toString()}`)
+		request
+			.get(`${this.props.paginationUrl}?${searchParams.toString()}`)
 			.then((res) => JSON.parse(res.text))
 			.then((data) => {
-				const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(data, newSize);
+				const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(
+					data,
+					newSize
+				);
 				this.setState({
 					from: newFrom,
 					nextEnabled,
@@ -132,52 +135,51 @@ class PagerElement extends React.Component {
 	render() {
 		return (
 			<div id="PagerElement">
-				{
-					this.state.results && this.state.results.length ?
-						<div>
-							<hr className="thin"/>
-							<Pager>
-								<Pager.Item
-									previous disabled={this.state.from <= 0}
-									href="#" onClick={this.handleClickPrevious}
-								>
-									&larr; Previous Page
-								</Pager.Item>
-								<ButtonGroup>
-									<Button disabled>Results {this.state.from + 1} —
-										{this.state.results.length < this.state.size ?
-											this.state.from + this.state.results.length :
-											this.state.from + this.state.size
-										}
-									</Button>
-									<DropdownButton
-										dropup bsStyle="info" id="bg-nested-dropdown"
-										title={`${this.state.size} per page`}
-										onSelect={this.handleResultsPerPageChange}
-									>
-										<MenuItem eventKey="10">10 per page</MenuItem>
-										<MenuItem eventKey="20">20 per page</MenuItem>
-										<MenuItem eventKey="35">35 per page</MenuItem>
-										<MenuItem eventKey="50">50 per page</MenuItem>
-										<MenuItem eventKey="100">100 per page</MenuItem>
-									</DropdownButton>
-								</ButtonGroup>
-								<Pager.Item
-									next disabled={!this.state.nextEnabled}
-									href="#" onClick={this.handleClickNext}
-								>
-									Next Page &rarr;
-								</Pager.Item>
-							</Pager>
-
-						</div> :
-						null
-				}
+				{this.state.results && this.state.results.length ? (
+					<div>
+						<hr className="thin" />
+						<Pager>
+							<Pager.Item
+								previous
+								disabled={this.state.from <= 0}
+								href="#"
+								onClick={this.handleClickPrevious}>
+								&larr; Previous Page
+							</Pager.Item>
+							<ButtonGroup>
+								<Button disabled>
+									Results {this.state.from + 1} —
+									{this.state.results.length < this.state.size
+										? this.state.from + this.state.results.length
+										: this.state.from + this.state.size}
+								</Button>
+								<DropdownButton
+									dropup
+									bsStyle="info"
+									id="bg-nested-dropdown"
+									title={`${this.state.size} per page`}
+									onSelect={this.handleResultsPerPageChange}>
+									<MenuItem eventKey="10">10 per page</MenuItem>
+									<MenuItem eventKey="20">20 per page</MenuItem>
+									<MenuItem eventKey="35">35 per page</MenuItem>
+									<MenuItem eventKey="50">50 per page</MenuItem>
+									<MenuItem eventKey="100">100 per page</MenuItem>
+								</DropdownButton>
+							</ButtonGroup>
+							<Pager.Item
+								next
+								disabled={!this.state.nextEnabled}
+								href="#"
+								onClick={this.handleClickNext}>
+								Next Page &rarr;
+							</Pager.Item>
+						</Pager>
+					</div>
+				) : null}
 			</div>
 		);
 	}
 }
-
 
 PagerElement.propTypes = {
 	from: PropTypes.number,

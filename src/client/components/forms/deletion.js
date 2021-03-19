@@ -27,7 +27,6 @@ import ValidationLabel from '../../entity-editor/common/validation-label';
 import {kebabCase as _kebabCase} from 'lodash';
 import request from 'superagent';
 
-
 const {Alert, Button, Col, Row, Panel} = bootstrap;
 
 class EntityDeletionForm extends React.Component {
@@ -64,7 +63,8 @@ class EntityDeletionForm extends React.Component {
 			error: null,
 			waiting: true
 		});
-		request.post(this.deleteUrl)
+		request
+			.post(this.deleteUrl)
 			.send({note})
 			.then(() => {
 				window.location.href = this.entityUrl;
@@ -88,40 +88,26 @@ class EntityDeletionForm extends React.Component {
 
 		let errorComponent = null;
 		if (this.state.error) {
-			errorComponent =
-				<Alert bsStyle="danger">{this.state.error}</Alert>;
+			errorComponent = <Alert bsStyle="danger">{this.state.error}</Alert>;
 		}
 
-		const loadingComponent = this.state.waiting ? <LoadingSpinner/> : null;
+		const loadingComponent = this.state.waiting ? <LoadingSpinner /> : null;
 
 		const hasNote = note && note.length;
 		const footerComponent = (
 			<span className="clearfix">
-				<Button
-					bsStyle="danger"
-					className="pull-right"
-					disabled={!hasNote}
-					type="submit"
-				>
-					<FontAwesomeIcon icon={faTrashAlt}/> Delete
+				<Button bsStyle="danger" className="pull-right" disabled={!hasNote} type="submit">
+					<FontAwesomeIcon icon={faTrashAlt} /> Delete
 				</Button>
-				<Button
-					className="pull-right"
-					href={this.entityUrl}
-				>
-					<FontAwesomeIcon icon={faTimesCircle}/> Cancel
+				<Button className="pull-right" href={this.entityUrl}>
+					<FontAwesomeIcon icon={faTimesCircle} /> Cancel
 				</Button>
 			</span>
 		);
 
-		const entityName =
-			entity.defaultAlias ? entity.defaultAlias.name : '(unnamed)';
+		const entityName = entity.defaultAlias ? entity.defaultAlias.name : '(unnamed)';
 
-		const noteLabel = (
-			<ValidationLabel error={!hasNote}>
-				Note
-			</ValidationLabel>
-		);
+		const noteLabel = <ValidationLabel error={!hasNote}>Note</ValidationLabel>;
 
 		return (
 			<div id="deletion-form">
@@ -130,53 +116,55 @@ class EntityDeletionForm extends React.Component {
 					{loadingComponent}
 					<Col md={6} mdOffset={3}>
 						<form onSubmit={this.handleSubmit}>
-							<Panel
-								bsStyle="danger"
-							>
+							<Panel bsStyle="danger">
 								<Panel.Heading>
-									<Panel.Title componentClass="h3">
-										Confirm Deletion
-									</Panel.Title>
+									<Panel.Title componentClass="h3">Confirm Deletion</Panel.Title>
 								</Panel.Heading>
 								<Panel.Body>
-
 									<Alert bsStyle="warning">
 										<h4>
-											<FontAwesomeIcon icon={faExclamationTriangle}/>&nbsp;
-											You’re about to delete the {entity.type} {entityName}.
+											<FontAwesomeIcon icon={faExclamationTriangle} />
+											&nbsp; You’re about to delete the {entity.type}{' '}
+											{entityName}.
 										</h4>
-										<p style={{fontSize: '1.3em'}}>Edit the entity or merge duplicates rather than delete !</p>
+										<p style={{fontSize: '1.3em'}}>
+											Edit the entity or merge duplicates rather than delete !
+										</p>
 									</Alert>
 									<p>
-									As a general principle, if you can solve an issue with non-destructive edits,
-									that&apos;s preferable to a removal. That way the unique identifier of the entity is preserved.
-										<br/>
-									In case of merged entities, the old identifier will forward to the entity it is merged into.
+										As a general principle, if you can solve an issue with
+										non-destructive edits, that&apos;s preferable to a removal.
+										That way the unique identifier of the entity is preserved.
+										<br />
+										In case of merged entities, the old identifier will forward
+										to the entity it is merged into.
 									</p>
-									<p>If you are certain it should be deleted, please enter a
-									revision note below to explain why and confirm the deletion.
-									If you are not sure, you can get feedback from the community&nbsp;
-									<a
-										href="//community.metabrainz.org/c/bookbrainz"
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										on our forums
-									</a>
-									&nbsp;or on our&nbsp;
-									<a
-										href="//webchat.freenode.net/?channels=#metabrainz"
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										IRC channel
-									</a>.
+									<p>
+										If you are certain it should be deleted, please enter a
+										revision note below to explain why and confirm the deletion.
+										If you are not sure, you can get feedback from the
+										community&nbsp;
+										<a
+											href="//community.metabrainz.org/c/bookbrainz"
+											rel="noopener noreferrer"
+											target="_blank">
+											on our forums
+										</a>
+										&nbsp;or on our&nbsp;
+										<a
+											href="//webchat.freenode.net/?channels=#metabrainz"
+											rel="noopener noreferrer"
+											target="_blank">
+											IRC channel
+										</a>
+										.
 									</p>
 									<p className="text-muted">
-									If this {entity.type} is a duplicate, click <a href={`/merge/add/${entity.bbid}`}>this link</a>
-									&nbsp;to select it to be merged instead.
+										If this {entity.type} is a duplicate, click{' '}
+										<a href={`/merge/add/${entity.bbid}`}>this link</a>
+										&nbsp;to select it to be merged instead.
 									</p>
-									<hr/>
+									<hr />
 									<CustomInput
 										help="* A note is required"
 										label={noteLabel}
@@ -189,9 +177,7 @@ class EntityDeletionForm extends React.Component {
 									/>
 									{errorComponent}
 								</Panel.Body>
-								<Panel.Footer>
-									{footerComponent}
-								</Panel.Footer>
+								<Panel.Footer>{footerComponent}</Panel.Footer>
 							</Panel>
 						</form>
 					</Col>

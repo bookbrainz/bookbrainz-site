@@ -19,11 +19,11 @@
 export const UPDATE_ANNOTATION = 'UPDATE_ANNOTATION';
 
 export type Action = {
-	type: string,
-	value?: unknown,
+	type: string;
+	value?: unknown;
 	meta?: {
-		debounce?: string
-	}
+		debounce?: string;
+	};
 };
 
 /**

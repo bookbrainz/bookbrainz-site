@@ -18,10 +18,7 @@
 
 import orm from '../test/bookbrainz-data';
 
-
-const {
-	bookshelf, util, Editor, EditorType, AchievementType, TitleType, Revision
-} = orm;
+const {bookshelf, util, Editor, EditorType, AchievementType, TitleType, Revision} = orm;
 
 export const editorTypeAttribs = {
 	id: 1,
@@ -117,7 +114,6 @@ export const limitedEditionAttribs = {
 	id: 1,
 	title: 'Limited Edition'
 };
-
 
 export const publisherIAttribs = {
 	badgeUrl: 'http://test.com',
@@ -295,147 +291,75 @@ export const hotOffThePressTitleAttribs = {
 export function createEditor() {
 	return new EditorType(editorTypeAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new Editor(editorAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new Editor(editorAttribs).save(null, {method: 'insert'}));
 }
 
 export function createRevisionist() {
 	return new AchievementType(revisionistIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(revisionistIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(revisionistIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(revisionistAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(revisionistIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(revisionistIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(revisionistAttribs).save(null, {method: 'insert'}));
 }
 
 export function createAuthorCreator() {
 	return new AchievementType(authorCreatorIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(authorCreatorIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(authorCreatorIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(authorCreatorAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(authorCreatorIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(authorCreatorIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(authorCreatorAttribs).save(null, {method: 'insert'}));
 }
 
 export function createLimitedEdition() {
 	return new AchievementType(limitedEditionIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(limitedEditionIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(limitedEditionIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(limitedEditionAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(limitedEditionIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(limitedEditionIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(limitedEditionAttribs).save(null, {method: 'insert'}));
 }
 
 export function createPublisher() {
 	return new AchievementType(publisherIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(publisherIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(publisherIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(publisherAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(publisherIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(publisherIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(publisherAttribs).save(null, {method: 'insert'}));
 }
 
 export function createWorkerBee() {
 	return new AchievementType(workerBeeIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(workerBeeIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(workerBeeIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(workerBeeAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(workerBeeIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(workerBeeIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(workerBeeAttribs).save(null, {method: 'insert'}));
 }
 
 export function createPublisherCreator() {
 	return new AchievementType(publisherCreatorIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(publisherCreatorIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(publisherCreatorIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(publisherCreatorAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(publisherCreatorIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(publisherCreatorIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(publisherCreatorAttribs).save(null, {method: 'insert'}));
 }
 
 export function createExplorer() {
 	return new AchievementType(explorerIAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new AchievementType(explorerIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new AchievementType(explorerIIIAttribs)
-				.save(null, {method: 'insert'})
-		)
-		.then(
-			() => new TitleType(explorerTitleAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new AchievementType(explorerIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new AchievementType(explorerIIIAttribs).save(null, {method: 'insert'}))
+		.then(() => new TitleType(explorerTitleAttribs).save(null, {method: 'insert'}));
 }
 
 export function createSprinter() {
 	return new AchievementType(sprinterAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new TitleType(sprinterTitleAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new TitleType(sprinterTitleAttribs).save(null, {method: 'insert'}));
 }
 
 export function sprinterHelper(numRevisions) {
 	const promiseList = [];
 	for (let i = 0; i < numRevisions; i++) {
-		promiseList.push(
-			new Revision({authorId: editorAttribs.id})
-				.save(null, {method: 'insert'})
-		);
+		promiseList.push(new Revision({authorId: editorAttribs.id}).save(null, {method: 'insert'}));
 	}
 	return Promise.all(promiseList);
 }
@@ -443,37 +367,25 @@ export function sprinterHelper(numRevisions) {
 export function createFunRunner() {
 	return new AchievementType(funRunnerAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new TitleType(funRunnerTitleAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new TitleType(funRunnerTitleAttribs).save(null, {method: 'insert'}));
 }
 
 export function createMarathoner() {
 	return new AchievementType(marathonerAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new TitleType(marathonerTitleAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new TitleType(marathonerTitleAttribs).save(null, {method: 'insert'}));
 }
 
 export function createTimeTraveller() {
 	return new AchievementType(timeTravellerAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new TitleType(timeTravellerTitleAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new TitleType(timeTravellerTitleAttribs).save(null, {method: 'insert'}));
 }
 
 export function createHotOffThePress() {
 	return new AchievementType(hotOffThePressAttribs)
 		.save(null, {method: 'insert'})
-		.then(
-			() => new TitleType(hotOffThePressTitleAttribs)
-				.save(null, {method: 'insert'})
-		);
+		.then(() => new TitleType(hotOffThePressTitleAttribs).save(null, {method: 'insert'}));
 }
 
 export function typeRevisionHelper(revisionType, rowcount) {
@@ -481,8 +393,7 @@ export function typeRevisionHelper(revisionType, rowcount) {
 		let rowCountPromise;
 		if (type === revisionType) {
 			rowCountPromise = Promise.resolve(rowcount);
-		}
-		else {
+		} else {
 			rowCountPromise = Promise.resolve(0);
 		}
 		return rowCountPromise;
@@ -494,8 +405,7 @@ export function typeCreationHelper(revisionTypeString, rowCount) {
 		let rowCountPromise;
 		if (string === revisionTypeString) {
 			rowCountPromise = Promise.resolve(rowCount);
-		}
-		else {
+		} else {
 			rowCountPromise = Promise.resolve(0);
 		}
 		return rowCountPromise;

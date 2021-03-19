@@ -27,30 +27,26 @@ import _ from 'lodash';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {genEntityIconHTMLElement} from '../../../helpers/entity';
 
-
 const {Button, DropdownButton, InputGroup, MenuItem} = bootstrap;
 
 const SearchButton = (
-	<Button
-		block
-		bsStyle="success"
-		type="submit"
-	>
-		<FontAwesomeIcon icon={faSearch}/>&nbsp;Search
+	<Button block bsStyle="success" type="submit">
+		<FontAwesomeIcon icon={faSearch} />
+		&nbsp;Search
 	</Button>
 );
 
 const updateDelay = 1000;
 
 type SearchFieldState = {
-	type: string,
-	query: string,
+	type: string;
+	query: string;
 };
 type SearchFieldProps = {
-	entityTypes: any[],
-	onSearch: (query: string, type: string) => void,
-	query?: string,
-	type?: string
+	entityTypes: any[];
+	onSearch: (query: string, type: string) => void;
+	query?: string;
+	type?: string;
 };
 
 class SearchField extends React.Component<SearchFieldProps, SearchFieldState> {
@@ -98,13 +94,13 @@ class SearchField extends React.Component<SearchFieldProps, SearchFieldState> {
 		this.props.onSearch(query, _.snakeCase(type));
 	}
 
-	handleSubmit = event => {
+	handleSubmit = (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.triggerOnSearch();
 	};
 
-	handleChange = event => {
+	handleChange = (event) => {
 		if (!event.target.value.match(/^ +$/) && event.target.value !== this.state.query) {
 			this.setState({query: event.target.value}, this.debouncedTriggerOnSearch);
 		}
@@ -120,42 +116,31 @@ class SearchField extends React.Component<SearchFieldProps, SearchFieldState> {
 				componentClass={InputGroup.Button}
 				id="entity-type-select"
 				title={_.startCase(this.state.type) || 'All Entities'}
-				onSelect={this.handleEntitySelect}
-			>
+				onSelect={this.handleEntitySelect}>
 				{this.props.entityTypes.map((entityType: string) => (
-					<MenuItem
-						eventKey={entityType}
-						key={entityType}
-					>
+					<MenuItem eventKey={entityType} key={entityType}>
 						{genEntityIconHTMLElement(entityType)}
 						{_.startCase(entityType)}
 					</MenuItem>
 				))}
-				<MenuItem divider/>
-				<MenuItem
-					eventKey="all_entities"
-					key="allEntities"
-				>
+				<MenuItem divider />
+				<MenuItem eventKey="all_entities" key="allEntities">
 					All Entities
 				</MenuItem>
 
-				<MenuItem divider/>
-				<MenuItem
-					eventKey="editor"
-					key="editor"
-				>
+				<MenuItem divider />
+				<MenuItem eventKey="editor" key="editor">
 					{genEntityIconHTMLElement('Editor')}
 					Editor
 				</MenuItem>
-				<MenuItem
-					eventKey="collection"
-					key="collection"
-				>
+				<MenuItem eventKey="collection" key="collection">
 					{genEntityIconHTMLElement('Collection')}
 					Collection
 				</MenuItem>
 			</DropdownButton>
-		) : '';
+		) : (
+			''
+		);
 
 		return (
 			<div className="row">
@@ -163,8 +148,7 @@ class SearchField extends React.Component<SearchFieldProps, SearchFieldState> {
 					<form
 						action="/search"
 						className="form-horizontal whole-page-form"
-						onSubmit={this.handleSubmit}
-					>
+						onSubmit={this.handleSubmit}>
 						<CustomInput
 							buttonAfter={[entityTypeSelect, SearchButton]}
 							name="q"

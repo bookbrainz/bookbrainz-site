@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import RevisionsTable from './parts/revisions-table';
 
-
 class RevisionsPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -58,7 +57,6 @@ class RevisionsPage extends React.Component {
 		);
 	}
 }
-
 
 RevisionsPage.displayName = 'RevisionsPage';
 RevisionsPage.propTypes = {

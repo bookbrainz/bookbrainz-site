@@ -21,7 +21,6 @@ import * as testData from '../data/test-data.js';
 import orm from './bookbrainz-data';
 import rewire from 'rewire';
 
-
 const Achievement = rewire('../src/server/helpers/achievement.js');
 
 const funRunnerThreshold = 7;
@@ -33,8 +32,7 @@ function rewireEditsInDaysTwo(threshold) {
 			let editPromise;
 			if (days === funRunnerDays) {
 				editPromise = Promise.resolve(threshold);
-			}
-			else {
+			} else {
 				editPromise = Promise.resolve(0);
 			}
 			return editPromise;
@@ -48,8 +46,7 @@ function rewireEditsInDaysThree(threshold) {
 			let editPromise;
 			if (days === funRunnerDays) {
 				editPromise = Promise.resolve(threshold);
-			}
-			else {
+			} else {
 				editPromise = Promise.resolve(0);
 			}
 			return editPromise;
@@ -58,9 +55,7 @@ function rewireEditsInDaysThree(threshold) {
 }
 
 function getRevAttrPromise() {
-	return common.getAttrPromise(
-		Achievement, orm, false, 'funRunner', 'Fun Runner'
-	);
+	return common.getAttrPromise(Achievement, orm, false, 'funRunner', 'Fun Runner');
 }
 
 function expectIds(rev) {
@@ -68,9 +63,7 @@ function expectIds(rev) {
 }
 
 export default function tests() {
-	beforeEach(
-		() => testData.createEditor().then(() => testData.createFunRunner())
-	);
+	beforeEach(() => testData.createEditor().then(() => testData.createFunRunner()));
 	afterEach(testData.truncate);
 
 	const test1 = common.testAchievement(
@@ -85,6 +78,5 @@ export default function tests() {
 		getRevAttrPromise(),
 		common.expectFalse()
 	);
-	it('shouldn\'t be given to someone without a revision a day for a week',
-		test2);
+	it("shouldn't be given to someone without a revision a day for a week", test2);
 }

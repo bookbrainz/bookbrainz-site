@@ -22,32 +22,43 @@ import * as utilHelper from '../../../helpers/utils';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 const {Table} = bootstrap;
-const {transformISODateForDisplay, extractAttribute, getEntityDisambiguation, getEntityLabel} = entityHelper;
+const {
+	transformISODateForDisplay,
+	extractAttribute,
+	getEntityDisambiguation,
+	getEntityLabel
+} = entityHelper;
 
-function AuthorTableRow({author, showAddedAtColumn, showCheckboxes, selectedEntities, onToggleRow}) {
+function AuthorTableRow({
+	author,
+	showAddedAtColumn,
+	showCheckboxes,
+	selectedEntities,
+	onToggleRow
+}) {
 	const name = getEntityLabel(author);
 	const disambiguation = getEntityDisambiguation(author);
 	const authorType = author.authorType ? author.authorType.label : '?';
 	const gender = author.gender ? author.gender.name : '?';
 	const beginDate = transformISODateForDisplay(extractAttribute(author.beginDate));
 	const endDate = transformISODateForDisplay(extractAttribute(author.endDate));
-	const addedAt = showAddedAtColumn ? utilHelper.formatDate(new Date(author.addedAt), true) : null;
+	const addedAt = showAddedAtColumn
+		? utilHelper.formatDate(new Date(author.addedAt), true)
+		: null;
 	/* eslint-disable react/jsx-no-bind */
 	return (
 		<tr>
 			<td>
-				{
-					showCheckboxes ?
-						<input
-							checked={selectedEntities.find(bbid => bbid === author.bbid)}
-							className="checkboxes"
-							id={author.bbid}
-							type="checkbox"
-							onClick={() => onToggleRow(author.bbid)}
-						/> : null
-				}
+				{showCheckboxes ? (
+					<input
+						checked={selectedEntities.find((bbid) => bbid === author.bbid)}
+						className="checkboxes"
+						id={author.bbid}
+						type="checkbox"
+						onClick={() => onToggleRow(author.bbid)}
+					/>
+				) : null}
 				<a href={`/author/${author.bbid}`}>{name}</a>
 				{disambiguation}
 			</td>
@@ -55,9 +66,7 @@ function AuthorTableRow({author, showAddedAtColumn, showCheckboxes, selectedEnti
 			<td>{authorType}</td>
 			<td>{beginDate}</td>
 			<td>{endDate}</td>
-			{
-				showAddedAtColumn ? <td>{addedAt}</td> : null
-			}
+			{showAddedAtColumn ? <td>{addedAt}</td> : null}
 		</tr>
 	);
 }
@@ -88,30 +97,25 @@ function AuthorTable({authors, showAddedAtColumn, showCheckboxes, selectedEntiti
 							<th>Type</th>
 							<th>Date of birth</th>
 							<th>Date of death</th>
-							{
-								showAddedAtColumn ? <th>Added at</th> : null
-							}
+							{showAddedAtColumn ? <th>Added at</th> : null}
 						</tr>
 					</thead>
 					<tbody>
-						{
-							authors.map((author) => (
-								<AuthorTableRow
-									author={author}
-									key={author.bbid}
-									selectedEntities={selectedEntities}
-									showAddedAtColumn={showAddedAtColumn}
-									showCheckboxes={showCheckboxes}
-									onToggleRow={onToggleRow}
-								/>
-							))
-						}
+						{authors.map((author) => (
+							<AuthorTableRow
+								author={author}
+								key={author.bbid}
+								selectedEntities={selectedEntities}
+								showAddedAtColumn={showAddedAtColumn}
+								showCheckboxes={showCheckboxes}
+								onToggleRow={onToggleRow}
+							/>
+						))}
 					</tbody>
 				</Table>
 			</React.Fragment>
 		);
-	}
-	else {
+	} else {
 		tableContent = <span>No Authors</span>;
 	}
 	return (

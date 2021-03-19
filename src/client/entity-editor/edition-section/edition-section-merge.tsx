@@ -45,52 +45,51 @@ import _ from 'lodash';
 import {connect} from 'react-redux';
 import {convertMapToObject} from '../../helpers/utils';
 
-
 type LanguageOption = {
-	name: string,
-	id: number
+	name: string;
+	id: number;
 };
 
 type Publisher = {
-	value: string,
-	id: number
+	value: string;
+	id: number;
 };
 
 type EditionGroup = {
-	value: string,
-	id: number
+	value: string;
+	id: number;
 };
 
 type OwnProps = {
-	mergingEntities: any[]
+	mergingEntities: any[];
 };
 
 type OptionalNumber = number | null | undefined;
 type StateProps = {
-	depthValue: OptionalNumber,
-	formatValue: OptionalNumber,
-	heightValue: OptionalNumber,
-	languageValues: List<LanguageOption>,
-	pagesValue: OptionalNumber,
-	publisherValue: Map<string, any>,
-	editionGroupValue: Map<string, any>,
-	releaseDateValue: Record<string, unknown> | null | undefined,
-	statusValue: OptionalNumber,
-	weightValue: OptionalNumber,
-	widthValue: OptionalNumber
+	depthValue: OptionalNumber;
+	formatValue: OptionalNumber;
+	heightValue: OptionalNumber;
+	languageValues: List<LanguageOption>;
+	pagesValue: OptionalNumber;
+	publisherValue: Map<string, any>;
+	editionGroupValue: Map<string, any>;
+	releaseDateValue: Record<string, unknown> | null | undefined;
+	statusValue: OptionalNumber;
+	weightValue: OptionalNumber;
+	widthValue: OptionalNumber;
 };
 
 type DispatchProps = {
-	onDepthChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown,
-	onFormatChange: (arg: number | null | undefined) => unknown,
-	onHeightChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown,
-	onPagesChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown,
-	onPublisherChange: (arg: Publisher) => unknown,
-	onEditionGroupChange: (arg: EditionGroup) => unknown,
-	onReleaseDateChange: (arg: string | null | undefined) => unknown,
-	onStatusChange: (arg: number | null | undefined) => unknown,
-	onWeightChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown,
-	onWidthChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown
+	onDepthChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown;
+	onFormatChange: (arg: number | null | undefined) => unknown;
+	onHeightChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown;
+	onPagesChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown;
+	onPublisherChange: (arg: Publisher) => unknown;
+	onEditionGroupChange: (arg: EditionGroup) => unknown;
+	onReleaseDateChange: (arg: string | null | undefined) => unknown;
+	onStatusChange: (arg: number | null | undefined) => unknown;
+	onWeightChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown;
+	onWidthChange: (arg: React.ChangeEvent<HTMLInputElement>) => unknown;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -164,17 +163,26 @@ function EditionSectionMerge({
 	const weightOptions = [];
 	const widthOptions = [];
 
-	mergingEntities.forEach(entity => {
+	mergingEntities.forEach((entity) => {
 		const depth = !_.isNil(entity.depth) && {label: entity.depth, value: entity.depth};
 		if (depth && !_.find(depthOptions, ['value', depth.value])) {
 			depthOptions.push(depth);
 		}
 		const editionGroup = !_.isNil(entity.editionGroup) && entityToOption(entity.editionGroup);
-		const editionGroupOption = editionGroup && {label: editionGroup.text, value: editionGroup};
-		if (editionGroupOption && !_.find(editionGroupOptions, ['value.id', editionGroupOption.value.id])) {
+		const editionGroupOption = editionGroup && {
+			label: editionGroup.text,
+			value: editionGroup
+		};
+		if (
+			editionGroupOption &&
+			!_.find(editionGroupOptions, ['value.id', editionGroupOption.value.id])
+		) {
 			editionGroupOptions.push(editionGroupOption);
 		}
-		const format = entity.editionFormat && {label: entity.editionFormat.label, value: entity.editionFormat.id};
+		const format = entity.editionFormat && {
+			label: entity.editionFormat.label,
+			value: entity.editionFormat.id
+		};
 		if (format && !_.find(formatOptions, ['value', format.value])) {
 			formatOptions.push(format);
 		}
@@ -192,11 +200,15 @@ function EditionSectionMerge({
 			publisherOptions.push(publisherOption);
 		}
 		const releaseEventDate = _.get(entity, 'releaseEventSet.releaseEvents[0].date');
-		const releaseDate = !_.isNil(releaseEventDate) && transformISODateForSelect(releaseEventDate);
+		const releaseDate =
+			!_.isNil(releaseEventDate) && transformISODateForSelect(releaseEventDate);
 		if (releaseDate && !_.find(releaseDateOptions, ['value', releaseDate.value])) {
 			releaseDateOptions.push(releaseDate);
 		}
-		const statusOption = entity.editionStatus && {label: entity.editionStatus.label, value: entity.editionStatus.id};
+		const statusOption = entity.editionStatus && {
+			label: entity.editionStatus.label,
+			value: entity.editionStatus.id
+		};
 		if (statusOption && !_.find(statusOptions, ['value', statusOption.value])) {
 			statusOptions.push(statusOption);
 		}
@@ -310,29 +322,31 @@ function mapStateToProps(rootState: RootState): StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 	return {
-		onDepthChange: (event) => dispatch(debouncedUpdateDepth(
-			event.target.value ? parseInt(event.target.value, 10) : null
-		)),
+		onDepthChange: (event) =>
+			dispatch(
+				debouncedUpdateDepth(event.target.value ? parseInt(event.target.value, 10) : null)
+			),
 		onEditionGroupChange: (value) => dispatch(updateEditionGroup(value)),
-		onFormatChange: (value: number) =>
-			dispatch(updateFormat(value)),
-		onHeightChange: (event) => dispatch(debouncedUpdateHeight(
-			event.target.value ? parseInt(event.target.value, 10) : null
-		)),
-		onPagesChange: (event) => dispatch(debouncedUpdatePages(
-			event.target.value ? parseInt(event.target.value, 10) : null
-		)),
+		onFormatChange: (value: number) => dispatch(updateFormat(value)),
+		onHeightChange: (event) =>
+			dispatch(
+				debouncedUpdateHeight(event.target.value ? parseInt(event.target.value, 10) : null)
+			),
+		onPagesChange: (event) =>
+			dispatch(
+				debouncedUpdatePages(event.target.value ? parseInt(event.target.value, 10) : null)
+			),
 		onPublisherChange: (value) => dispatch(updatePublisher(value)),
-		onReleaseDateChange: (dateString) =>
-			dispatch(debouncedUpdateReleaseDate(dateString)),
-		onStatusChange: (value: number) =>
-			dispatch(updateStatus(value)),
-		onWeightChange: (event) => dispatch(debouncedUpdateWeight(
-			event.target.value ? parseInt(event.target.value, 10) : null
-		)),
-		onWidthChange: (event) => dispatch(debouncedUpdateWidth(
-			event.target.value ? parseInt(event.target.value, 10) : null
-		))
+		onReleaseDateChange: (dateString) => dispatch(debouncedUpdateReleaseDate(dateString)),
+		onStatusChange: (value: number) => dispatch(updateStatus(value)),
+		onWeightChange: (event) =>
+			dispatch(
+				debouncedUpdateWeight(event.target.value ? parseInt(event.target.value, 10) : null)
+			),
+		onWidthChange: (event) =>
+			dispatch(
+				debouncedUpdateWidth(event.target.value ? parseInt(event.target.value, 10) : null)
+			)
 	};
 }
 

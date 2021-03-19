@@ -34,7 +34,6 @@ import express from 'express';
 import {getOrderedRevisions} from '../helpers/revisions';
 import target from '../templates/target';
 
-
 const router = express.Router();
 
 /* GET home page. */
@@ -57,25 +56,25 @@ router.get('/', async (req, res, next) => {
 		 * props
 		 */
 		const markup = ReactDOMServer.renderToString(
-			<Layout	{...propHelpers.extractLayoutProps(props)}>
-				<Index {...propHelpers.extractChildProps(props)}/>
+			<Layout {...propHelpers.extractLayoutProps(props)}>
+				<Index {...propHelpers.extractChildProps(props)} />
 			</Layout>
 		);
 
-		res.send(target({
-			markup,
-			page: 'Index',
-			props: escapeProps(props),
-			script: '/js/index.js'
-		}));
+		res.send(
+			target({
+				markup,
+				page: 'Index',
+				props: escapeProps(props),
+				script: '/js/index.js'
+			})
+		);
 	}
-
 
 	try {
 		const orderedRevisions = await getOrderedRevisions(0, numRevisionsOnHomepage, orm);
 		return render(orderedRevisions);
-	}
-	catch (err) {
+	} catch (err) {
 		return next(err);
 	}
 });
@@ -87,17 +86,19 @@ function _createStaticRoute(route, title, PageComponent) {
 
 		const markup = ReactDOMServer.renderToString(
 			<Layout {...propHelpers.extractLayoutProps(props)}>
-				<PageComponent/>
+				<PageComponent />
 			</Layout>
 		);
 
-		res.send(target({
-			markup,
-			page: title,
-			props: escapeProps(props),
-			script: '/js/index.js',
-			title
-		}));
+		res.send(
+			target({
+				markup,
+				page: title,
+				props: escapeProps(props),
+				script: '/js/index.js',
+				title
+			})
+		);
 	});
 }
 

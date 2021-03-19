@@ -16,7 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as React from 'react';
 
 import {
@@ -46,14 +45,13 @@ import Relationship from './relationship';
 import _ from 'lodash';
 import {getEntityLink} from '../../../server/helpers/utils';
 
-
 function isValidRelationship(relationship: _Relationship) {
 	const {relationshipType, sourceEntity, targetEntity} = relationship;
 
 	return (
 		relationshipType.deprecated !== true &&
-		(relationshipType.sourceEntityType === sourceEntity.type) &&
-		(relationshipType.targetEntityType === targetEntity.type)
+		relationshipType.sourceEntityType === sourceEntity.type &&
+		relationshipType.targetEntityType === targetEntity.type
 	);
 }
 
@@ -62,27 +60,20 @@ function generateRelationshipSelection(
 	entityA: Entity,
 	entityB: Entity
 ): Array<RelationshipWithLabel> {
-	const forwardRelationships = relationshipTypes.map(
-		(relationshipType) => ({
-			label: relationshipType.linkPhrase,
-			relationshipType,
-			sourceEntity: entityA,
-			targetEntity: entityB
-		})
-	);
-	const reverseRelationships = relationshipTypes.map(
-		(relationshipType) => ({
-			label: relationshipType.linkPhrase,
-			relationshipType,
-			sourceEntity: entityB,
-			targetEntity: entityA
-		})
-	);
+	const forwardRelationships = relationshipTypes.map((relationshipType) => ({
+		label: relationshipType.linkPhrase,
+		relationshipType,
+		sourceEntity: entityA,
+		targetEntity: entityB
+	}));
+	const reverseRelationships = relationshipTypes.map((relationshipType) => ({
+		label: relationshipType.linkPhrase,
+		relationshipType,
+		sourceEntity: entityB,
+		targetEntity: entityA
+	}));
 
-	const candidateRelationships = [
-		...forwardRelationships,
-		...reverseRelationships
-	];
+	const candidateRelationships = [...forwardRelationships, ...reverseRelationships];
 
 	const validRels = candidateRelationships.filter(isValidRelationship);
 	if (!validRels.length) {
@@ -100,14 +91,21 @@ function generateRelationshipSelection(
 
 	// Make level 0 (parentId = null) the base of a new sortedArray
 	const sortedRelationships = _.get(groupBy, 'null');
-	sortedRelationships.forEach(rootRel => rootRel.relationshipType.depth = 0);
+	sortedRelationships.forEach((rootRel) => (rootRel.relationshipType.depth = 0));
 	delete groupBy.null;
 
 	// Iterate over the remaining elements to place after their parent and set their depth accordingly
 	_.forEach(groupBy, (group, parentId) => {
 		// Find the parent root in the sortedArray and insert its children after it
-		const parentIndex = _.findIndex(sortedRelationships, ['relationshipType.id', Number(parentId)]);
-		group.forEach(rel => rel.relationshipType.depth = sortedRelationships[parentIndex].relationshipType.depth + 1);
+		const parentIndex = _.findIndex(sortedRelationships, [
+			'relationshipType.id',
+			Number(parentId)
+		]);
+		group.forEach(
+			(rel) =>
+				(rel.relationshipType.depth =
+					sortedRelationships[parentIndex].relationshipType.depth + 1)
+		);
 		// Insert the group after its parent
 		sortedRelationships.splice(parentIndex + 1, 0, ...group);
 	});
@@ -115,10 +113,7 @@ function generateRelationshipSelection(
 	return sortedRelationships;
 }
 
-function getValidOtherEntityTypes(
-	relationshipTypes: Array<RelationshipType>,
-	baseEntity: Entity
-) {
+function getValidOtherEntityTypes(relationshipTypes: Array<RelationshipType>, baseEntity: Entity) {
 	const validEntityTypes = relationshipTypes.map((relationshipType) => {
 		if (relationshipType.deprecated === true) {
 			return null;
@@ -136,30 +131,31 @@ function getValidOtherEntityTypes(
 }
 
 type EntitySearchResult = {
-	text: string,
-	id: string,
-	value: string | number,
-	type: EntityType
+	text: string;
+	id: string;
+	value: string | number;
+	type: EntityType;
 };
 
 type RelationshipModalProps = {
-	relationshipTypes: Array<RelationshipType>,
-	baseEntity: Entity,
-	initRelationship: _Relationship | null | undefined,
-	languageOptions: Array<{label: string, value: number}>,
-	onCancel?: () => unknown,
-	onClose?: () => unknown,
-	onAdd?: (_Relationship) => unknown
+	relationshipTypes: Array<RelationshipType>;
+	baseEntity: Entity;
+	initRelationship: _Relationship | null | undefined;
+	languageOptions: Array<{label: string; value: number}>;
+	onCancel?: () => unknown;
+	onClose?: () => unknown;
+	onAdd?: (_Relationship) => unknown;
 };
 
 type RelationshipModalState = {
-	relationshipType?: RelationshipType | null | undefined,
-	relationship?: _Relationship | null | undefined,
-	targetEntity?: EntitySearchResult | null | undefined
+	relationshipType?: RelationshipType | null | undefined;
+	relationship?: _Relationship | null | undefined;
+	targetEntity?: EntitySearchResult | null | undefined;
 };
 
 function getInitState(
-	baseEntity: Entity, initRelationship: _Relationship | null | undefined
+	baseEntity: Entity,
+	initRelationship: _Relationship | null | undefined
 ): RelationshipModalState {
 	if (_.isNull(initRelationship)) {
 		return {
@@ -175,8 +171,10 @@ function getInitState(
 	const baseEntityBBID = _.get(baseEntity, ['bbid']);
 	const sourceEntityBBID = _.get(sourceEntity, ['bbid']);
 
-	const [otherEntity, thisEntity] = baseEntityBBID === sourceEntityBBID ?
-		[targetEntity, sourceEntity] : [sourceEntity, targetEntity];
+	const [otherEntity, thisEntity] =
+		baseEntityBBID === sourceEntityBBID
+			? [targetEntity, sourceEntity]
+			: [sourceEntity, targetEntity];
 
 	/* If one of the entities is being created,
 	update that new entity's name to replace "New Entity" */
@@ -191,9 +189,7 @@ function getInitState(
 
 	const searchFormatOtherEntity = otherEntity && {
 		id: _.get(otherEntity, ['bbid']),
-		text: _.get(
-			otherEntity, ['defaultAlias', 'name'], '(unnamed)'
-		),
+		text: _.get(otherEntity, ['defaultAlias', 'name'], '(unnamed)'),
 		type: _.get(otherEntity, ['type']),
 		value: _.get(otherEntity, ['bbid'])
 	};
@@ -230,8 +226,7 @@ function getInitState(
  *        is clicked.
  */
 /* eslint-enable valid-jsdoc */
-class RelationshipModal
-	extends React.Component<RelationshipModalProps, RelationshipModalState> {
+class RelationshipModal extends React.Component<RelationshipModalProps, RelationshipModalState> {
 	static defaultProps = {
 		onAdd: null,
 		onCancel: null,
@@ -299,10 +294,11 @@ class RelationshipModal
 		const typesForDisplay = types.map(_.startCase);
 		const lastType = _.last(typesForDisplay);
 		const otherTypes = _.join(typesForDisplay.slice(0, -1), ', ');
-		const label =
-			`Other Entity (${otherTypes.length ? `${otherTypes} or ` : ''}${lastType})`;
+		const label = `Other Entity (${otherTypes.length ? `${otherTypes} or ` : ''}${lastType})`;
 
-		const link = targetEntity ? getEntityLink({bbid: targetEntity.id, type: targetEntity.type}) : '';
+		const link = targetEntity
+			? getEntityLink({bbid: targetEntity.id, type: targetEntity.type})
+			: '';
 		const openButton = (
 			<Button
 				bsStyle="info"
@@ -310,9 +306,8 @@ class RelationshipModal
 				href={link}
 				rel="noreferrer noopener"
 				target="_blank"
-				title="Open in a new tab"
-			>
-				<FontAwesomeIcon icon={faExternalLinkAlt}/>
+				title="Open in a new tab">
+				<FontAwesomeIcon icon={faExternalLinkAlt} />
 			</Button>
 		);
 
@@ -344,7 +339,9 @@ class RelationshipModal
 		};
 
 		const relationships = generateRelationshipSelection(
-			relationshipTypes, baseEntity, otherEntity
+			relationshipTypes,
+			baseEntity,
+			otherEntity
 		);
 
 		return (
@@ -360,9 +357,9 @@ class RelationshipModal
 					valueRenderer={Relationship}
 					onChange={this.handleRelationshipTypeChange}
 				/>
-				{this.state.relationshipType &&
+				{this.state.relationshipType && (
 					<HelpBlock>{this.state.relationshipType.description}</HelpBlock>
-				}
+				)}
 			</FormGroup>
 		);
 	}
@@ -384,12 +381,15 @@ class RelationshipModal
 					<Modal.Body>
 						<p>
 							<strong>
-								{baseEntityTypeForDisplay}s have no possible relationships with other entities at the moment.
+								{baseEntityTypeForDisplay}s have no possible relationships with
+								other entities at the moment.
 							</strong>
 						</p>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button bsStyle="danger" onClick={onCancel}>Cancel</Button>
+						<Button bsStyle="danger" onClick={onCancel}>
+							Cancel
+						</Button>
 					</Modal.Footer>
 				</Modal>
 			);
@@ -403,24 +403,18 @@ class RelationshipModal
 				<Modal.Body>
 					<p>
 						<strong>
-							Use this form to add links between this{' '}
-							{baseEntityTypeForDisplay}
-							{' '}and other entities.
-						</strong>
-						{' '}For example, you can link an author
-						to a work, or a work to another work
-						to show translation or derivation.
+							Use this form to add links between this {baseEntityTypeForDisplay} and
+							other entities.
+						</strong>{' '}
+						For example, you can link an author to a work, or a work to another work to
+						show translation or derivation.
 					</p>
-					<hr/>
+					<hr />
 					<Row>
 						<Col md={10} mdOffset={1}>
 							<form>
-								<div>
-									{entitySelect}
-								</div>
-								<div>
-									{this.renderRelationshipSelect()}
-								</div>
+								<div>{entitySelect}</div>
+								<div>{this.renderRelationshipSelect()}</div>
 							</form>
 						</Col>
 					</Row>
@@ -428,22 +422,15 @@ class RelationshipModal
 				<Modal.Footer>
 					<Row>
 						<Col md={10} mdOffset={1}>
-							<ProgressBar
-								bsStyle="success"
-								now={this.calculateProgressAmount()}
-							/>
+							<ProgressBar bsStyle="success" now={this.calculateProgressAmount()} />
 						</Col>
 					</Row>
 					<Button bsStyle="danger" onClick={onCancel}>
-						<FontAwesomeIcon icon={faTimes}/>
+						<FontAwesomeIcon icon={faTimes} />
 						<span>&nbsp;Cancel</span>
 					</Button>
-					<Button
-						bsStyle="success"
-						disabled={submitDisabled}
-						onClick={this.handleAdd}
-					>
-						<FontAwesomeIcon icon={faPlus}/>
+					<Button bsStyle="success" disabled={submitDisabled} onClick={this.handleAdd}>
+						<FontAwesomeIcon icon={faPlus} />
 						<span>&nbsp;Add</span>
 					</Button>
 				</Modal.Footer>

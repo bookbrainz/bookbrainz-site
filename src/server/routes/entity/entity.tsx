@@ -26,7 +26,6 @@ import * as propHelpers from '../../../client/helpers/props';
 import * as search from '../../../common/helpers/search';
 import * as utils from '../../helpers/utils';
 
-
 import type {Request as $Request, Response as $Response, NextFunction} from 'express';
 import type {
 	EntityTypeString,
@@ -51,9 +50,7 @@ import {getOrderedRevisionsForEntityPage} from '../../helpers/revisions';
 import log from 'log';
 import target from '../../templates/target';
 
-
-type PassportRequest = $Request & {user: any, session: any};
-
+type PassportRequest = $Request & {user: any; session: any};
 
 const entityComponents = {
 	author: AuthorPage,
@@ -72,10 +69,7 @@ export function displayEntity(req: PassportRequest, res: $Response) {
 	// $FlowFixMe
 	let identifierTypes = [];
 	if (entity.identifierSet) {
-		identifierTypes = _.uniqBy(
-			_.map(entity.identifierSet.identifiers, 'type'),
-			'id'
-		);
+		identifierTypes = _.uniqBy(_.map(entity.identifierSet.identifiers, 'type'), 'id');
 	}
 
 	let editorEntityVisitPromise;
@@ -88,54 +82,45 @@ export function displayEntity(req: PassportRequest, res: $Response) {
 			.then(() => achievement.processPageVisit(orm, resLocals.user.id))
 			.catch(
 				// error caused by duplicates we do not want in database
-				() => new Promise(resolve => resolve(false))
+				() => new Promise((resolve) => resolve(false))
 			);
-	}
-	else {
-		editorEntityVisitPromise = new Promise(resolve => resolve(false));
+	} else {
+		editorEntityVisitPromise = new Promise((resolve) => resolve(false));
 	}
 
 	let alertPromise = editorEntityVisitPromise.then((visitAlert) => {
 		let alertIds = [];
 		if (visitAlert.alert) {
-			alertIds = alertIds.concat(visitAlert.alert.split(',').map(
-				(id) => parseInt(id, 10)
-			));
+			alertIds = alertIds.concat(visitAlert.alert.split(',').map((id) => parseInt(id, 10)));
 		}
 		if (_.isString(req.query.alert)) {
 			// $FlowFixMe
-			alertIds = alertIds.concat(req.query.alert.split(',').map(
-				(id) =>	parseInt(id, 10)
-			));
+			alertIds = alertIds.concat(req.query.alert.split(',').map((id) => parseInt(id, 10)));
 		}
 		if (alertIds.length > 0) {
-			const promiseList = alertIds.map(
-				(achievementAlert) =>
-					new AchievementUnlock(
-						{id: achievementAlert}
-					)
-						.fetch({
-							require: true,
-							withRelated: 'achievement'
-						})
-						.then((unlock) => unlock.toJSON())
-						.then((unlock) => {
-							let unlockName;
-							if (req.user.id === unlock.editorId) {
-								unlockName = {
-									name: unlock.achievement.name
-								};
-							}
-							return unlockName;
-						})
-						.catch((err) => {
-							log.debug(err);
-						})
+			const promiseList = alertIds.map((achievementAlert) =>
+				new AchievementUnlock({id: achievementAlert})
+					.fetch({
+						require: true,
+						withRelated: 'achievement'
+					})
+					.then((unlock) => unlock.toJSON())
+					.then((unlock) => {
+						let unlockName;
+						if (req.user.id === unlock.editorId) {
+							unlockName = {
+								name: unlock.achievement.name
+							};
+						}
+						return unlockName;
+					})
+					.catch((err) => {
+						log.debug(err);
+					})
 			);
 			alertPromise = Promise.all(promiseList);
-		}
-		else {
-			alertPromise = new Promise(resolve => resolve(false));
+		} else {
+			alertPromise = new Promise((resolve) => resolve(false));
 		}
 		return alertPromise;
 	});
@@ -151,23 +136,20 @@ export function displayEntity(req: PassportRequest, res: $Response) {
 
 			const markup = ReactDOMServer.renderToString(
 				<Layout {...propHelpers.extractLayoutProps(props)}>
-					<EntityComponent
-						{...propHelpers.extractEntityProps(props)}
-					/>
+					<EntityComponent {...propHelpers.extractEntityProps(props)} />
 				</Layout>
 			);
-			res.send(target({
-				markup,
-				page: entityName,
-				props: escapeProps(props),
-				script: '/js/entity/entity.js',
-				title: `${getEntityLabel(props.entity, false)} (${_.upperFirst(entityName)})`
-			}));
-		}
-		else {
-			throw new Error(
-				`Component was not found for the following entity:${entityName}`
+			res.send(
+				target({
+					markup,
+					page: entityName,
+					props: escapeProps(props),
+					script: '/js/entity/entity.js',
+					title: `${getEntityLabel(props.entity, false)} (${_.upperFirst(entityName)})`
+				})
 			);
+		} else {
+			throw new Error(`Component was not found for the following entity:${entityName}`);
 		}
 	});
 }
@@ -177,19 +159,24 @@ export function displayDeleteEntity(req: PassportRequest, res: $Response) {
 
 	const markup = ReactDOMServer.renderToString(
 		<Layout {...propHelpers.extractLayoutProps(props)}>
-			<DeletionForm entity={props.entity}/>
+			<DeletionForm entity={props.entity} />
 		</Layout>
 	);
 
-	res.send(target({
-		markup,
-		props: escapeProps(props),
-		script: '/js/deletion.js'
-	}));
+	res.send(
+		target({
+			markup,
+			props: escapeProps(props),
+			script: '/js/deletion.js'
+		})
+	);
 }
 
 export async function displayRevisions(
-	req: PassportRequest, res: $Response, next: NextFunction, RevisionModel: any
+	req: PassportRequest,
+	res: $Response,
+	next: NextFunction,
+	RevisionModel: any
 ) {
 	const size = _.isString(req.query.size) ? parseInt(req.query.size, 10) : 20;
 	const from = _.isString(req.query.from) ? parseInt(req.query.from, 10) : 0;
@@ -197,8 +184,17 @@ export async function displayRevisions(
 	const {bbid} = req.params;
 	try {
 		// get 1 more revision than required to check nextEnabled
-		const orderedRevisions = await getOrderedRevisionsForEntityPage(orm, from, size + 1, RevisionModel, bbid);
-		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(orderedRevisions, size);
+		const orderedRevisions = await getOrderedRevisionsForEntityPage(
+			orm,
+			from,
+			size + 1,
+			RevisionModel,
+			bbid
+		);
+		const {newResultsArray, nextEnabled} = utils.getNextEnabledAndResultsArray(
+			orderedRevisions,
+			size
+		);
 		const props = generateProps(req, res, {
 			from,
 			nextEnabled,
@@ -210,37 +206,43 @@ export async function displayRevisions(
 
 		const markup = ReactDOMServer.renderToString(
 			<Layout {...propHelpers.extractLayoutProps(props)}>
-				<EntityRevisions
-					entity={props.entity}
-					{...propHelpers.extractChildProps(props)}
-				/>
+				<EntityRevisions entity={props.entity} {...propHelpers.extractChildProps(props)} />
 			</Layout>
 		);
-		return res.send(target({
-			markup,
-			page: 'revisions',
-			props: escapeProps(props),
-			script: '/js/entity/entity.js'
-		}));
-	}
-	catch (err) {
+		return res.send(
+			target({
+				markup,
+				page: 'revisions',
+				props: escapeProps(props),
+				script: '/js/entity/entity.js'
+			})
+		);
+	} catch (err) {
 		return next(err);
 	}
 }
 
 // eslint-disable-next-line consistent-return
 export async function updateDisplayedRevisions(
-	req: PassportRequest, res: $Response, next: NextFunction, RevisionModel: any
+	req: PassportRequest,
+	res: $Response,
+	next: NextFunction,
+	RevisionModel: any
 ) {
 	const size = _.isString(req.query.size) ? parseInt(req.query.size, 10) : 20;
 	const from = _.isString(req.query.from) ? parseInt(req.query.from, 10) : 0;
 	const {orm}: any = req.app.locals;
 	const {bbid} = req.params;
 	try {
-		const orderedRevisions = await getOrderedRevisionsForEntityPage(orm, from, size, RevisionModel, bbid);
+		const orderedRevisions = await getOrderedRevisionsForEntityPage(
+			orm,
+			from,
+			size,
+			RevisionModel,
+			bbid
+		);
 		res.send(orderedRevisions);
-	}
-	catch (err) {
+	} catch (err) {
 		return next(err);
 	}
 }
@@ -253,8 +255,7 @@ function _createNote(orm, content, editorID, revision, transacting) {
 			authorId: editorID,
 			content,
 			revisionId
-		})
-			.save(null, {transacting});
+		}).save(null, {transacting});
 	}
 
 	return null;
@@ -266,10 +267,8 @@ export function addNoteToRevision(req: PassportRequest, res: $Response) {
 	const editorJSON = req.session.passport.user;
 	const revision = Revision.forge({id: req.params.id});
 	const {body}: {body: any} = req;
-	const revisionNotePromise = bookshelf.transaction(
-		(transacting) => _createNote(
-			orm, body.note, editorJSON.id, revision, transacting
-		)
+	const revisionNotePromise = bookshelf.transaction((transacting) =>
+		_createNote(orm, body.note, editorJSON.id, revision, transacting)
 	);
 	return handler.sendPromiseResult(res, revisionNotePromise);
 }
@@ -284,46 +283,45 @@ export async function getEntityByBBID(orm: any, transacting: Transaction, bbid: 
 
 async function setParentRevisions(transacting, newRevision, parentRevisionIDs) {
 	if (_.isEmpty(parentRevisionIDs)) {
-		return new Promise(resolve => resolve(null));
+		return new Promise((resolve) => resolve(null));
 	}
 
 	// Get the parents of the new revision
-	const parents =
-		await newRevision.related('parents').fetch({transacting});
+	const parents = await newRevision.related('parents').fetch({transacting});
 
 	// Add the previous revision as a parent of this revision.
 	return parents.attach(parentRevisionIDs, {transacting});
 }
 
-
 async function saveEntitiesAndFinishRevision(
-	orm, transacting, isNew: boolean, newRevision: any, mainEntity: any,
-	updatedEntities: any[], editorID: number, note: string
+	orm,
+	transacting,
+	isNew: boolean,
+	newRevision: any,
+	mainEntity: any,
+	updatedEntities: any[],
+	editorID: number,
+	note: string
 ) {
-	const parentRevisionIDs = _.compact(_.uniq(updatedEntities.map(
-		(entityModel) => entityModel.get('revisionId')
-	)));
+	const parentRevisionIDs = _.compact(
+		_.uniq(updatedEntities.map((entityModel) => entityModel.get('revisionId')))
+	);
 
 	const entitiesSavedPromise = Promise.all(
 		_.map(updatedEntities, (entityModel) => {
 			entityModel.set('revisionId', newRevision.get('id'));
 
-			const shouldInsert =
-				entityModel.get('bbid') === mainEntity.get('bbid') && isNew;
+			const shouldInsert = entityModel.get('bbid') === mainEntity.get('bbid') && isNew;
 			const method = shouldInsert ? 'insert' : 'update';
 			return entityModel.save(null, {method, transacting});
 		})
 	);
 
-	const editorUpdatePromise =
-		utils.incrementEditorEditCountById(orm, editorID, transacting);
+	const editorUpdatePromise = utils.incrementEditorEditCountById(orm, editorID, transacting);
 
-	const notePromise = _createNote(
-		orm, note, editorID, newRevision, transacting
-	);
+	const notePromise = _createNote(orm, note, editorID, newRevision, transacting);
 
-	const parentsAddedPromise =
-		setParentRevisions(transacting, newRevision, parentRevisionIDs);
+	const parentsAddedPromise = setParentRevisions(transacting, newRevision, parentRevisionIDs);
 
 	/** model.save returns a refreshed model */
 	// eslint-disable-next-line no-unused-vars
@@ -334,7 +332,10 @@ async function saveEntitiesAndFinishRevision(
 		notePromise
 	]);
 
-	return savedEntities.find(entityModel => entityModel.get('bbid') === mainEntity.get('bbid')) || mainEntity;
+	return (
+		savedEntities.find((entityModel) => entityModel.get('bbid') === mainEntity.get('bbid')) ||
+		mainEntity
+	);
 }
 
 export async function deleteRelationships(orm: any, transacting: Transaction, mainEntity: any) {
@@ -351,8 +352,7 @@ export async function deleteRelationships(orm: any, transacting: Transaction, ma
 		relationshipSet.relationships.forEach((relationship) => {
 			if (relationship.sourceBbid === mainBBID) {
 				otherBBIDs.push(relationship.targetBbid);
-			}
-			else if (relationship.targetBbid === mainBBID) {
+			} else if (relationship.targetBbid === mainBBID) {
 				otherBBIDs.push(relationship.sourceBbid);
 			}
 		});
@@ -362,56 +362,69 @@ export async function deleteRelationships(orm: any, transacting: Transaction, ma
 			if (otherBBIDs.length === 0) {
 				return [];
 			}
-			await Promise.all(otherBBIDs.map(async (entityBbid) => {
-				const otherEntity = await getEntityByBBID(orm, transacting, entityBbid);
+			await Promise.all(
+				otherBBIDs.map(async (entityBbid) => {
+					const otherEntity = await getEntityByBBID(orm, transacting, entityBbid);
 
-				const otherEntityRelationshipSet = await otherEntity.relationshipSet()
-					.fetch({require: false, transacting, withRelated: 'relationships'});
+					const otherEntityRelationshipSet = await otherEntity
+						.relationshipSet()
+						.fetch({require: false, transacting, withRelated: 'relationships'});
 
-				if (_.isNil(otherEntityRelationshipSet)) {
-					return;
-				}
+					if (_.isNil(otherEntityRelationshipSet)) {
+						return;
+					}
 
-				// Fetch other entity relationships to remove relation with the deleted entity
-				let otherEntityRelationships = otherEntityRelationshipSet.related('relationships').toJSON();
+					// Fetch other entity relationships to remove relation with the deleted entity
+					let otherEntityRelationships = otherEntityRelationshipSet
+						.related('relationships')
+						.toJSON();
 
-				// Filter out entites related to deleted entity
-				otherEntityRelationships = otherEntityRelationships.filter(({sourceBbid, targetBbid}) =>
-					mainBBID !== sourceBbid && mainBBID !== targetBbid);
+					// Filter out entites related to deleted entity
+					otherEntityRelationships = otherEntityRelationships.filter(
+						({sourceBbid, targetBbid}) =>
+							mainBBID !== sourceBbid && mainBBID !== targetBbid
+					);
 
-				const newRelationshipSet = await orm.func.relationship.updateRelationshipSets(
-					orm, transacting, otherEntityRelationshipSet, otherEntityRelationships
-				);
+					const newRelationshipSet = await orm.func.relationship.updateRelationshipSets(
+						orm,
+						transacting,
+						otherEntityRelationshipSet,
+						otherEntityRelationships
+					);
 
-				otherEntity.set(
-					'relationshipSetId',
-					newRelationshipSet[entityBbid] ? newRelationshipSet[entityBbid].get('id') : null
-				);
+					otherEntity.set(
+						'relationshipSetId',
+						newRelationshipSet[entityBbid]
+							? newRelationshipSet[entityBbid].get('id')
+							: null
+					);
 
-				otherEntities.push(otherEntity);
-			}));
+					otherEntities.push(otherEntity);
+				})
+			);
 		}
 	}
 
 	return otherEntities;
 }
 
-function fetchOrCreateMainEntity(
-	orm, transacting, isNew, bbid, entityType
-) {
+function fetchOrCreateMainEntity(orm, transacting, isNew, bbid, entityType) {
 	const model = commonUtils.getEntityModelByType(orm, entityType);
 
 	const entity = model.forge({bbid});
 
 	if (isNew) {
-		return new Promise(resolve => resolve(entity));
+		return new Promise((resolve) => resolve(entity));
 	}
 
 	return entity.fetch({transacting});
 }
 
 export function handleDelete(
-	orm: any, req: PassportRequest, res: $Response, HeaderModel: any,
+	orm: any,
+	req: PassportRequest,
+	res: $Response,
+	HeaderModel: any,
 	RevisionModel: any
 ) {
 	const {entity}: {entity?: any} = res.locals;
@@ -421,7 +434,9 @@ export function handleDelete(
 
 	const entityDeletePromise = bookshelf.transaction(async (transacting) => {
 		if (!body.note || !body.note.length) {
-			throw new error.FormSubmissionError('A revision note is required when deleting an entity');
+			throw new error.FormSubmissionError(
+				'A revision note is required when deleting an entity'
+			);
 		}
 
 		const otherEntities = await deleteRelationships(orm, transacting, entity);
@@ -450,20 +465,23 @@ export function handleDelete(
 		}).save(null, {transacting});
 
 		const mainEntity = await fetchOrCreateMainEntity(
-			orm, transacting, false, entity.bbid, entity.type
+			orm,
+			transacting,
+			false,
+			entity.bbid,
+			entity.type
 		);
 
-		const savedMainEntity =
-			await saveEntitiesAndFinishRevision(
-				orm,
-				transacting,
-				false,
-				newRevision,
-				mainEntity,
-				otherEntities,
-				editorJSON.id,
-				body.note
-			);
+		const savedMainEntity = await saveEntitiesAndFinishRevision(
+			orm,
+			transacting,
+			false,
+			newRevision,
+			mainEntity,
+			otherEntities,
+			editorJSON.id,
+			body.note
+		);
 
 		return savedMainEntity;
 	});
@@ -471,7 +489,14 @@ export function handleDelete(
 	return handler.sendPromiseResult(res, entityDeletePromise, search.deleteEntity);
 }
 
-export async function processMergeOperation(orm, transacting, session, mainEntity, allEntities, relationshipSets) {
+export async function processMergeOperation(
+	orm,
+	transacting,
+	session,
+	mainEntity,
+	allEntities,
+	relationshipSets
+) {
 	const {Edition, bookshelf} = orm;
 	const {mergingEntities} = session.mergeQueue;
 	if (!mergingEntities) {
@@ -486,44 +511,58 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 	const entitiesToMergeBBIDs = _.without(Object.keys(mergingEntities), currentEntityBBID);
 	let allEntitiesReturnArray = allEntities;
 	// fetch entities we're merging to add them to to the array of modified entities
-	const entitiesToMerge = _.values(mergingEntities).filter(({bbid}) => bbid !== currentEntityBBID);
+	const entitiesToMerge = _.values(mergingEntities).filter(
+		({bbid}) => bbid !== currentEntityBBID
+	);
 
-	const entitiesModelsToMerge = await Promise.all(entitiesToMergeBBIDs
-		.map(bbid => fetchOrCreateMainEntity(orm, transacting, false, bbid, entityType)));
+	const entitiesModelsToMerge = await Promise.all(
+		entitiesToMergeBBIDs.map((bbid) =>
+			fetchOrCreateMainEntity(orm, transacting, false, bbid, entityType)
+		)
+	);
 
 	/** Add entities to be merged to the array of modified entities */
 	allEntitiesReturnArray = _.unionBy(allEntitiesReturnArray, entitiesModelsToMerge, 'id');
 
 	/** Remove relationships that concern entities being merged from already modified relationshipSets */
-	await Promise.all(_.map(relationshipSets, async (relationshipSet) => {
-		/** Some items in this object may be null */
-		if (relationshipSet) {
-			/** Refresh RelationshipSet to fetch both existing and new relationships */
-			const refreshedrelationshipSet = await relationshipSet
-				.refresh({transacting, withRelated: 'relationships'});
+	await Promise.all(
+		_.map(relationshipSets, async (relationshipSet) => {
+			/** Some items in this object may be null */
+			if (relationshipSet) {
+				/** Refresh RelationshipSet to fetch both existing and new relationships */
+				const refreshedrelationshipSet = await relationshipSet.refresh({
+					transacting,
+					withRelated: 'relationships'
+				});
 
-			/** Find relationships with entities being merge and remove them from set */
-			const relationshipsToRemove = refreshedrelationshipSet
-				.related('relationships').toJSON()
-				.filter(({sourceBbid, targetBbid}) => _.includes(entitiesToMergeBBIDs, sourceBbid) ||
-					_.includes(entitiesToMergeBBIDs, targetBbid))
-				.map(({id}) => id);
-			if (relationshipsToRemove.length) {
-				await refreshedrelationshipSet
+				/** Find relationships with entities being merge and remove them from set */
+				const relationshipsToRemove = refreshedrelationshipSet
 					.related('relationships')
-					.detach(relationshipsToRemove, {transacting});
+					.toJSON()
+					.filter(
+						({sourceBbid, targetBbid}) =>
+							_.includes(entitiesToMergeBBIDs, sourceBbid) ||
+							_.includes(entitiesToMergeBBIDs, targetBbid)
+					)
+					.map(({id}) => id);
+				if (relationshipsToRemove.length) {
+					await refreshedrelationshipSet
+						.related('relationships')
+						.detach(relationshipsToRemove, {transacting});
+				}
 			}
-		}
-	}));
+		})
+	);
 
 	/**
 	 * Fetch each merged entity, get its relationships, then fetch the related entity for each relationship.
 	 * Then on the related entity's side, remove any relationship with merged entities from its relationship set
 	 */
-	await Promise.all(entitiesModelsToMerge.map(
-		async entity => {
+	await Promise.all(
+		entitiesModelsToMerge.map(async (entity) => {
 			const entityBBID = entity.get('bbid');
-			const relationshipSet = await entity.relationshipSet()
+			const relationshipSet = await entity
+				.relationshipSet()
 				.fetch({require: false, transacting, withRelated: 'relationships'});
 			if (!relationshipSet) {
 				return;
@@ -534,45 +573,54 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 				.reduce((accumulator, relationship) => {
 					if (relationship.sourceBbid === entityBBID) {
 						accumulator.push(relationship.targetBbid);
-					}
-					else if (relationship.targetBbid === entityBBID) {
+					} else if (relationship.targetBbid === entityBBID) {
 						accumulator.push(relationship.sourceBbid);
 					}
 					return accumulator;
 				}, [])
 				// Ignore entities that already have a modified relationshipSet (dealed with above)
-				.filter(bbid => !_.includes(_.keys(relationshipSets), bbid));
+				.filter((bbid) => !_.includes(_.keys(relationshipSets), bbid));
 
-			await Promise.all(otherEntitiesToFetch.map(
-				async (bbid) => {
+			await Promise.all(
+				otherEntitiesToFetch.map(async (bbid) => {
 					const otherEntity = await getEntityByBBID(orm, transacting, bbid);
 
-					const otherEntityRelationshipSet = await entity.relationshipSet()
+					const otherEntityRelationshipSet = await entity
+						.relationshipSet()
 						.fetch({require: false, transacting, withRelated: 'relationships'});
 					if (!otherEntityRelationshipSet) {
 						return;
 					}
-					const otherEntityRelationships = otherEntityRelationshipSet.related('relationships').toJSON();
+					const otherEntityRelationships = otherEntityRelationshipSet
+						.related('relationships')
+						.toJSON();
 
 					// Remove relationships with entity being merged
-					const cleanedUpRelationships = otherEntityRelationships
-						.filter(({sourceBbid, targetBbid}) =>
-							entityBBID !== sourceBbid &&
-							entityBBID !== targetBbid);
+					const cleanedUpRelationships = otherEntityRelationships.filter(
+						({sourceBbid, targetBbid}) =>
+							entityBBID !== sourceBbid && entityBBID !== targetBbid
+					);
 
 					// If there's a difference, apply the new relationships array without rels to merged entity
 					if (cleanedUpRelationships.length !== otherEntityRelationships.length) {
 						const updatedRelationshipSets = await orm.func.relationship.updateRelationshipSets(
-							orm, transacting, otherEntityRelationshipSet, cleanedUpRelationships
+							orm,
+							transacting,
+							otherEntityRelationshipSet,
+							cleanedUpRelationships
 						);
 						// Make sure the entity is later updated with its new relationshipSet id
-						allEntitiesReturnArray = _.unionBy(allEntitiesReturnArray, [otherEntity], 'id');
+						allEntitiesReturnArray = _.unionBy(
+							allEntitiesReturnArray,
+							[otherEntity],
+							'id'
+						);
 						_.assign(relationshipSets, _.pick(updatedRelationshipSets, bbid));
 					}
-				}
-			));
-		}
-	));
+				})
+			);
+		})
+	);
 
 	/** Special cases per entity type*/
 
@@ -581,16 +629,19 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 	 * We need to set each Edition's edition_group_bbid to the target entity BBID
 	 */
 	if (entityType === 'EditionGroup') {
-		const editionsToSet = await Edition.query(
-			qb => qb
-				.whereIn('edition_group_bbid', entitiesToMergeBBIDs)
-				.andWhere('master', true)
-		)
-			.fetchAll({require: false, transacting});
+		const editionsToSet = await Edition.query((qb) =>
+			qb.whereIn('edition_group_bbid', entitiesToMergeBBIDs).andWhere('master', true)
+		).fetchAll({require: false, transacting});
 		if (editionsToSet.length) {
-			editionsToSet.forEach(editionModel => editionModel.set({editionGroupBbid: currentEntityBBID}));
+			editionsToSet.forEach((editionModel) =>
+				editionModel.set({editionGroupBbid: currentEntityBBID})
+			);
 			// Add the modified Editions to the revision
-			allEntitiesReturnArray = _.unionBy(allEntitiesReturnArray, editionsToSet.toArray(), 'id');
+			allEntitiesReturnArray = _.unionBy(
+				allEntitiesReturnArray,
+				editionsToSet.toArray(),
+				'id'
+			);
 		}
 	}
 
@@ -600,27 +651,35 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 	 */
 	if (entityType === 'Publisher') {
 		try {
-			const editionsToSetCollections = await Promise.all(entitiesModelsToMerge.map(entitiesModel => entitiesModel.editions()));
+			const editionsToSetCollections = await Promise.all(
+				entitiesModelsToMerge.map((entitiesModel) => entitiesModel.editions())
+			);
 			// eslint-disable-next-line consistent-return
-			let editionsToSet = _.flatMap(editionsToSetCollections, edition => {
+			let editionsToSet = _.flatMap(editionsToSetCollections, (edition) => {
 				if (edition.models && edition.models.length) {
 					return edition.models;
 				}
 			});
 			// Remove 'undefined' entries (no editions in those publishers)
 			editionsToSet = _.reject(editionsToSet, _.isNil);
-			await Promise.all(editionsToSet.map(async (edition) => {
-				// Fetch current PublisherSet
-				const oldPublisherSet = await edition.publisherSet();
-				// Create a new PublisherSet pointing to the main entity
-				const newPublisherSet = await orm.func.publisher.updatePublisherSet(orm, transacting, oldPublisherSet, [{bbid: currentEntityBBID}]);
-				// Set the new PublisherSet on the Edition
-				edition.set('publisherSetId', newPublisherSet.get('id'));
-				// Add the modified Edition to the revision (if it doesn't exist yet)
-				allEntitiesReturnArray = _.unionBy(allEntitiesReturnArray, [edition], 'id');
-			}));
-		}
-		catch (err) {
+			await Promise.all(
+				editionsToSet.map(async (edition) => {
+					// Fetch current PublisherSet
+					const oldPublisherSet = await edition.publisherSet();
+					// Create a new PublisherSet pointing to the main entity
+					const newPublisherSet = await orm.func.publisher.updatePublisherSet(
+						orm,
+						transacting,
+						oldPublisherSet,
+						[{bbid: currentEntityBBID}]
+					);
+					// Set the new PublisherSet on the Edition
+					edition.set('publisherSetId', newPublisherSet.get('id'));
+					// Add the modified Edition to the revision (if it doesn't exist yet)
+					allEntitiesReturnArray = _.unionBy(allEntitiesReturnArray, [edition], 'id');
+				})
+			);
+		} catch (err) {
 			log.error(err);
 			throw err;
 		}
@@ -628,7 +687,7 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 
 	/**
 	 * Some actions we only want to take once the main entity has been saved
-	*/
+	 */
 	mainEntity.once('saved', async (model) => {
 		/**
 		 * Set isMerge to true on the *entity*_revision models
@@ -637,8 +696,7 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 		 * We only want to set isMerge to true on the entities we're merging,
 		 * not the other entities potentially affected by the merge -> .where(…
 		 */
-		const newEntityRevision = await model.revision()
-			.fetch({transacting});
+		const newEntityRevision = await model.revision().fetch({transacting});
 
 		await newEntityRevision
 			.where('bbid', currentEntityBBID)
@@ -646,7 +704,7 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 
 		/* Also set dataID to null for slave entities to 'delete' them */
 		await newEntityRevision
-			.query(qb => qb.whereIn('bbid', entitiesToMergeBBIDs))
+			.query((qb) => qb.whereIn('bbid', entitiesToMergeBBIDs))
 			.save({dataId: null, isMerge: true}, {patch: true, transacting});
 
 		/** Clear the merge queue */
@@ -654,31 +712,38 @@ export async function processMergeOperation(orm, transacting, session, mainEntit
 		try {
 			/* Remove merged entities from search results */
 			await Promise.all(entitiesToMerge.map(search.deleteEntity));
-		}
-		catch (err) {
+		} catch (err) {
 			log.debug(err);
 		}
 	});
 
 	/** Update the redirection table to redirect merged entities' bbids
 	 *  to currentEntityBBID (the entity we're merging into)
-	*/
-	await bookshelf.knex('bookbrainz.entity_redirect')
+	 */
+	await bookshelf
+		.knex('bookbrainz.entity_redirect')
 		.transacting(transacting)
-		.insert(entitiesToMergeBBIDs.map(bbid => (
-			// eslint-disable-next-line camelcase
-			{source_bbid: bbid, target_bbid: currentEntityBBID})));
+		.insert(
+			entitiesToMergeBBIDs.map((bbid) =>
+				// eslint-disable-next-line camelcase
+				({source_bbid: bbid, target_bbid: currentEntityBBID})
+			)
+		);
 
 	return allEntitiesReturnArray;
 }
 
 type ProcessEditionSetsBody = {
-	languages: Array<Language>,
-	publishers: Array<Publisher>,
-	releaseEvents: Array<ReleaseEvent>
+	languages: Array<Language>;
+	publishers: Array<Publisher>;
+	releaseEvents: Array<ReleaseEvent>;
 };
 
-type ProcessEditionSetsResult = {languageSetId: number[], publisherSetId: number[], releaseEventSetId: number[]};
+type ProcessEditionSetsResult = {
+	languageSetId: number[];
+	publisherSetId: number[];
+	releaseEventSetId: number[];
+};
 async function processEditionSets(
 	orm: any,
 	currentEntity: Record<string, unknown> | null | undefined,
@@ -687,41 +752,47 @@ async function processEditionSets(
 ): Promise<ProcessEditionSetsResult> {
 	const languageSetID = _.get(currentEntity, ['languageSet', 'id']);
 
-	const oldLanguageSet = await (
-		languageSetID &&
-		orm.LanguageSet.forge({id: languageSetID})
-			.fetch({transacting, withRelated: ['languages']})
-	);
+	const oldLanguageSet = await (languageSetID &&
+		orm.LanguageSet.forge({id: languageSetID}).fetch({
+			transacting,
+			withRelated: ['languages']
+		}));
 
 	const languages = _.get(body, 'languages') || [];
-	const newLanguageSetIDPromise = orm.func.language.updateLanguageSet(
-		orm, transacting, oldLanguageSet,
-		languages.map((languageID) => ({id: languageID}))
-	)
+	const newLanguageSetIDPromise = orm.func.language
+		.updateLanguageSet(
+			orm,
+			transacting,
+			oldLanguageSet,
+			languages.map((languageID) => ({id: languageID}))
+		)
 		.then((set) => set && set.get('id'));
 
 	const publisherSetID = _.get(currentEntity, ['publisherSet', 'id']);
 
-	const oldPublisherSet = await (
-		publisherSetID &&
-		orm.PublisherSet.forge({id: publisherSetID})
-			.fetch({transacting, withRelated: ['publishers']})
-	);
+	const oldPublisherSet = await (publisherSetID &&
+		orm.PublisherSet.forge({id: publisherSetID}).fetch({
+			transacting,
+			withRelated: ['publishers']
+		}));
 
 	const publishers = _.get(body, 'publishers') || [];
-	const newPublisherSetIDPromise = orm.func.publisher.updatePublisherSet(
-		orm, transacting, oldPublisherSet,
-		publishers.map((publisherBBID) => ({bbid: publisherBBID}))
-	)
+	const newPublisherSetIDPromise = orm.func.publisher
+		.updatePublisherSet(
+			orm,
+			transacting,
+			oldPublisherSet,
+			publishers.map((publisherBBID) => ({bbid: publisherBBID}))
+		)
 		.then((set) => set && set.get('id'));
 
 	const releaseEventSetID = _.get(currentEntity, ['releaseEventSet', 'id']);
 
-	const oldReleaseEventSet = await (
-		releaseEventSetID &&
-		orm.ReleaseEventSet.forge({id: releaseEventSetID})
-			.fetch({transacting, withRelated: ['releaseEvents']})
-	);
+	const oldReleaseEventSet = await (releaseEventSetID &&
+		orm.ReleaseEventSet.forge({id: releaseEventSetID}).fetch({
+			transacting,
+			withRelated: ['releaseEvents']
+		}));
 
 	const releaseEvents = _.get(body, 'releaseEvents') || [];
 
@@ -737,11 +808,9 @@ async function processEditionSets(
 		}
 	}
 
-	const newReleaseEventSetIDPromise =
-		orm.func.releaseEvent.updateReleaseEventSet(
-			orm, transacting, oldReleaseEventSet, releaseEvents
-		)
-			.then((set) => set && set.get('id'));
+	const newReleaseEventSetIDPromise = orm.func.releaseEvent
+		.updateReleaseEventSet(orm, transacting, oldReleaseEventSet, releaseEvents)
+		.then((set) => set && set.get('id'));
 
 	return commonUtils.makePromiseFromObject<ProcessEditionSetsResult>({
 		languageSetId: newLanguageSetIDPromise,
@@ -752,23 +821,26 @@ async function processEditionSets(
 
 type ProcessWorkSetsResult = {languageSetId: number[]};
 async function processWorkSets(
-	orm, currentEntity: Record<string, unknown> | null | undefined, body: {languages: Array<Language>},
+	orm,
+	currentEntity: Record<string, unknown> | null | undefined,
+	body: {languages: Array<Language>},
 	transacting: Transaction
 ): Promise<ProcessWorkSetsResult> {
 	const id = _.get(currentEntity, ['languageSet', 'id']);
 
-	const oldSet = await (
-		id &&
-		orm.LanguageSet.forge({id})
-			.fetch({transacting, withRelated: ['languages']})
-	);
+	const oldSet = await (id &&
+		orm.LanguageSet.forge({id}).fetch({transacting, withRelated: ['languages']}));
 
 	const languages = _.get(body, 'languages') || [];
 	return commonUtils.makePromiseFromObject<ProcessWorkSetsResult>({
-		languageSetId: orm.func.language.updateLanguageSet(
-			orm, transacting, oldSet,
-			languages.map((languageID) => ({id: languageID}))
-		).then((set) => set && set.get('id'))
+		languageSetId: orm.func.language
+			.updateLanguageSet(
+				orm,
+				transacting,
+				oldSet,
+				languages.map((languageID) => ({id: languageID}))
+			)
+			.then((set) => set && set.get('id'))
 	});
 }
 
@@ -787,22 +859,21 @@ function processEntitySets(
 		return processWorkSets(orm, currentEntity, body, transacting);
 	}
 
-	return new Promise(resolve => resolve(null));
+	return new Promise((resolve) => resolve(null));
 }
-
 
 async function getNextAliasSet(orm, transacting, currentEntity, body) {
 	const {AliasSet} = orm;
 
 	const id = _.get(currentEntity, ['aliasSet', 'id']);
 
-	const oldAliasSet = await (
-		id &&
-		new AliasSet({id}).fetch({require: false, transacting, withRelated: ['aliases']})
-	);
+	const oldAliasSet = await (id &&
+		new AliasSet({id}).fetch({require: false, transacting, withRelated: ['aliases']}));
 
 	return orm.func.alias.updateAliasSet(
-		orm, transacting, oldAliasSet,
+		orm,
+		transacting,
+		oldAliasSet,
 		oldAliasSet && oldAliasSet.get('defaultAliasId'),
 		body.aliases || []
 	);
@@ -813,53 +884,57 @@ async function getNextIdentifierSet(orm, transacting, currentEntity, body) {
 
 	const id = _.get(currentEntity, ['identifierSet', 'id']);
 
-	const oldIdentifierSet = await (
-		id &&
+	const oldIdentifierSet = await (id &&
 		new IdentifierSet({id}).fetch({
 			require: false,
-			transacting, withRelated: ['identifiers']
-		})
-	);
+			transacting,
+			withRelated: ['identifiers']
+		}));
 
 	return orm.func.identifier.updateIdentifierSet(
-		orm, transacting, oldIdentifierSet, body.identifiers || []
+		orm,
+		transacting,
+		oldIdentifierSet,
+		body.identifiers || []
 	);
 }
 
-async function getNextRelationshipSets(
-	orm, transacting, currentEntity, body
-) {
+async function getNextRelationshipSets(orm, transacting, currentEntity, body) {
 	const {RelationshipSet} = orm;
 
 	const id = _.get(currentEntity, ['relationshipSet', 'id']);
 
-	const oldRelationshipSet = await (
-		id &&
+	const oldRelationshipSet = await (id &&
 		new RelationshipSet({id}).fetch({
 			require: false,
-			transacting, withRelated: ['relationships']
-		})
-	);
+			transacting,
+			withRelated: ['relationships']
+		}));
 
 	return orm.func.relationship.updateRelationshipSets(
-		orm, transacting, oldRelationshipSet, body.relationships || []
+		orm,
+		transacting,
+		oldRelationshipSet,
+		body.relationships || []
 	);
 }
 
-async function getNextAnnotation(
-	orm, transacting, currentEntity, body, revision
-) {
+async function getNextAnnotation(orm, transacting, currentEntity, body, revision) {
 	const {Annotation} = orm;
 
 	const id = _.get(currentEntity, ['annotation', 'id']);
 
-	const oldAnnotation = await (
-		id && new Annotation({id}).fetch({require: false, transacting})
-	);
+	const oldAnnotation = await (id && new Annotation({id}).fetch({require: false, transacting}));
 
-	return body.annotation ? orm.func.annotation.updateAnnotation(
-		orm, transacting, oldAnnotation, body.annotation, revision
-	) : new Promise(resolve => resolve(null));
+	return body.annotation
+		? orm.func.annotation.updateAnnotation(
+				orm,
+				transacting,
+				oldAnnotation,
+				body.annotation,
+				revision
+		  )
+		: new Promise((resolve) => resolve(null));
 }
 
 async function getNextDisambiguation(orm, transacting, currentEntity, body) {
@@ -867,47 +942,55 @@ async function getNextDisambiguation(orm, transacting, currentEntity, body) {
 
 	const id = _.get(currentEntity, ['disambiguation', 'id']);
 
-	const oldDisambiguation = await (
-		id && new Disambiguation({id}).fetch({require: false, transacting})
-	);
+	const oldDisambiguation = await (id &&
+		new Disambiguation({id}).fetch({require: false, transacting}));
 
 	return orm.func.disambiguation.updateDisambiguation(
-		orm, transacting, oldDisambiguation, body.disambiguation
+		orm,
+		transacting,
+		oldDisambiguation,
+		body.disambiguation
 	);
 }
 
 async function getChangedProps(
-	orm, transacting, isNew, currentEntity, body, entityType,
-	newRevision, derivedProps
+	orm,
+	transacting,
+	isNew,
+	currentEntity,
+	body,
+	entityType,
+	newRevision,
+	derivedProps
 ) {
-	const aliasSetPromise =
-		getNextAliasSet(orm, transacting, currentEntity, body);
+	const aliasSetPromise = getNextAliasSet(orm, transacting, currentEntity, body);
 
-	const identSetPromise =
-		getNextIdentifierSet(orm, transacting, currentEntity, body);
+	const identSetPromise = getNextIdentifierSet(orm, transacting, currentEntity, body);
 
-	const annotationPromise = getNextAnnotation(
-		orm, transacting, currentEntity, body, newRevision
+	const annotationPromise = getNextAnnotation(orm, transacting, currentEntity, body, newRevision);
+
+	const disambiguationPromise = getNextDisambiguation(orm, transacting, currentEntity, body);
+
+	const entitySetIdsPromise = processEntitySets(
+		orm,
+		currentEntity,
+		entityType,
+		body,
+		transacting
 	);
 
-	const disambiguationPromise =
-		getNextDisambiguation(orm, transacting, currentEntity, body);
-
-	const entitySetIdsPromise =
-		processEntitySets(orm, currentEntity, entityType, body, transacting);
-
-	const [
-		aliasSet, identSet, annotation, disambiguation, entitySetIds
-	] = await Promise.all([
-		aliasSetPromise, identSetPromise, annotationPromise,
-		disambiguationPromise, entitySetIdsPromise
+	const [aliasSet, identSet, annotation, disambiguation, entitySetIds] = await Promise.all([
+		aliasSetPromise,
+		identSetPromise,
+		annotationPromise,
+		disambiguationPromise,
+		entitySetIdsPromise
 	]);
 
 	const propsToSet = {
 		aliasSetId: aliasSet && aliasSet.get('id'),
 		annotationId: annotation && annotation.get('id'),
-		disambiguationId:
-			disambiguation && disambiguation.get('id'),
+		disambiguationId: disambiguation && disambiguation.get('id'),
 		identifierSetId: identSet && identSet.get('id'),
 		...derivedProps,
 		...entitySetIds
@@ -918,30 +1001,27 @@ async function getChangedProps(
 	}
 
 	// Construct a set of differences between the new values and old
-	return _.reduce(propsToSet, (result, value, key) => {
-		if (!_.isEqual(value, currentEntity[key]) &&
-			// If both items are null or undefined, consider them equal (null !=== undefined)
-			!(_.isNil(value) && _.isNil(currentEntity[key]))
-		) {
-			result[key] = value;
-		}
+	return _.reduce(
+		propsToSet,
+		(result, value, key) => {
+			if (
+				!_.isEqual(value, currentEntity[key]) &&
+				// If both items are null or undefined, consider them equal (null !=== undefined)
+				!(_.isNil(value) && _.isNil(currentEntity[key]))
+			) {
+				result[key] = value;
+			}
 
-		return result;
-	}, {});
+			return result;
+		},
+		{}
+	);
 }
 
+function fetchEntitiesForRelationships(orm, transacting, currentEntity, relationshipSets) {
+	const bbidsToFetch = _.without(_.keys(relationshipSets), _.get(currentEntity, 'bbid'));
 
-function fetchEntitiesForRelationships(
-	orm, transacting, currentEntity, relationshipSets
-) {
-	const bbidsToFetch = _.without(
-		_.keys(relationshipSets), _.get(currentEntity, 'bbid')
-	);
-
-	return Promise.all(bbidsToFetch.map(
-		(bbid) =>
-			getEntityByBBID(orm, transacting, bbid)
-	));
+	return Promise.all(bbidsToFetch.map((bbid) => getEntityByBBID(orm, transacting, bbid)));
 }
 
 /**
@@ -955,15 +1035,13 @@ async function indexAutoCreatedEditionGroup(orm, newEdition, transacting) {
 	const {EditionGroup} = orm;
 	const bbid = newEdition.get('editionGroupBbid');
 	try {
-		const editionGroup = await new EditionGroup({bbid})
-			.fetch({
-				require: true,
-				transacting,
-				withRelated: 'aliasSet.aliases'
-			});
+		const editionGroup = await new EditionGroup({bbid}).fetch({
+			require: true,
+			transacting,
+			withRelated: 'aliasSet.aliases'
+		});
 		await search.indexEntity(editionGroup.toJSON());
-	}
-	catch (err) {
+	} catch (err) {
 		log.error('Could not reindex edition group after edition creation:', err);
 	}
 }
@@ -982,14 +1060,17 @@ export function handleCreateOrEditEntity(
 	const {body}: {body: any} = req;
 	const {locals: resLocals}: {locals: any} = res;
 
-	let currentEntity: {
-		aliasSet: {id: number} | null | undefined,
-		annotation: {id: number} | null | undefined,
-		bbid: string,
-		disambiguation: {id: number} | null | undefined,
-		identifierSet: {id: number} | null | undefined,
-		type: EntityTypeString
-	} | null | undefined = resLocals.entity;
+	let currentEntity:
+		| {
+				aliasSet: {id: number} | null | undefined;
+				annotation: {id: number} | null | undefined;
+				bbid: string;
+				disambiguation: {id: number} | null | undefined;
+				identifierSet: {id: number} | null | undefined;
+				type: EntityTypeString;
+		  }
+		| null
+		| undefined = resLocals.entity;
 
 	const entityEditPromise = bookshelf.transaction(async (transacting) => {
 		try {
@@ -997,8 +1078,9 @@ export function handleCreateOrEditEntity(
 			const isNew = !currentEntity;
 
 			if (isNew) {
-				const newEntity = await new Entity({type: entityType})
-					.save(null, {transacting});
+				const newEntity = await new Entity({type: entityType}).save(null, {
+					transacting
+				});
 				const newEntityBBID = newEntity.get('bbid');
 				body.relationships = _.map(
 					body.relationships,
@@ -1019,12 +1101,21 @@ export function handleCreateOrEditEntity(
 			}).save(null, {transacting});
 
 			const relationshipSets = await getNextRelationshipSets(
-				orm, transacting, currentEntity, body
+				orm,
+				transacting,
+				currentEntity,
+				body
 			);
 
 			const changedProps = await getChangedProps(
-				orm, transacting, isNew, currentEntity, body, entityType,
-				newRevision, derivedProps
+				orm,
+				transacting,
+				isNew,
+				currentEntity,
+				body,
+				entityType,
+				newRevision,
+				derivedProps
 			);
 
 			// If there are no differences, bail
@@ -1034,25 +1125,41 @@ export function handleCreateOrEditEntity(
 
 			// Fetch or create main entity
 			const mainEntity = await fetchOrCreateMainEntity(
-				orm, transacting, isNew, currentEntity.bbid, entityType
+				orm,
+				transacting,
+				isNew,
+				currentEntity.bbid,
+				entityType
 			);
 
 			// Fetch all entities that definitely exist
 			const otherEntities = await fetchEntitiesForRelationships(
-				orm, transacting, currentEntity, relationshipSets
+				orm,
+				transacting,
+				currentEntity,
+				relationshipSets
 			);
-			otherEntities.forEach(entity => { entity.shouldInsert = false; });
+			otherEntities.forEach((entity) => {
+				entity.shouldInsert = false;
+			});
 			mainEntity.shouldInsert = isNew;
 
 			_.forOwn(changedProps, (value, key) => mainEntity.set(key, value));
 
 			// Don't try to modify 'deleted' entities (those with no dataId)
-			let allEntities = [...otherEntities, mainEntity]
-				.filter(entity => entity.get('dataId') !== null);
+			let allEntities = [...otherEntities, mainEntity].filter(
+				(entity) => entity.get('dataId') !== null
+			);
 
 			if (isMergeOperation) {
-				allEntities = await processMergeOperation(orm, transacting, req.session,
-					mainEntity, allEntities, relationshipSets);
+				allEntities = await processMergeOperation(
+					orm,
+					transacting,
+					req.session,
+					mainEntity,
+					allEntities,
+					relationshipSets
+				);
 			}
 
 			_.forEach(allEntities, (entityModel) => {
@@ -1067,8 +1174,14 @@ export function handleCreateOrEditEntity(
 			});
 
 			const savedMainEntity = await saveEntitiesAndFinishRevision(
-				orm, transacting, isNew, newRevision, mainEntity, allEntities,
-				editorJSON.id, body.note
+				orm,
+				transacting,
+				isNew,
+				newRevision,
+				mainEntity,
+				allEntities,
+				editorJSON.id,
+				body.note
 			);
 
 			/* We need to load the aliases for search reindexing and refresh it*/
@@ -1084,59 +1197,52 @@ export function handleCreateOrEditEntity(
 				}
 			}
 
-
 			return savedMainEntity.toJSON();
-		}
-		catch (err) {
+		} catch (err) {
 			log.error(err);
 			throw err;
 		}
 	});
 
-	const achievementPromise = entityEditPromise.then(
-		(entityJSON) => achievement.processEdit(
-			orm, editorJSON.id, entityJSON.revisionId
-		)
+	const achievementPromise = entityEditPromise.then((entityJSON) =>
+		achievement
+			.processEdit(orm, editorJSON.id, entityJSON.revisionId)
 			.then((unlock) => {
 				if (unlock.alert) {
 					entityJSON.alert = unlock.alert;
 				}
 				return entityJSON;
 			})
-			.catch(err => { throw err; })
+			.catch((err) => {
+				throw err;
+			})
 	);
 
-	return handler.sendPromiseResult(
-		res,
-		achievementPromise,
-		search.indexEntity
-	);
+	return handler.sendPromiseResult(res, achievementPromise, search.indexEntity);
 }
 
 type AliasEditorT = {
-	language: number | null | undefined,
-	name: string,
-	primary: boolean,
-	sortName: string
+	language: number | null | undefined;
+	name: string;
+	primary: boolean;
+	sortName: string;
 };
 
 type NameSectionT = {
-	disambiguation: string,
-	language: number | null | undefined,
-	name: string,
-	sortName: string,
-	id: string
+	disambiguation: string;
+	language: number | null | undefined;
+	name: string;
+	sortName: string;
+	id: string;
 };
 
 export function constructAliases(
-	aliasEditor: {[propName: string]: AliasEditorT}, nameSection: NameSectionT
+	aliasEditor: {[propName: string]: AliasEditorT},
+	nameSection: NameSectionT
 ) {
 	const aliases = _.map(
 		aliasEditor,
-		(
-			{language: languageId, name, primary, sortName}: AliasEditorT,
-			id
-		) => ({
+		({language: languageId, name, primary, sortName}: AliasEditorT, id) => ({
 			default: false,
 			id,
 			languageId,
@@ -1146,29 +1252,30 @@ export function constructAliases(
 		})
 	);
 
-	return [{
-		default: true,
-		id: nameSection.id,
-		languageId: nameSection.language,
-		name: nameSection.name,
-		primary: true,
-		sortName: nameSection.sortName
-	}, ...aliases];
+	return [
+		{
+			default: true,
+			id: nameSection.id,
+			languageId: nameSection.language,
+			name: nameSection.name,
+			primary: true,
+			sortName: nameSection.sortName
+		},
+		...aliases
+	];
 }
 
 type IdentifierEditorT = {
-	type: number,
-	value: string
+	type: number;
+	value: string;
 };
 
-export function constructIdentifiers(
-	identifierEditor: {[propName: string]: IdentifierEditorT}
-) {
-	return _.map(
-		identifierEditor,
-		({type: typeId, value}: IdentifierEditorT, id: string) =>
-			({id, typeId, value})
-	);
+export function constructIdentifiers(identifierEditor: {[propName: string]: IdentifierEditorT}) {
+	return _.map(identifierEditor, ({type: typeId, value}: IdentifierEditorT, id: string) => ({
+		id,
+		typeId,
+		value
+	}));
 }
 
 export function constructRelationships(relationshipSection) {
@@ -1207,16 +1314,13 @@ export function getDefaultAliasIndex(aliasSet) {
 			defaultAliasIdNumber = Number(defaultAliasId);
 		}
 		index = aliases.findIndex((alias) => alias.id === defaultAliasIdNumber);
-	}
-	else {
+	} else {
 		index = aliases.findIndex((alias) => alias.default);
 	}
 	return index > 0 ? index : 0;
 }
 
-export function areaToOption(
-	area: {comment: string, id: number, name: string}
-) {
+export function areaToOption(area: {comment: string; id: number; name: string}) {
 	if (!area) {
 		return null;
 	}

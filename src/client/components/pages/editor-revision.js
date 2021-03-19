@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import RevisionsTable from './parts/revisions-table';
 
-
 class EditorRevisionPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -59,7 +58,6 @@ class EditorRevisionPage extends React.Component {
 		);
 	}
 }
-
 
 EditorRevisionPage.displayName = 'EditorRevisionPage';
 EditorRevisionPage.propTypes = {

@@ -19,7 +19,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 /**
  * This class is derived from the React Component base class and renders
  * an image which supports drag and drop functionality.

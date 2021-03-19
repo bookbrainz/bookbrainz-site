@@ -23,43 +23,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {faSlash} from '@fortawesome/free-solid-svg-icons';
 
-
 const {Image} = bootstrap;
 
 function EntityImage({backupIcon, deleted, imageUrl}) {
 	if (imageUrl) {
-		return (
-			<Image
-				responsive
-				src={imageUrl}
-			/>
-		);
+		return <Image responsive src={imageUrl} />;
 	}
 
 	if (deleted) {
 		return (
 			<div className="entity-display-icon fa-layers fa-fw">
-				<FontAwesomeIcon
-					icon={backupIcon}
-					key="entityIcon"
-					size="5x"
-					stack="1x"
-				/>,
-				<FontAwesomeIcon
-					icon={faSlash}
-					key="deletedIcon"
-					size="5x"
-					stack="1x"
-				/>
-			</div>);
+				<FontAwesomeIcon icon={backupIcon} key="entityIcon" size="5x" stack="1x" />,
+				<FontAwesomeIcon icon={faSlash} key="deletedIcon" size="5x" stack="1x" />
+			</div>
+		);
 	}
 
 	return (
 		<div className="entity-display-icon">
-			<FontAwesomeIcon
-				icon={backupIcon}
-				size="5x"
-			/>
+			<FontAwesomeIcon icon={backupIcon} size="5x" />
 		</div>
 	);
 }

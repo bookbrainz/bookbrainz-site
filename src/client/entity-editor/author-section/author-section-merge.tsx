@@ -17,7 +17,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as React from 'react';
 import * as _ from 'lodash';
 
@@ -32,7 +31,6 @@ import {
 	updateType
 } from './actions';
 
-
 import {convertMapToObject, labelsForAuthor} from '../../helpers/utils';
 import {entityToOption, transformISODateForSelect} from '../../helpers/entity';
 import type {Dispatch} from 'redux';
@@ -41,54 +39,50 @@ import LinkedEntity from '../common/linked-entity';
 import MergeField from '../common/merge-field';
 import {connect} from 'react-redux';
 
-
 type AuthorType = {
-	label: string,
-	id: number
+	label: string;
+	id: number;
 };
 
 type GenderOptions = {
-	name: string,
-	id: number
+	name: string;
+	id: number;
 };
 
 type Area = {
-	disambiguation: string | null | undefined,
-	id: string | number,
-	text: string,
-	type: string
+	disambiguation: string | null | undefined;
+	id: string | number;
+	text: string;
+	type: string;
 };
-
 
 type StateProps = {
-	beginAreaLabel: string,
-	beginAreaValue: Map<string, any>,
-	beginDateLabel: string,
-	beginDateValue: string,
-	endAreaLabel: string,
-	endAreaValue: Map<string, any>,
-	endDateLabel: string,
-	endDateValue: string,
-	endedChecked: boolean,
-	endedLabel: string,
-	genderValue: number,
-	typeValue: number
+	beginAreaLabel: string;
+	beginAreaValue: Map<string, any>;
+	beginDateLabel: string;
+	beginDateValue: string;
+	endAreaLabel: string;
+	endAreaValue: Map<string, any>;
+	endDateLabel: string;
+	endDateValue: string;
+	endedChecked: boolean;
+	endedLabel: string;
+	genderValue: number;
+	typeValue: number;
 };
-
 
 type DispatchProps = {
-	onBeginAreaChange: (arg: Area | null | undefined) => unknown,
-	onBeginDateChange: (arg: string) => unknown,
-	onEndAreaChange: (arg: Area | null | undefined) => unknown,
-	onEndDateChange: (arg: string) => unknown,
-	onEndedChange: (arg: boolean) => unknown,
-	onGenderChange: (value: number | null) => unknown,
-	onTypeChange: (value: number | null) => unknown
+	onBeginAreaChange: (arg: Area | null | undefined) => unknown;
+	onBeginDateChange: (arg: string) => unknown;
+	onEndAreaChange: (arg: Area | null | undefined) => unknown;
+	onEndDateChange: (arg: string) => unknown;
+	onEndedChange: (arg: boolean) => unknown;
+	onGenderChange: (value: number | null) => unknown;
+	onTypeChange: (value: number | null) => unknown;
 };
 
-
 type OwnProps = {
-	mergingEntities: any[]
+	mergingEntities: any[];
 };
 
 export type Props = StateProps & DispatchProps & OwnProps;
@@ -169,12 +163,18 @@ function AuthorSectionMerge({
 	const genderOptions = [];
 	const typeOptions = [];
 
-	mergingEntities.forEach(entity => {
-		const typeOption = !_.isNil(entity.authorType) && {label: entity.authorType.label, value: entity.authorType.id};
+	mergingEntities.forEach((entity) => {
+		const typeOption = !_.isNil(entity.authorType) && {
+			label: entity.authorType.label,
+			value: entity.authorType.id
+		};
 		if (typeOption && !_.find(typeOptions, ['value', typeOption.value])) {
 			typeOptions.push(typeOption);
 		}
-		const gender = !_.isNil(entity.gender) && {label: entity.gender.name, value: entity.gender.id};
+		const gender = !_.isNil(entity.gender) && {
+			label: entity.gender.name,
+			value: entity.gender.id
+		};
 		if (gender && !_.find(genderOptions, ['value', gender.value])) {
 			genderOptions.push(gender);
 		}
@@ -182,12 +182,18 @@ function AuthorSectionMerge({
 		if (beginDate && !_.find(beginDateOptions, ['value', beginDate.value])) {
 			beginDateOptions.push(beginDate);
 		}
-		const beginArea = !_.isNil(entity.beginArea) && {label: entity.beginArea.name, value: entityToOption(entity.beginArea)};
+		const beginArea = !_.isNil(entity.beginArea) && {
+			label: entity.beginArea.name,
+			value: entityToOption(entity.beginArea)
+		};
 		if (beginArea && !_.find(beginAreaOptions, ['value.id', beginArea.value.id])) {
 			beginAreaOptions.push(beginArea);
 		}
 
-		const ended = !_.isNil(entity.ended) && {label: entity.ended ? 'Yes' : 'No', value: entity.ended};
+		const ended = !_.isNil(entity.ended) && {
+			label: entity.ended ? 'Yes' : 'No',
+			value: entity.ended
+		};
 		if (ended && !_.find(endedOptions, ['value', ended.value])) {
 			endedOptions.push(ended);
 		}
@@ -195,7 +201,10 @@ function AuthorSectionMerge({
 		if (endDate && !_.find(endDateOptions, ['value', endDate.value])) {
 			endDateOptions.push(endDate);
 		}
-		const endArea = !_.isNil(entity.endArea) && {label: entity.endArea.name, value: entityToOption(entity.endArea)};
+		const endArea = !_.isNil(entity.endArea) && {
+			label: entity.endArea.name,
+			value: entityToOption(entity.endArea)
+		};
 		if (endArea && !_.find(endAreaOptions, ['value.id', endArea.value.id])) {
 			endAreaOptions.push(endArea);
 		}
@@ -238,7 +247,7 @@ function AuthorSectionMerge({
 				options={endedOptions}
 				onChange={onEndedChange}
 			/>
-			{endedChecked &&
+			{endedChecked && (
 				<React.Fragment>
 					<MergeField
 						currentValue={formattedEndDateValue}
@@ -255,7 +264,7 @@ function AuthorSectionMerge({
 						onChange={onEndAreaChange}
 					/>
 				</React.Fragment>
-			}
+			)}
 		</form>
 	);
 }
@@ -266,7 +275,7 @@ export function mapStateToProps(rootState, {mergingEntities}: OwnProps): StatePr
 
 	const typeValue = state.get('type');
 
-	const authorTypes = mergingEntities.map(entity => entity.authorType);
+	const authorTypes = mergingEntities.map((entity) => entity.authorType);
 
 	const isGroup = _.uniqBy(authorTypes, 'id').find((type) => type && type.label === 'Group');
 
@@ -297,17 +306,12 @@ export function mapStateToProps(rootState, {mergingEntities}: OwnProps): StatePr
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 	return {
 		onBeginAreaChange: (value) => dispatch(updateBeginArea(value)),
-		onBeginDateChange: (dateString) =>
-			dispatch(debouncedUpdateBeginDate(dateString)),
+		onBeginDateChange: (dateString) => dispatch(debouncedUpdateBeginDate(dateString)),
 		onEndAreaChange: (value) => dispatch(updateEndArea(value)),
-		onEndDateChange: (dateString) =>
-			dispatch(debouncedUpdateEndDate(dateString)),
-		onEndedChange: (value) =>
-			dispatch(updateEnded(value)),
-		onGenderChange: (value) =>
-			dispatch(updateGender(value)),
-		onTypeChange: (value) =>
-			dispatch(updateType(value))
+		onEndDateChange: (dateString) => dispatch(debouncedUpdateEndDate(dateString)),
+		onEndedChange: (value) => dispatch(updateEnded(value)),
+		onGenderChange: (value) => dispatch(updateGender(value)),
+		onTypeChange: (value) => dispatch(updateType(value))
 	};
 }
 

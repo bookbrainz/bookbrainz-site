@@ -28,13 +28,11 @@ import Layout from '../../client/containers/layout';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import RegisterAuthPage from '../../client/components/pages/registration-auth';
-import RegisterDetailPage from
-	'../../client/components/forms/registration-details';
+import RegisterDetailPage from '../../client/components/forms/registration-details';
 import _ from 'lodash';
 import express from 'express';
 import log from 'log';
 import target from '../templates/target';
-
 
 const router = express.Router();
 
@@ -48,7 +46,7 @@ router.get('/', (req, res) => {
 
 	const markup = ReactDOMServer.renderToString(
 		<Layout {...propHelpers.extractLayoutProps(props)}>
-			<RegisterAuthPage/>
+			<RegisterAuthPage />
 		</Layout>
 	);
 
@@ -77,20 +75,18 @@ router.get('/details', middleware.loadGenders, (req, res) => {
 
 	const markup = ReactDOMServer.renderToString(
 		<Layout {...propHelpers.extractLayoutProps(props)}>
-			<RegisterDetailPage
-				gender={props.gender}
-				genders={props.genders}
-				name={props.name}
-			/>
+			<RegisterDetailPage gender={props.gender} genders={props.genders} name={props.name} />
 		</Layout>
 	);
 
-	return res.send(target({
-		markup,
-		props: escapeProps(props),
-		script: '/js/registrationDetails.js',
-		title: 'Register'
-	}));
+	return res.send(
+		target({
+			markup,
+			props: escapeProps(props),
+			script: '/js/registrationDetails.js',
+			title: 'Register'
+		})
+	);
 });
 
 router.post('/handler', (req, res) => {
@@ -117,8 +113,7 @@ router.post('/handler', (req, res) => {
 					metabrainzUserId: req.session.mbProfile.metabrainz_user_id,
 					name: req.body.displayName,
 					typeId: editorType.id
-				})
-					.save()
+				}).save()
 		)
 		.then((editor) => {
 			req.session.mbProfile = null;
@@ -128,9 +123,7 @@ router.post('/handler', (req, res) => {
 			const editorForES = {};
 			editorForES.bbid = editorJSON.id;
 			editorForES.aliasSet = {
-				aliases: [
-					{name: editorJSON.name}
-				]
+				aliases: [{name: editorJSON.name}]
 			};
 			editorForES.type = 'Editor';
 			return editorForES;
@@ -141,8 +134,8 @@ router.post('/handler', (req, res) => {
 			if (_.isMatch(err, {constraint: 'editor_name_key'})) {
 				throw new error.FormSubmissionError(
 					'That username already exists - please try using another,' +
-					' or contact us to have your existing BookBrainz account' +
-					' linked to a MusicBrainz account.'
+						' or contact us to have your existing BookBrainz account' +
+						' linked to a MusicBrainz account.'
 				);
 			}
 

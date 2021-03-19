@@ -44,15 +44,8 @@ import {connect} from 'react-redux';
  * @returns {ReactElement} React element containing the rendered
  *          SubmissionSection.
  */
-function SubmissionSection({
-	errorText,
-	formValid,
-	onNoteChange,
-	onSubmit,
-	submitted
-}) {
-	const errorAlertClass =
-		classNames('text-center', 'margin-top-1', {hidden: !errorText});
+function SubmissionSection({errorText, formValid, onNoteChange, onSubmit, submitted}) {
+	const errorAlertClass = classNames('text-center', 'margin-top-1', {hidden: !errorText});
 
 	const editNoteLabel = (
 		<span>
@@ -63,9 +56,7 @@ function SubmissionSection({
 
 	return (
 		<div>
-			<h2>
-				Submit Your Edit
-			</h2>
+			<h2>Submit Your Edit</h2>
 			<Row>
 				<Col md={6} mdOffset={3}>
 					<CustomInput
@@ -84,11 +75,7 @@ function SubmissionSection({
 				</Col>
 			</Row>
 			<div className="text-center margin-top-1">
-				<Button
-					bsStyle="success"
-					disabled={!formValid || submitted}
-					onClick={onSubmit}
-				>
+				<Button bsStyle="success" disabled={!formValid || submitted} onClick={onSubmit}>
 					Submit
 				</Button>
 			</div>
@@ -116,11 +103,9 @@ function mapStateToProps(rootState, {validate, identifierTypes}) {
 	};
 }
 
-
 function mapDispatchToProps(dispatch, {submissionUrl}) {
 	return {
-		onNoteChange: (event) =>
-			dispatch(debounceUpdateRevisionNote(event.target.value)),
+		onNoteChange: (event) => dispatch(debounceUpdateRevisionNote(event.target.value)),
 		onSubmit: () => dispatch(submit(submissionUrl))
 	};
 }

@@ -19,7 +19,6 @@
 import {snakeCase as _snakeCase, isString, remove, uniqBy} from 'lodash';
 import request from 'superagent';
 
-
 export const UPDATE_DISAMBIGUATION_FIELD = 'UPDATE_DISAMBIGUATION_FIELD';
 export const UPDATE_LANGUAGE_FIELD = 'UPDATE_LANGUAGE_FIELD';
 export const UPDATE_NAME_FIELD = 'UPDATE_NAME_FIELD';
@@ -28,11 +27,11 @@ export const UPDATE_WARN_IF_EXISTS = 'UPDATE_WARN_IF_EXISTS';
 export const UPDATE_SEARCH_RESULTS = 'UPDATE_SEARCH_RESULTS';
 
 export type Action = {
-	type: string,
-	payload?: unknown,
+	type: string;
+	payload?: unknown;
 	meta?: {
-		debounce?: string
-	}
+		debounce?: string;
+	};
 };
 
 /**
@@ -90,9 +89,7 @@ export function updateLanguageField(newLanguageId: number | null | undefined): A
  *        disambiguation.
  * @returns {Action} The resulting UPDATE_SORT_NAME_FIELD action.
  */
-export function debouncedUpdateDisambiguationField(
-	newDisambiguation: string
-): Action {
+export function debouncedUpdateDisambiguationField(newDisambiguation: string): Action {
 	return {
 		meta: {debounce: 'keystroke'},
 		payload: newDisambiguation,
@@ -122,7 +119,8 @@ export function checkIfNameExists(
 	 * @param  {function} dispatch - The redux dispatch function.
 	 */
 	return async (dispatch) => {
-		if (!name ||
+		if (
+			!name ||
 			_snakeCase(entityType) === 'edition' ||
 			(_snakeCase(entityType) === 'edition_group' && action === UPDATE_WARN_IF_EXISTS)
 		) {
@@ -133,11 +131,10 @@ export function checkIfNameExists(
 			return;
 		}
 		try {
-			const res = await request.get('/search/exists')
-				.query({
-					q: name,
-					type: _snakeCase(entityType)
-				});
+			const res = await request.get('/search/exists').query({
+				q: name,
+				type: _snakeCase(entityType)
+			});
 
 			let payload = JSON.parse(res.text) || null;
 			if (Array.isArray(payload)) {
@@ -151,8 +148,7 @@ export function checkIfNameExists(
 				payload,
 				type: action || UPDATE_WARN_IF_EXISTS
 			});
-		}
-		catch (error) {
+		} catch (error) {
 			// eslint-disable-next-line no-console
 			console.error(error);
 		}
@@ -185,12 +181,13 @@ export function searchName(
 			});
 			return;
 		}
-		request.get('/search/autocomplete')
+		request
+			.get('/search/autocomplete')
 			.query({
 				q: name,
 				type
 			})
-			.then(res => {
+			.then((res) => {
 				const searchResults = JSON.parse(res.text);
 				// Filter out the current entity (if any)
 				if (isString(entityBBID)) {

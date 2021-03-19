@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {hot} from 'react-hot-loader';
 
-
 const {Button, Grid, Row} = bootstrap;
 
 /**
@@ -55,19 +54,12 @@ function ErrorPage(props) {
 					detailedMessage.map((message, idx) => (
 						// eslint-disable-next-line react/no-array-index-key
 						<Row key={`detailedMsg${idx}`}>
-							<span>
-								{message}
-							</span>
+							<span>{message}</span>
 						</Row>
-					))
-				}
+					))}
 			</div>
 			<Row className="margin-top-1">
-				<Button
-					bsSize="small"
-					bsStyle="link"
-					href="/"
-				>
+				<Button bsSize="small" bsStyle="link" href="/">
 					Return to Main Page
 				</Button>
 			</Row>

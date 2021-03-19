@@ -23,10 +23,7 @@
 
 import * as helpers from './helpers';
 import {applyMiddleware, compose, createStore} from 'redux';
-import {
-	extractChildProps,
-	extractLayoutProps
-} from '../helpers/props';
+import {extractChildProps, extractLayoutProps} from '../helpers/props';
 import {AppContainer} from 'react-hot-loader';
 import EntityEditor from './entity-editor';
 import EntityMerge from './entity-merge';
@@ -38,10 +35,12 @@ import ReactDOM from 'react-dom';
 import ReduxThunk from 'redux-thunk';
 import createDebounce from 'redux-debounce';
 
-
 const {
-	createRootReducer, getValidator, getEntitySection,
-	getEntitySectionMerge, shouldDevToolsBeInjected
+	createRootReducer,
+	getValidator,
+	getEntitySection,
+	getEntitySectionMerge,
+	shouldDevToolsBeInjected
 } = helpers;
 
 const KEYSTROKE_DEBOUNCE_TIME = 250;
@@ -50,11 +49,11 @@ const propsTarget = document.getElementById('props');
 const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 const {initialState, ...rest} = props;
 
-
 const rootReducer = createRootReducer(props.entityType);
 const debouncer = createDebounce({keystroke: KEYSTROKE_DEBOUNCE_TIME});
-const composeEnhancers = shouldDevToolsBeInjected() ?
-	window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose;
+const composeEnhancers = shouldDevToolsBeInjected()
+	? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+	: compose;
 
 const getEntityEditor = () => {
 	let Editor;
@@ -62,17 +61,13 @@ const getEntityEditor = () => {
 	if (props.mergingEntities) {
 		EntitySection = getEntitySectionMerge(props.entityType);
 		Editor = EntityMerge;
-	}
-	else {
+	} else {
 		EntitySection = getEntitySection(props.entityType);
 		Editor = EntityEditor;
 	}
 	return (
-		<Editor
-			validate={getValidator(props.entityType)}
-			{...extractChildProps(rest)}
-		>
-			<EntitySection/>
+		<Editor validate={getValidator(props.entityType)} {...extractChildProps(rest)}>
+			<EntitySection />
 		</Editor>
 	);
 };
@@ -85,9 +80,7 @@ const store = createStore(
 const markup = (
 	<AppContainer>
 		<Layout {...extractLayoutProps(rest)}>
-			<Provider store={store}>
-				{getEntityEditor()}
-			</Provider>
+			<Provider store={store}>{getEntityEditor()}</Provider>
 		</Layout>
 	</AppContainer>
 );

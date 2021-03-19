@@ -16,7 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as bootstrap from 'react-bootstrap';
 import {faPlus, faSave, faTimes, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {trim, uniqBy} from 'lodash';
@@ -30,7 +29,6 @@ import ReactSelect from 'react-select';
 import SelectWrapper from '../input/select-wrapper';
 import classNames from 'classnames';
 import request from 'superagent';
-
 
 const {Alert, Button, ButtonGroup, Col} = bootstrap;
 
@@ -84,19 +82,22 @@ class UserCollectionForm extends React.Component {
 		let submissionURL;
 		if (this.props.collection.id) {
 			submissionURL = `/collection/${this.props.collection.id}/edit/handler`;
-		}
-		else {
+		} else {
 			submissionURL = '/collection/create/handler';
 		}
-		request.post(submissionURL)
+		request
+			.post(submissionURL)
 			.send(data)
-			.then((res) => {
-				window.location.href = `/collection/${res.body.id}`;
-			}, (error) => {
-				this.setState({
-					errorText: 'Internal Error'
-				});
-			});
+			.then(
+				(res) => {
+					window.location.href = `/collection/${res.body.id}`;
+				},
+				(error) => {
+					this.setState({
+						errorText: 'Internal Error'
+					});
+				}
+			);
 	}
 
 	isValid() {
@@ -104,18 +105,23 @@ class UserCollectionForm extends React.Component {
 	}
 
 	getCleanedCollaborators() {
-		const cleanedCollaborators = uniqBy(this.state.collaborators.filter(collaborator => collaborator && collaborator.id !== null), 'id');
+		const cleanedCollaborators = uniqBy(
+			this.state.collaborators.filter(
+				(collaborator) => collaborator && collaborator.id !== null
+			),
+			'id'
+		);
 		return cleanedCollaborators;
 	}
 
 	handleAddCollaborator() {
-		this.setState(prevState => ({
+		this.setState((prevState) => ({
 			collaborators: [...prevState.collaborators, {id: null, name: ''}]
 		}));
 	}
 
 	handleRemoveCollaborator(index) {
-		this.setState(prevState => ({
+		this.setState((prevState) => ({
 			collaborators: prevState.collaborators.splice(index, 1) && prevState.collaborators
 		}));
 	}
@@ -127,8 +133,7 @@ class UserCollectionForm extends React.Component {
 				id: null,
 				name: ''
 			};
-		}
-		else {
+		} else {
 			newCollaborator = newCollab;
 		}
 
@@ -157,17 +162,18 @@ class UserCollectionForm extends React.Component {
 		const privacyOptions = ['Private', 'Public'].map((option) => ({
 			name: option
 		}));
-		const entityTypeOptions = ['Author', 'Work', 'Edition', 'Edition-Group', 'Publisher'].map((entity) => ({
-			name: entity
-		}));
+		const entityTypeOptions = ['Author', 'Work', 'Edition', 'Edition-Group', 'Publisher'].map(
+			(entity) => ({
+				name: entity
+			})
+		);
 		const initialName = this.state.collection.name;
 		const initialDescription = this.state.collection.description;
 		const initialType = this.state.collection.entityType;
 		let initialPrivacy;
 		if (this.props.collection.name) {
 			initialPrivacy = this.state.collection.public ? 'Public' : 'Private';
-		}
-		else {
+		} else {
 			initialPrivacy = 'Public';
 		}
 		const {errorText} = this.state;
@@ -186,25 +192,18 @@ class UserCollectionForm extends React.Component {
 					onCloseModal={this.handleCloseModal}
 				/>
 				<div>
-					<Col
-						id="collectionForm"
-						md={8}
-						mdOffset={2}
-					>
-						<form
-							className="padding-sides-0"
-							onSubmit={this.handleSubmit}
-						>
+					<Col id="collectionForm" md={8} mdOffset={2}>
+						<form className="padding-sides-0" onSubmit={this.handleSubmit}>
 							<CustomInput
 								defaultValue={initialName}
 								label="Name"
-								ref={(ref) => this.name = ref}
+								ref={(ref) => (this.name = ref)}
 								type="text"
 							/>
 							<CustomInput
 								defaultValue={initialDescription}
 								label="Description"
-								ref={(ref) => this.description = ref}
+								ref={(ref) => (this.description = ref)}
 								type="textarea"
 							/>
 							<SelectWrapper
@@ -216,7 +215,7 @@ class UserCollectionForm extends React.Component {
 								labelAttribute="name"
 								options={entityTypeOptions}
 								placeholder="Select Entity Type"
-								ref={(ref) => this.entityType = ref}
+								ref={(ref) => (this.entityType = ref)}
 							/>
 							<SelectWrapper
 								base={ReactSelect}
@@ -226,13 +225,15 @@ class UserCollectionForm extends React.Component {
 								labelAttribute="name"
 								options={privacyOptions}
 								placeholder="Select Privacy"
-								ref={(ref) => this.privacy = ref}
+								ref={(ref) => (this.privacy = ref)}
 							/>
-							<h3><b>Collaborators</b></h3>
+							<h3>
+								<b>Collaborators</b>
+							</h3>
 							<div className="row margin-bottom-2">
 								<div className="col-sm-6 margin-top-d5">
 									<p className="help-block">
-								Collaborators can add/remove entities from your collection
+										Collaborators can add/remove entities from your collection
 									</p>
 								</div>
 								<div className="col-sm-6 margin-top-d5">
@@ -240,73 +241,70 @@ class UserCollectionForm extends React.Component {
 										block
 										bsStyle="primary"
 										type="button"
-										onClick={this.handleAddCollaborator}
-									>
-										<FontAwesomeIcon icon={faPlus}/>
+										onClick={this.handleAddCollaborator}>
+										<FontAwesomeIcon icon={faPlus} />
 										&nbsp;Add another collaborator
 									</Button>
 								</div>
 							</div>
-							{
-								this.state.collaborators.map((collaborator, index) => {
-									const buttonAfter = (
-										<Button
-											bsSize="small"
-											bsStyle="danger"
-											type="button"
-											onClick={() => this.handleRemoveCollaborator(index)}
-										>
-											<FontAwesomeIcon icon={faTimes}/>&nbsp;Remove
-										</Button>
-									);
-									return (
-										<div key={collaborator.id}>
-											<EntitySearchFieldOption
-												buttonAfter={buttonAfter}
-												instanceId="collaboratorSearchField"
-												label="Select Collaborator"
-												name="editor"
-												type="editor"
-												value={collaborator}
-												onChange={(newCollaborator) => this.handleChangeCollaborator(newCollaborator, index)}
-											/>
-										</div>
-									);
-								})
-							}
-							<hr/>
+							{this.state.collaborators.map((collaborator, index) => {
+								const buttonAfter = (
+									<Button
+										bsSize="small"
+										bsStyle="danger"
+										type="button"
+										onClick={() => this.handleRemoveCollaborator(index)}>
+										<FontAwesomeIcon icon={faTimes} />
+										&nbsp;Remove
+									</Button>
+								);
+								return (
+									<div key={collaborator.id}>
+										<EntitySearchFieldOption
+											buttonAfter={buttonAfter}
+											instanceId="collaboratorSearchField"
+											label="Select Collaborator"
+											name="editor"
+											type="editor"
+											value={collaborator}
+											onChange={(newCollaborator) =>
+												this.handleChangeCollaborator(
+													newCollaborator,
+													index
+												)
+											}
+										/>
+									</div>
+								);
+							})}
+							<hr />
 							<div className={errorAlertClass}>
 								<Alert bsStyle="danger">Error: {errorText}</Alert>
 							</div>
 							<div className="row margin-bottom-2">
 								<div className="col-sm-6 margin-top-d5">
-									<Button
-										block
-										bsStyle="success"
-										type="submit"
-									>
-										<FontAwesomeIcon icon={faSave}/>&nbsp;{submitLabel}
+									<Button block bsStyle="success" type="submit">
+										<FontAwesomeIcon icon={faSave} />
+										&nbsp;{submitLabel}
 									</Button>
 								</div>
-								{
-									this.props.collection.id ?
-										<div className="col-sm-6 margin-top-d5">
-											<Button
-												block
-												bsStyle="danger"
-												type="button"
-												onClick={this.handleShowModal}
-											>
-												<FontAwesomeIcon icon={faTrashAlt}/>&nbsp;Delete collection
-											</Button>
-										</div> : null
-								}
+								{this.props.collection.id ? (
+									<div className="col-sm-6 margin-top-d5">
+										<Button
+											block
+											bsStyle="danger"
+											type="button"
+											onClick={this.handleShowModal}>
+											<FontAwesomeIcon icon={faTrashAlt} />
+											&nbsp;Delete collection
+										</Button>
+									</div>
+								) : null}
 							</div>
 						</form>
 					</Col>
 				</div>
 			</div>
-
 		);
 	}
 }

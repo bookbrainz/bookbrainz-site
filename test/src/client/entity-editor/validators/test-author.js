@@ -51,10 +51,8 @@ import {
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
-
 
 function describeValidateAuthorSectionBeginArea() {
 	testValidateAreaFunc(validateAuthorSectionBeginArea, false);
@@ -102,9 +100,7 @@ function describeValidateAuthorSection() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateAuthorSection(
-			Immutable.fromJS(VALID_AUTHOR_SECTION)
-		);
+		const result = validateAuthorSection(Immutable.fromJS(VALID_AUTHOR_SECTION));
 		expect(result).to.be.true;
 	});
 
@@ -165,9 +161,7 @@ function describeValidateAuthorSection() {
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateAuthorSection(
-			Immutable.fromJS(INVALID_AUTHOR_SECTION)
-		);
+		const result = validateAuthorSection(Immutable.fromJS(INVALID_AUTHOR_SECTION));
 		expect(result).to.be.false;
 	});
 
@@ -181,7 +175,6 @@ function describeValidateAuthorSection() {
 		expect(result).to.be.true;
 	});
 }
-
 
 function describeValidateForm() {
 	const validForm = {
@@ -198,10 +191,7 @@ function describeValidateForm() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(validForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(validForm), IDENTIFIER_TYPES);
 		expect(result).to.be.true;
 	});
 
@@ -221,7 +211,8 @@ function describeValidateForm() {
 			{
 				...validForm,
 				identifierEditor: INVALID_IDENTIFIERS
-			}, IDENTIFIER_TYPES
+			},
+			IDENTIFIER_TYPES
 		);
 		expect(result).to.be.false;
 	});
@@ -262,14 +253,10 @@ function describeValidateForm() {
 	const invalidForm = {
 		...validForm,
 		authorSection: INVALID_AUTHOR_SECTION
-
 	};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(invalidForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(invalidForm), IDENTIFIER_TYPES);
 		expect(result).to.be.false;
 	});
 
@@ -284,44 +271,16 @@ function describeValidateForm() {
 	});
 }
 
-
 function tests() {
-	describe(
-		'validateAuthorSectionBeginArea',
-		describeValidateAuthorSectionBeginArea
-	);
-	describe(
-		'validateAuthorSectionBeginDate',
-		describeValidateAuthorSectionBeginDate
-	);
-	describe(
-		'validateAuthorSectionEndArea',
-		describeValidateAuthorSectionEndArea
-	);
-	describe(
-		'validateAuthorSectionEndDate',
-		describeValidateAuthorSectionEndDate
-	);
-	describe(
-		'validateAuthorSectionEnded',
-		describeValidateAuthorSectionEnded
-	);
-	describe(
-		'validateAuthorSectionGender',
-		describeValidateAuthorSectionGender
-	);
-	describe(
-		'validateAuthorSectionType',
-		describeValidateAuthorSectionType
-	);
-	describe(
-		'validateAuthorSection',
-		describeValidateAuthorSection
-	);
-	describe(
-		'validateForm',
-		describeValidateForm
-	);
+	describe('validateAuthorSectionBeginArea', describeValidateAuthorSectionBeginArea);
+	describe('validateAuthorSectionBeginDate', describeValidateAuthorSectionBeginDate);
+	describe('validateAuthorSectionEndArea', describeValidateAuthorSectionEndArea);
+	describe('validateAuthorSectionEndDate', describeValidateAuthorSectionEndDate);
+	describe('validateAuthorSectionEnded', describeValidateAuthorSectionEnded);
+	describe('validateAuthorSectionGender', describeValidateAuthorSectionGender);
+	describe('validateAuthorSectionType', describeValidateAuthorSectionType);
+	describe('validateAuthorSection', describeValidateAuthorSection);
+	describe('validateForm', describeValidateForm);
 }
 
 describe('validateAuthorSection* functions', tests);

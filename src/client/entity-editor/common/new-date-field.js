@@ -13,7 +13,6 @@ import {dateIsBefore} from '../validators/base';
 import {faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
 import {transformISODateForDisplay} from '../../helpers/entity';
 
-
 class DateField extends React.Component {
 	constructor(props) {
 		super(props);
@@ -28,9 +27,7 @@ class DateField extends React.Component {
 	}
 
 	updateDate = (day, month, year) => {
-		this.props.onChangeDate(
-			dateObjectToISOString({day, month, year})
-		);
+		this.props.onChangeDate(dateObjectToISOString({day, month, year}));
 
 		this.setState({warn: dateIsBefore(getTodayDate(), {day, month, year})});
 	};
@@ -41,26 +38,17 @@ class DateField extends React.Component {
 
 	handleYearChange = (event) => {
 		const year = event.target.value;
-		this.setState(
-			{year},
-			this.setStateCallback
-		);
+		this.setState({year}, this.setStateCallback);
 	};
 
 	handleMonthChange = (event) => {
 		const month = event.target.value;
-		this.setState(
-			{month},
-			this.setStateCallback
-		);
+		this.setState({month}, this.setStateCallback);
 	};
 
 	handleDayChange = (event) => {
 		const day = event.target.value;
-		this.setState(
-			{day},
-			this.setStateCallback
-		);
+		this.setState({day}, this.setStateCallback);
 	};
 
 	/**
@@ -108,7 +96,11 @@ class DateField extends React.Component {
 		const month = (date.getMonth() + 1).toString();
 		const day = date.getDate().toString();
 		this.setState(
-			{day: this.padMonthOrDay(day), month: this.padMonthOrDay(month), year: this.formatYearForDisplay(year)},
+			{
+				day: this.padMonthOrDay(day),
+				month: this.padMonthOrDay(month),
+				year: this.formatYearForDisplay(year)
+			},
 			this.setStateCallback
 		);
 	};
@@ -121,8 +113,7 @@ class DateField extends React.Component {
 				error={this.props.error}
 				errorMessage={this.props.errorMessage}
 				warn={this.state.warn}
-				warnMessage={warnMessage}
-			>
+				warnMessage={warnMessage}>
 				{this.props.label}
 			</ValidationLabel>
 		);
@@ -133,13 +124,11 @@ class DateField extends React.Component {
 		});
 		const selectedDate = parseISO(dateString);
 		const groupClassName = classNames({hidden: !this.props.show});
-		const isCommonEraDate = Math.sign(this.state.year) === 1 || Math.sign(this.state.year) === 0;
+		const isCommonEraDate =
+			Math.sign(this.state.year) === 1 || Math.sign(this.state.year) === 0;
 		return (
 			<div>
-				<CustomInput
-					groupClassName={groupClassName}
-					label={labelElement}
-				>
+				<CustomInput groupClassName={groupClassName} label={labelElement}>
 					<InputGroup style={{width: '18em'}}>
 						<FormControl
 							maxLength={isCommonEraDate ? 4 : 5}
@@ -175,8 +164,11 @@ class DateField extends React.Component {
 								showMonthDropdown
 								showYearDropdown
 								customInput={
-									<Button bsStyle="info" style={{lineHeight: '1.75', padding: '0.375em 0.938em'}} title="Date picker">
-										<FontAwesomeIcon icon={faCalendarAlt}/>
+									<Button
+										bsStyle="info"
+										style={{lineHeight: '1.75', padding: '0.375em 0.938em'}}
+										title="Date picker">
+										<FontAwesomeIcon icon={faCalendarAlt} />
 									</Button>
 								}
 								dateFormat="uuuuuu-MM-dd"
@@ -189,9 +181,7 @@ class DateField extends React.Component {
 						</InputGroup.Button>
 					</InputGroup>
 				</CustomInput>
-
 			</div>
-
 		);
 	}
 }

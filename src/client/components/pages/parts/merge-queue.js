@@ -24,10 +24,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
-const {
-	Button, ButtonGroup, ListGroup, ListGroupItem, Well
-} = bootstrap;
+const {Button, ButtonGroup, ListGroup, ListGroupItem, Well} = bootstrap;
 
 class MergeQueue extends React.Component {
 	constructor(props) {
@@ -62,26 +59,22 @@ class MergeQueue extends React.Component {
 		let entityList;
 		if (entityCount === 0) {
 			entityList = <div>No entities selected for merge</div>;
-		}
-		else {
+		} else {
 			entityList = (
 				<ListGroup>
-					{values(mergingEntities)
-						.map(entity =>
-							 (
-								<ListGroupItem key={`merge-queue-${entity.bbid}`}>
-
-									<input
-										checked={this.state.selectedOption === entity.bbid}
-										className="margin-right-1"
-										title="Select entity"
-										type="radio"
-										value={entity.bbid}
-										onChange={this.handleOptionChange}
-									/>
-									<EntityLink inline entity={entity}/>
-								</ListGroupItem>
-							))}
+					{values(mergingEntities).map((entity) => (
+						<ListGroupItem key={`merge-queue-${entity.bbid}`}>
+							<input
+								checked={this.state.selectedOption === entity.bbid}
+								className="margin-right-1"
+								title="Select entity"
+								type="radio"
+								value={entity.bbid}
+								onChange={this.handleOptionChange}
+							/>
+							<EntityLink inline entity={entity} />
+						</ListGroupItem>
+					))}
 				</ListGroup>
 			);
 		}
@@ -91,8 +84,11 @@ class MergeQueue extends React.Component {
 				<h3 className="margin-top-0">
 					Selected {entityCount} entit{entityCount > 1 ? 'ies' : 'y'} for merging
 				</h3>
-				<p className="help-block">Select the entity you want to merge into, or add more duplicates to merge.<br/>
-					After clicking <i>Merge into selected entity</i>, you will be redirected to a page where you can review the data before merging.
+				<p className="help-block">
+					Select the entity you want to merge into, or add more duplicates to merge.
+					<br />
+					After clicking <i>Merge into selected entity</i>, you will be redirected to a
+					page where you can review the data before merging.
 				</p>
 				{entityList}
 				<ButtonGroup>
@@ -100,26 +96,20 @@ class MergeQueue extends React.Component {
 						bsStyle="success"
 						disabled={isNil(this.state.selectedOption)}
 						href={`/merge/submit/${this.state.selectedOption}`}
-						title="Merge entities"
-					>
-						<FontAwesomeIcon icon={faTasks}/>
+						title="Merge entities">
+						<FontAwesomeIcon icon={faTasks} />
 						&nbsp;Merge into selected entity
 					</Button>
 					<Button
 						bsStyle="warning"
 						disabled={isNil(this.state.selectedOption)}
 						href={`/merge/remove/${this.state.selectedOption}`}
-						title="Remove from merge"
-					>
-						<FontAwesomeIcon icon={faTrashAlt}/>
+						title="Remove from merge">
+						<FontAwesomeIcon icon={faTrashAlt} />
 						&nbsp;Remove selected entity
 					</Button>
-					<Button
-						bsStyle="danger"
-						href="/merge/cancel"
-						title="Cancel merge"
-					>
-						<FontAwesomeIcon icon={faTrashAlt}/>
+					<Button bsStyle="danger" href="/merge/cancel" title="Cancel merge">
+						<FontAwesomeIcon icon={faTrashAlt} />
 						&nbsp;Cancel merge
 					</Button>
 				</ButtonGroup>

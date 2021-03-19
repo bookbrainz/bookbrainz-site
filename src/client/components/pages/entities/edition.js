@@ -29,10 +29,16 @@ import React from 'react';
 import WorksTable from './work-table';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 
-
 const {
-	deletedEntityMessage, extractAttribute, getEditionPublishers, getEditionReleaseDate, getEntityUrl,
-	getLanguageAttribute, getRelationshipTargetByTypeId, ENTITY_TYPE_ICONS, getSortNameOfDefaultAlias
+	deletedEntityMessage,
+	extractAttribute,
+	getEditionPublishers,
+	getEditionReleaseDate,
+	getEntityUrl,
+	getLanguageAttribute,
+	getRelationshipTargetByTypeId,
+	ENTITY_TYPE_ICONS,
+	getSortNameOfDefaultAlias
 } = entityHelper;
 const {Col, Row} = bootstrap;
 
@@ -55,7 +61,6 @@ function EditionAttributes({edition}) {
 
 	return (
 		<div>
-
 			<Row>
 				<Col md={3}>
 					<dl>
@@ -78,7 +83,9 @@ function EditionAttributes({edition}) {
 				<Col md={3}>
 					<dl>
 						<dt>Dimensions (WxHxD)</dt>
-						<dd>{width}&times;{height}&times;{depth} mm</dd>
+						<dd>
+							{width}&times;{height}&times;{depth} mm
+						</dd>
 						<dt>Weight</dt>
 						<dd>{weight} g</dd>
 						<dt>Page Count</dt>
@@ -100,7 +107,6 @@ EditionAttributes.propTypes = {
 	edition: PropTypes.object.isRequired
 };
 
-
 function EditionDisplayPage({entity, identifierTypes, user}) {
 	// relationshipTypeId = 10 refers the relation (<Work> is contained by <Edition>)
 	const relationshipTypeId = 10;
@@ -111,13 +117,12 @@ function EditionDisplayPage({entity, identifierTypes, user}) {
 		editionGroupSection = (
 			<div className="margin-bottom-d15">
 				<a href={`/edition-group/${entity.editionGroup.bbid}`}>
-					<FontAwesomeIcon icon={faExternalLinkAlt}/>
+					<FontAwesomeIcon icon={faExternalLinkAlt} />
 					<span>&nbsp;See all similar editions</span>
 				</a>
 			</div>
 		);
-	}
-	else if (!entity.deleted) {
+	} else if (!entity.deleted) {
 		editionGroupSection = (
 			<span className="bg-danger">
 				Edition Group unset - please edit this Edition and add one if you see this!
@@ -135,25 +140,23 @@ function EditionDisplayPage({entity, identifierTypes, user}) {
 					/>
 				</Col>
 				<Col md={10}>
-					<EntityTitle entity={entity}/>
-					<EditionAttributes edition={entity}/>
+					<EntityTitle entity={entity} />
+					<EditionAttributes edition={entity} />
 					{editionGroupSection}
 				</Col>
 			</Row>
-			<EntityAnnotation entity={entity}/>
-			{!entity.deleted &&
-			<React.Fragment>
-				<WorksTable
-					entity={entity}
-					works={worksContainedByEdition}
-				/>
-				<EntityLinks
-					entity={entity}
-					identifierTypes={identifierTypes}
-					urlPrefix={urlPrefix}
-				/>
-			</React.Fragment>}
-			<hr className="margin-top-d40"/>
+			<EntityAnnotation entity={entity} />
+			{!entity.deleted && (
+				<React.Fragment>
+					<WorksTable entity={entity} works={worksContainedByEdition} />
+					<EntityLinks
+						entity={entity}
+						identifierTypes={identifierTypes}
+						urlPrefix={urlPrefix}
+					/>
+				</React.Fragment>
+			)}
+			<hr className="margin-top-d40" />
 			<EntityFooter
 				bbid={entity.bbid}
 				deleted={entity.deleted}

@@ -1,49 +1,57 @@
 import * as React from 'react';
 
 // eslint-disable-next-line import/named
-import {ControlLabel, FormControl, FormGroup, HelpBlock, InputGroup, OverlayTrigger, Sizes, Tooltip} from 'react-bootstrap';
+import {
+	ControlLabel,
+	FormControl,
+	FormGroup,
+	HelpBlock,
+	InputGroup,
+	OverlayTrigger,
+	Sizes, // eslint-disable-line import/named
+	Tooltip
+} from 'react-bootstrap';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 
-
 type Props = {
-	addonAfter?: any,
-	addonBefore?: any,
-	bsSize?: Sizes,
-	buttonAfter?: any,
-	buttonBefore?: any,
-	children?: React.ReactElement,
-	groupClassName?: string,
-	hasFeedback?: boolean,
-	help?: React.ReactNode,
-	id?: string,
-	label?: React.ReactNode,
-	labelClassName?: string,
-	name?: string,
-	standalone?: boolean,
-	tooltipText?: string,
-	type?: string,
-	validationState?: 'success' | 'warning' | 'error' | null,
-	wrapperClassName?: string,
-	value?: string,
-	[propName: string]: any
+	addonAfter?: any;
+	addonBefore?: any;
+	bsSize?: Sizes;
+	buttonAfter?: any;
+	buttonBefore?: any;
+	children?: React.ReactElement;
+	groupClassName?: string;
+	hasFeedback?: boolean;
+	help?: React.ReactNode;
+	id?: string;
+	label?: React.ReactNode;
+	labelClassName?: string;
+	name?: string;
+	standalone?: boolean;
+	tooltipText?: string;
+	type?: string;
+	validationState?: 'success' | 'warning' | 'error' | null;
+	wrapperClassName?: string;
+	value?: string;
+	[propName: string]: any;
 };
 
 type IGProps = {
-	wrapperClassName?: string,
-	addonBefore?: any,
-	addonAfter?: any,
-	buttonBefore?: any,
-	buttonAfter?: any,
-	help?: React.ReactNode,
-	hasFeedback?: boolean,
-	name?: string,
-	children?: React.ReactElement,
-	value?: string,
-	[propName: string]: any
+	wrapperClassName?: string;
+	addonBefore?: any;
+	addonAfter?: any;
+	buttonBefore?: any;
+	buttonAfter?: any;
+	help?: React.ReactNode;
+	hasFeedback?: boolean;
+	name?: string;
+	children?: React.ReactElement;
+	value?: string;
+	[propName: string]: any;
 };
 
 export default class Input extends React.Component<Props> {
@@ -145,9 +153,14 @@ export default class Input extends React.Component<Props> {
 
 	renderInputGroup({
 		wrapperClassName,
-		addonBefore, addonAfter, buttonBefore, buttonAfter,
-		help, hasFeedback,
-		children, value,
+		addonBefore,
+		addonAfter,
+		buttonBefore,
+		buttonAfter,
+		help,
+		hasFeedback,
+		children,
+		value,
 		...props
 	}: IGProps) {
 		if (props.type === 'select' || props.type === 'textarea') {
@@ -155,25 +168,27 @@ export default class Input extends React.Component<Props> {
 			delete props.type;
 		}
 
-		const formControl =
-			(children && React.cloneElement(children, props)) ||
+		const formControl = (children && React.cloneElement(children, props)) || (
 			<FormControl
 				/* eslint-disable-next-line react/jsx-no-bind */
-				inputRef={(ref: HTMLInputElement) => { this.refFormControl = ref; }}
+				inputRef={(ref: HTMLInputElement) => {
+					this.refFormControl = ref;
+				}}
 				value={value}
 				{...props}
-			/>;
+			/>
+		);
 
 		function getFormControlWrapped(className?: string | null | undefined) {
-			return className || hasFeedback || help ?
-				(
-					<div className={className}>
-						{formControl}
-						{hasFeedback && <FormControl.Feedback/>}
-						{help && <HelpBlock>{help}</HelpBlock>}
-					</div>
-				) :
-				formControl;
+			return className || hasFeedback || help ? (
+				<div className={className}>
+					{formControl}
+					{hasFeedback && <FormControl.Feedback />}
+					{help && <HelpBlock>{help}</HelpBlock>}
+				</div>
+			) : (
+				formControl
+			);
 		}
 
 		if (!addonBefore && !addonAfter && !buttonBefore && !buttonAfter) {
@@ -181,9 +196,7 @@ export default class Input extends React.Component<Props> {
 		}
 
 		return (
-			<InputGroup
-				bsClass={cx('input-group', wrapperClassName)}
-			>
+			<InputGroup bsClass={cx('input-group', wrapperClassName)}>
 				{this.renderAddon(addonBefore)}
 				{this.renderButtons(buttonBefore)}
 				{getFormControlWrapped()}
@@ -209,12 +222,8 @@ export default class Input extends React.Component<Props> {
 		const helpIconElement = tooltipText && (
 			<OverlayTrigger
 				delayShow={50}
-				overlay={<Tooltip id={`tooltip-${id}`}>{tooltipText}</Tooltip>}
-			>
-				<FontAwesomeIcon
-					className="margin-left-0-5"
-					icon={faQuestionCircle}
-				/>
+				overlay={<Tooltip id={`tooltip-${id}`}>{tooltipText}</Tooltip>}>
+				<FontAwesomeIcon className="margin-left-0-5" icon={faQuestionCircle} />
 			</OverlayTrigger>
 		);
 
@@ -224,12 +233,9 @@ export default class Input extends React.Component<Props> {
 				bsSize={bsSize}
 				controlId={id}
 				name={props.name}
-				validationState={validationState}
-			>
+				validationState={validationState}>
 				{label && (
-					<ControlLabel
-						bsClass={cx('control-label', labelClassName)}
-					>
+					<ControlLabel bsClass={cx('control-label', labelClassName)}>
 						{label}
 						{helpIconElement}
 					</ControlLabel>

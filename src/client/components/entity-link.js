@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {kebabCase as _kebabCase} from 'lodash';
 
-
 function EntityLink({entity, inline}) {
 	let bbidElement = <div className="small">({entity.bbid})</div>;
 	if (inline) {

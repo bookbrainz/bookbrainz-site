@@ -27,7 +27,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {removeAliasRow} from './actions';
 
-
 /**
  * Container component. The AliasRowMerge component renders a single Row containing
  * several input fields, allowing the user to set the name, sort name, language
@@ -58,7 +57,10 @@ const AliasRowMerge = ({
 }) => (
 	<div className="margin-bottom-1">
 		{nameValue} <small>({sortNameValue})</small>
-		&nbsp;<small className="text-muted">{primaryChecked && 'Primary'} {languageOptions[languageValue]}</small>
+		&nbsp;
+		<small className="text-muted">
+			{primaryChecked && 'Primary'} {languageOptions[languageValue]}
+		</small>
 	</div>
 );
 
@@ -77,8 +79,7 @@ AliasRowMerge.defaultProps = {
 
 function mapDispatchToProps(dispatch, {index}) {
 	return {
-		onRemoveButtonClick: () =>
-			dispatch(removeAliasRow(index))
+		onRemoveButtonClick: () => dispatch(removeAliasRow(index))
 	};
 }
 
@@ -92,9 +93,7 @@ function mapStateToProps(rootState, {index}) {
 	};
 }
 
-
 export default connect(mapStateToProps, mapDispatchToProps)(AliasRowMerge);
-
 
 /* <Col sm={9}>
 	{nameValue} <small>({sortNameValue})</small>

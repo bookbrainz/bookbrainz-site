@@ -18,7 +18,6 @@
 
 import type {Relationship} from './types';
 
-
 export const SHOW_RELATIONSHIP_EDITOR = 'SHOW_RELATIONSHIP_EDITOR';
 export const HIDE_RELATIONSHIP_EDITOR = 'HIDE_RELATIONSHIP_EDITOR';
 export const ADD_RELATIONSHIP = 'ADD_RELATIONSHIP';
@@ -27,8 +26,8 @@ export const REMOVE_RELATIONSHIP = 'REMOVE_RELATIONSHIP';
 export const UNDO_LAST_SAVE = 'UNDO_LAST_SAVE';
 
 export type Action = {
-	type: string,
-	payload?: unknown
+	type: string;
+	payload?: unknown;
 };
 
 export function showRelationshipEditor(): Action {

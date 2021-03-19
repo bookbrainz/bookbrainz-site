@@ -49,10 +49,8 @@ import {
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-
 chai.use(chaiAsPromised);
 const {expect} = chai;
-
 
 function describeValidatePublisherSectionArea() {
 	testValidateAreaFunc(validatePublisherSectionArea, false);
@@ -90,9 +88,7 @@ function describeValidatePublisherSection() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validatePublisherSection(
-			Immutable.fromJS(VALID_PUBLISHER_SECTION)
-		);
+		const result = validatePublisherSection(Immutable.fromJS(VALID_PUBLISHER_SECTION));
 		expect(result).to.be.true;
 	});
 
@@ -137,9 +133,7 @@ function describeValidatePublisherSection() {
 	});
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validatePublisherSection(
-			Immutable.fromJS(INVALID_PUBLISHER_SECTION)
-		);
+		const result = validatePublisherSection(Immutable.fromJS(INVALID_PUBLISHER_SECTION));
 		expect(result).to.be.false;
 	});
 
@@ -153,7 +147,6 @@ function describeValidatePublisherSection() {
 		expect(result).to.be.true;
 	});
 }
-
 
 function describeValidateForm() {
 	const validForm = {
@@ -170,10 +163,7 @@ function describeValidateForm() {
 	});
 
 	it('should pass a valid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(validForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(validForm), IDENTIFIER_TYPES);
 		expect(result).to.be.true;
 	});
 
@@ -193,7 +183,8 @@ function describeValidateForm() {
 			{
 				...validForm,
 				identifierEditor: INVALID_IDENTIFIERS
-			}, IDENTIFIER_TYPES
+			},
+			IDENTIFIER_TYPES
 		);
 		expect(result).to.be.false;
 	});
@@ -237,10 +228,7 @@ function describeValidateForm() {
 	};
 
 	it('should reject an invalid Immutable.Map', () => {
-		const result = validateForm(
-			Immutable.fromJS(invalidForm),
-			IDENTIFIER_TYPES
-		);
+		const result = validateForm(Immutable.fromJS(invalidForm), IDENTIFIER_TYPES);
 		expect(result).to.be.false;
 	});
 
@@ -255,36 +243,14 @@ function describeValidateForm() {
 	});
 }
 
-
 function tests() {
-	describe(
-		'validatePublisherSectionArea',
-		describeValidatePublisherSectionArea
-	);
-	describe(
-		'validatePublisherSectionBeginDate',
-		describeValidatePublisherSectionBeginDate
-	);
-	describe(
-		'validatePublisherSectionEndDate',
-		describeValidatePublisherSectionEndDate
-	);
-	describe(
-		'validatePublisherSectionEnded',
-		describeValidatePublisherSectionEnded
-	);
-	describe(
-		'validatePublisherSectionType',
-		describeValidatePublisherSectionType
-	);
-	describe(
-		'validatePublisherSection',
-		describeValidatePublisherSection
-	);
-	describe(
-		'validateForm',
-		describeValidateForm
-	);
+	describe('validatePublisherSectionArea', describeValidatePublisherSectionArea);
+	describe('validatePublisherSectionBeginDate', describeValidatePublisherSectionBeginDate);
+	describe('validatePublisherSectionEndDate', describeValidatePublisherSectionEndDate);
+	describe('validatePublisherSectionEnded', describeValidatePublisherSectionEnded);
+	describe('validatePublisherSectionType', describeValidatePublisherSectionType);
+	describe('validatePublisherSection', describeValidatePublisherSection);
+	describe('validateForm', describeValidateForm);
 }
 
 describe('validatePublisherSection* functions', tests);

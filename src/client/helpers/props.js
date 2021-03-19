@@ -18,7 +18,6 @@
 
 import {omit, pick} from 'lodash';
 
-
 const LAYOUT_PROPS = [
 	'alerts',
 	'hideSearch',
@@ -30,10 +29,7 @@ const LAYOUT_PROPS = [
 	'user'
 ];
 
-const EDITOR_PROPS = [
-	'editor',
-	'tabActive'
-];
+const EDITOR_PROPS = ['editor', 'tabActive'];
 
 export function extractLayoutProps(props) {
 	return pick(props, LAYOUT_PROPS);

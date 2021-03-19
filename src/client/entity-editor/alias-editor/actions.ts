@@ -26,11 +26,11 @@ export const HIDE_ALIAS_EDITOR = 'HIDE_ALIAS_EDITOR';
 export const REMOVE_EMPTY_ALIASES = 'REMOVE_EMPTY_ALIASES';
 
 export type Action = {
-	type: string,
-	payload?: unknown,
+	type: string;
+	payload?: unknown;
 	meta?: {
-		debounce?: string
-	}
+		debounce?: string;
+	};
 };
 
 /**
@@ -64,9 +64,7 @@ export function debouncedUpdateAliasName(rowId: number, value: string): Action {
  * @param {string} value - The new value to be used for the alias sort name.
  * @returns {Action} The resulting UPDATE_ALIAS_SORT_NAME action.
  */
-export function debouncedUpdateAliasSortName(
-	rowId: number, value: string
-): Action {
+export function debouncedUpdateAliasSortName(rowId: number, value: string): Action {
 	return {
 		meta: {debounce: 'keystroke'},
 		payload: {

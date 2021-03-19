@@ -20,11 +20,11 @@ export const SHOW_ALIAS_EDITOR = 'SHOW_ALIAS_EDITOR';
 export const SHOW_IDENTIFIER_EDITOR = 'SHOW_IDENTIFIER_EDITOR';
 
 export type Action = {
-	type: string,
-	payload?: unknown,
+	type: string;
+	payload?: unknown;
 	meta?: {
-		debounce?: string
-	}
+		debounce?: string;
+	};
 };
 
 /**

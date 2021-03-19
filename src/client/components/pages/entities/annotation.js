@@ -21,18 +21,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {formatDate} from '../../../helpers/utils';
 
-
 class EntityAnnotation extends React.Component {
 	constructor(props) {
-	  super(props);
+		super(props);
 
-	  this.state = {
+		this.state = {
 			open: false
-	  };
+		};
 	}
 
 	handleToggleCollapse = () => {
-		this.setState(prevState => ({open: !prevState.open}));
+		this.setState((prevState) => ({open: !prevState.open}));
 	};
 
 	render() {
@@ -51,8 +50,19 @@ class EntityAnnotation extends React.Component {
 					<Button bsStyle="link" onClick={this.handleToggleCollapse}>
 						Show {this.state.open ? 'less' : 'more…'}
 					</Button>
-					<p className="text-muted">Last modified: <span title={formatDate(lastModifiedDate, true)}>{formatDate(lastModifiedDate)}</span>
-						<span className="small"> (revision <a href={`/revision/${annotation.lastRevisionId}`}>#{annotation.lastRevisionId}</a>)</span>
+					<p className="text-muted">
+						Last modified:{' '}
+						<span title={formatDate(lastModifiedDate, true)}>
+							{formatDate(lastModifiedDate)}
+						</span>
+						<span className="small">
+							{' '}
+							(revision{' '}
+							<a href={`/revision/${annotation.lastRevisionId}`}>
+								#{annotation.lastRevisionId}
+							</a>
+							)
+						</span>
 					</p>
 				</Col>
 			</Row>

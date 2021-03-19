@@ -24,7 +24,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import {genEntityIconHTMLElement} from '../../helpers/entity';
 
-
 class LinkedEntity extends React.Component<any, any> {
 	static displayName = 'LinkedEntity';
 
@@ -60,9 +59,10 @@ class LinkedEntity extends React.Component<any, any> {
 		const type = option && option.type;
 		const id = option && option.id;
 		if (type && id) {
-			url = type.toLowerCase() === 'area' ?
-				`//musicbrainz.org/area/${id}` :
-				`/${_kebabCase(type)}/${id}`;
+			url =
+				type.toLowerCase() === 'area'
+					? `//musicbrainz.org/area/${id}`
+					: `/${_kebabCase(type)}/${id}`;
 		}
 		if (url) {
 			window.open(url, '_blank');
@@ -84,21 +84,21 @@ class LinkedEntity extends React.Component<any, any> {
 
 		return (
 			<div className={this.props.className} onClick={this.handleParentEvent}>
-				{
-					type && genEntityIconHTMLElement(type)
-				}
+				{type && genEntityIconHTMLElement(type)}
 				&nbsp;
 				{nameComponent}
 				&nbsp;&nbsp;
-				{
-					disambiguation &&
-					<span className="disambig"><small>({disambiguation})</small></span>
-				}
-				{' '}
+				{disambiguation && (
+					<span className="disambig">
+						<small>({disambiguation})</small>
+					</span>
+				)}{' '}
 				<a onClick={this.handleChildEvent}>
-					<FontAwesomeIcon icon={faExternalLinkAlt}/>
+					<FontAwesomeIcon icon={faExternalLinkAlt} />
 				</a>
-				<span className="text-muted small" style={{float: 'right'}}>{language}</span>
+				<span className="text-muted small" style={{float: 'right'}}>
+					{language}
+				</span>
 			</div>
 		);
 	}

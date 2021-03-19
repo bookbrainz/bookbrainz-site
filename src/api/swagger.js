@@ -5,7 +5,6 @@ import {Router} from 'express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-
 const router = Router();
 const API_VERSION = process.env.API_VERSION || '1';
 
@@ -25,15 +24,17 @@ const swaggerOptions = {
 			version: '0.2.0'
 		},
 		openapi: '3.0.3',
-		servers: [{
-			url: '/{version}',
-			variables: {
-				version: {
-					default: API_VERSION,
-					enum: ['1', API_VERSION]
+		servers: [
+			{
+				url: '/{version}',
+				variables: {
+					version: {
+						default: API_VERSION,
+						enum: ['1', API_VERSION]
+					}
 				}
 			}
-		}]
+		]
 	}
 };
 
@@ -53,6 +54,5 @@ router.get('/json', (req, res) => {
 });
 
 router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUIOptions));
-
 
 export default router;

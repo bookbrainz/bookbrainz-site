@@ -24,7 +24,6 @@ import EntityRelationships from './relationships';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 const {filterOutRelationshipTypeById} = entityHelper;
 const {Col, Row} = bootstrap;
 

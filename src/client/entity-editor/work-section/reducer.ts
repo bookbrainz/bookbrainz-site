@@ -16,12 +16,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 import * as Immutable from 'immutable';
-import {
-	Action, UPDATE_LANGUAGES, UPDATE_TYPE
-} from './actions';
-
+import {Action, UPDATE_LANGUAGES, UPDATE_TYPE} from './actions';
 
 type State = Immutable.Map<string, any>;
 

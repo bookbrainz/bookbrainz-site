@@ -24,18 +24,13 @@ import ReactDOM from 'react-dom';
 import RegistrationForm from '../components/forms/registration-details';
 import {extractLayoutProps} from '../helpers/props';
 
-
 const propsTarget = document.getElementById('props');
 const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 
 const markup = (
 	<AppContainer>
 		<Layout {...extractLayoutProps(props)}>
-			<RegistrationForm
-				gender={props.gender}
-				genders={props.genders}
-				name={props.name}
-			/>
+			<RegistrationForm gender={props.gender} genders={props.genders} name={props.name} />
 		</Layout>
 	</AppContainer>
 );

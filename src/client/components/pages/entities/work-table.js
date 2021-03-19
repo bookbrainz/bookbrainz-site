@@ -28,7 +28,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {kebabCase as _kebabCase} from 'lodash';
 
-
 const {Button, Table} = bootstrap;
 
 const {getEntityDisambiguation, getLanguageAttribute, getEntityLabel} = entityHelper;
@@ -44,16 +43,15 @@ function WorkTableRow({showAddedAtColumn, work, showCheckboxes, selectedEntities
 	return (
 		<tr>
 			<td>
-				{
-					showCheckboxes ?
-						<input
-							checked={selectedEntities.find(bbid => bbid === work.bbid)}
-							className="checkboxes"
-							id={work.bbid}
-							type="checkbox"
-							onClick={() => onToggleRow(work.bbid)}
-						/> : null
-				}
+				{showCheckboxes ? (
+					<input
+						checked={selectedEntities.find((bbid) => bbid === work.bbid)}
+						className="checkboxes"
+						id={work.bbid}
+						type="checkbox"
+						onClick={() => onToggleRow(work.bbid)}
+					/>
+				) : null}
 				<a href={`/work/${work.bbid}`}>{name}</a>
 				{disambiguation}
 			</td>
@@ -77,7 +75,15 @@ WorkTableRow.defaultProps = {
 	showCheckboxes: false
 };
 
-function WorkTable({entity, showAddedAtColumn, works, showAdd, showCheckboxes, selectedEntities, onToggleRow}) {
+function WorkTable({
+	entity,
+	showAddedAtColumn,
+	works,
+	showAdd,
+	showCheckboxes,
+	selectedEntities,
+	onToggleRow
+}) {
 	let tableContent;
 	if (works.length) {
 		tableContent = (
@@ -88,48 +94,42 @@ function WorkTable({entity, showAddedAtColumn, works, showAdd, showCheckboxes, s
 							<th>Name</th>
 							<th>Languages</th>
 							<th>Type</th>
-							{
-								showAddedAtColumn ? <th>Added at</th> : null
-							}
+							{showAddedAtColumn ? <th>Added at</th> : null}
 						</tr>
 					</thead>
 					<tbody>
-						{
-							works.map((work) => (
-								<WorkTableRow
-									key={work.bbid}
-									selectedEntities={selectedEntities}
-									showAddedAtColumn={showAddedAtColumn}
-									showCheckboxes={showCheckboxes}
-									work={work}
-									onToggleRow={onToggleRow}
-								/>
-							))
-						}
+						{works.map((work) => (
+							<WorkTableRow
+								key={work.bbid}
+								selectedEntities={selectedEntities}
+								showAddedAtColumn={showAddedAtColumn}
+								showCheckboxes={showCheckboxes}
+								work={work}
+								onToggleRow={onToggleRow}
+							/>
+						))}
 					</tbody>
 				</Table>
-				{showAdd &&
+				{showAdd && (
 					<Button
 						bsStyle="success"
 						className="margin-top-d15"
-						href={`/work/create?${_kebabCase(entity.type)}=${entity.bbid}`}
-					>
-						<FontAwesomeIcon className="margin-right-0-5" icon={faPlus}/>Add Work
+						href={`/work/create?${_kebabCase(entity.type)}=${entity.bbid}`}>
+						<FontAwesomeIcon className="margin-right-0-5" icon={faPlus} />
+						Add Work
 					</Button>
-				}
+				)}
 			</React.Fragment>
 		);
-	}
-	else if (showAdd) {
+	} else if (showAdd) {
 		tableContent = (
 			<React.Fragment>
 				<span className="margin-right-2 pull-left">
 					<Button
 						bsStyle="success"
-						href={`/work/create?${_kebabCase(entity.type)}=${entity.bbid}`}
-					>
-						<FontAwesomeIcon icon={faPenNib} size="2x"/>
-						<br/>
+						href={`/work/create?${_kebabCase(entity.type)}=${entity.bbid}`}>
+						<FontAwesomeIcon icon={faPenNib} size="2x" />
+						<br />
 						Add Work
 					</Button>
 				</span>
@@ -137,15 +137,17 @@ function WorkTable({entity, showAddedAtColumn, works, showAdd, showCheckboxes, s
 					<h4>There are no Works yet!</h4>
 					<p>
 						Help us complete BookBrainz
-						<br/>
+						<br />
 					</p>
-					<br/><small>Not sure what to do? Visit the <a href="/help">help page</a> to get started.</small>
+					<br />
+					<small>
+						Not sure what to do? Visit the <a href="/help">help page</a> to get started.
+					</small>
 				</span>
-				<hr className="margin-bottom-d0"/>
+				<hr className="margin-bottom-d0" />
 			</React.Fragment>
 		);
-	}
-	else {
+	} else {
 		tableContent = <span>No works</span>;
 	}
 	return (

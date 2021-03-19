@@ -8,7 +8,6 @@ import orm from '../../../bookbrainz-data';
 chai.use(chaiHttp);
 const {expect} = chai;
 
-
 describe('getEditorActivity', () => {
 	const {Revision} = orm;
 	let editorJSON;
@@ -26,7 +25,10 @@ describe('getEditorActivity', () => {
 		const activity = await getEditorActivity(editorJSON.id, startDate, Revision, endDate);
 
 		const expectedResult = {
-			'Jan-20': 0, 'Feb-20': 0, 'Mar-20': 0, 'Apr-20': 0
+			'Jan-20': 0,
+			'Feb-20': 0,
+			'Mar-20': 0,
+			'Apr-20': 0
 		};
 		expect(activity).to.deep.equal(expectedResult);
 	});
@@ -53,8 +55,18 @@ describe('getEditorActivity', () => {
 		const activity = await getEditorActivity(editorJSON.id, startDate, Revision, endDate);
 
 		const expectedResult = {
-			'Jan-20': 1, 'Feb-20': 1, 'Mar-20': 1, 'Apr-20': 1, 'May-20': 1, 'Jun-20': 1, 'Jul-20': 1,
-			'Aug-20': 1, 'Sep-20': 1, 'Oct-20': 1, 'Nov-20': 1, 'Dec-20': 1
+			'Jan-20': 1,
+			'Feb-20': 1,
+			'Mar-20': 1,
+			'Apr-20': 1,
+			'May-20': 1,
+			'Jun-20': 1,
+			'Jul-20': 1,
+			'Aug-20': 1,
+			'Sep-20': 1,
+			'Oct-20': 1,
+			'Nov-20': 1,
+			'Dec-20': 1
 		};
 
 		expect(activity).to.deep.equal(expectedResult);
@@ -82,8 +94,18 @@ describe('getEditorActivity', () => {
 		const activity = await getEditorActivity(editorJSON.id, startDate, Revision, endDate);
 
 		const expectedResult = {
-			'Jan-20': 1, 'Feb-20': 0, 'Mar-20': 1, 'Apr-20': 0, 'May-20': 1, 'Jun-20': 0, 'Jul-20': 1,
-			'Aug-20': 0, 'Sep-20': 1, 'Oct-20': 0, 'Nov-20': 1, 'Dec-20': 0
+			'Jan-20': 1,
+			'Feb-20': 0,
+			'Mar-20': 1,
+			'Apr-20': 0,
+			'May-20': 1,
+			'Jun-20': 0,
+			'Jul-20': 1,
+			'Aug-20': 0,
+			'Sep-20': 1,
+			'Oct-20': 0,
+			'Nov-20': 1,
+			'Dec-20': 0
 		};
 
 		expect(activity).to.deep.equal(expectedResult);
@@ -95,8 +117,7 @@ describe('getEditorActivity', () => {
 		endDate.setFullYear(2020, 0, 1);
 		try {
 			await getEditorActivity(editorJSON.id, startDate, Revision, endDate);
-		}
-		catch (err) {
+		} catch (err) {
 			const expectedError = new Error('Start date is invalid');
 			expect(err.message).to.equal(expectedError.message);
 		}
@@ -108,8 +129,7 @@ describe('getEditorActivity', () => {
 		const endDate = 'bob';
 		try {
 			await getEditorActivity(editorJSON.id, startDate, Revision, endDate);
-		}
-		catch (err) {
+		} catch (err) {
 			const expectedError = new Error('End date is invalid');
 			expect(err.message).to.equal(expectedError.message);
 		}
@@ -123,8 +143,7 @@ describe('getEditorActivity', () => {
 
 		try {
 			await getEditorActivity(editorJSON.id, startDate, Revision, endDate);
-		}
-		catch (err) {
+		} catch (err) {
 			const expectedError = new Error('Start date is greater than end date');
 			expect(err.message).to.equal(expectedError.message);
 		}

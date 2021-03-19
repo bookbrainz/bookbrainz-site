@@ -19,8 +19,7 @@
 import {Request, Response} from 'express';
 import jsesc from 'jsesc';
 
-
-type PassportRequest = Request & {user: any, session: any};
+type PassportRequest = Request & {user: any; session: any};
 
 // JSON.stringify that escapes characters in string output
 export function escapeProps(props) {
@@ -30,7 +29,11 @@ export function escapeProps(props) {
 	});
 }
 
-export function generateProps<T>(req: PassportRequest, res: Response, props?: T): T & Record<string, unknown> {
+export function generateProps<T>(
+	req: PassportRequest,
+	res: Response,
+	props?: T
+): T & Record<string, unknown> {
 	const baseObject: Record<string, unknown> = {};
 	if (req.session && req.session.mergeQueue) {
 		baseObject.mergeQueue = req.session.mergeQueue;
