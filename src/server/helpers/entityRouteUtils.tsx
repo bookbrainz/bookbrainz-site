@@ -152,7 +152,8 @@ export function generateEntityMergeProps(
  */
 export function entityEditorMarkup(
 	props: { initialState: any,
-			 entityType: string }
+			 entityType: string,
+			 heading?: string }
 ) {
 	const {initialState, ...rest} = props;
 	const rootReducer = createRootReducer(props.entityType);
@@ -190,7 +191,7 @@ export function entityMergeMarkup(
 			 entityType: string }
 ) {
 	const {initialState, ...rest} = props;
-	const rootReducer = createRootReducer(props.entityType);
+	const rootReducer = createRootReducer(props.entityType, true);
 	const store: any = createStore(rootReducer, Immutable.fromJS(initialState));
 	const EntitySection = getEntitySectionMerge(props.entityType);
 	const markup = ReactDOMServer.renderToString(

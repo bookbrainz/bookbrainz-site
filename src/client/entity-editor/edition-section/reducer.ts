@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 /*
  * Copyright (C) 2016  Ben Ockmore
  *
@@ -18,7 +19,6 @@
 
 
 import * as Immutable from 'immutable';
-import * as _ from 'lodash';
 
 import {
 	Action,
@@ -37,12 +37,14 @@ import {
 	UPDATE_WEIGHT,
 	UPDATE_WIDTH
 } from './actions';
+import {HIDE_AUTHOR_CREDIT_EDITOR, SHOW_AUTHOR_CREDIT_EDITOR} from '../author-credit-editor/actions';
 
 
 type State = Immutable.Map<string, any>;
 
 function reducer(
 	state: State = Immutable.Map({
+		authorCreditEditorVisible: false,
 		format: null,
 		languages: Immutable.List([]),
 		publisher: null,
@@ -79,12 +81,15 @@ function reducer(
 			return state.set('height', payload);
 		case UPDATE_DEPTH:
 			return state.set('depth', payload);
+		case HIDE_AUTHOR_CREDIT_EDITOR:
+			return state.set('authorCreditEditorVisible', false);
+		case SHOW_AUTHOR_CREDIT_EDITOR:
+			return state.set('authorCreditEditorVisible', true);
 		case UPDATE_WARN_IF_EDITION_GROUP_EXISTS:
 			if (!Array.isArray(payload) || !payload.length) {
 				return state.set('matchingNameEditionGroups', []);
 			}
 			return state.set('matchingNameEditionGroups', payload);
-		// no default
 	}
 	return state;
 }

@@ -18,6 +18,7 @@
 
 import * as bootstrap from 'react-bootstrap';
 import * as entityHelper from '../../../helpers/entity';
+import AuthorCreditDisplay from '../../author-credit-display';
 import EntityAnnotation from './annotation';
 import EntityFooter from './footer';
 import EntityImage from './image';
@@ -106,6 +107,24 @@ function EditionDisplayPage({entity, identifierTypes, user}) {
 	const relationshipTypeId = 10;
 	const worksContainedByEdition = getRelationshipTargetByTypeId(entity, relationshipTypeId);
 	const urlPrefix = getEntityUrl(entity);
+
+	let authorCreditSection;
+	if (entity.authorCredit) {
+		authorCreditSection = (
+			<AuthorCreditDisplay
+				names={entity.authorCredit.names}
+			/>
+		);
+	}
+	else if (!entity.deleted) {
+		authorCreditSection = (
+			<div className="alert alert-warning text-center">
+				Author Credit unset; please&nbsp;
+				<a href={`/edition/${entity.bbid}/edit`}>edit this Edition</a>&nbsp;
+				and add its Author(s) if you see this!
+			</div>);
+	}
+
 	let editionGroupSection;
 	if (entity.editionGroup) {
 		editionGroupSection = (
@@ -119,9 +138,11 @@ function EditionDisplayPage({entity, identifierTypes, user}) {
 	}
 	else if (!entity.deleted) {
 		editionGroupSection = (
-			<span className="bg-danger">
-				Edition Group unset - please edit this Edition and add one if you see this!
-			</span>
+			<div className="alert alert-warning text-center">
+				Edition Group unset - please&nbsp;
+				<a href={`/edition/${entity.bbid}/edit`}>edit this Edition</a>&nbsp;
+				and add one if you see this!
+			</div>
 		);
 	}
 	return (
@@ -136,6 +157,8 @@ function EditionDisplayPage({entity, identifierTypes, user}) {
 				</Col>
 				<Col md={10}>
 					<EntityTitle entity={entity}/>
+					{authorCreditSection}
+					<hr/>
 					<EditionAttributes edition={entity}/>
 					{editionGroupSection}
 				</Col>

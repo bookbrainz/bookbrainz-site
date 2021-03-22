@@ -45,6 +45,32 @@ const additionalEditionProps = [
 	'formatId', 'statusId'
 ];
 
+type AuthorT = {
+	value: string,
+	id: number
+};
+
+type AuthorCreditEditorT = {
+	author: AuthorT,
+	joinPhrase: string,
+	name: string
+};
+
+type PassportRequest = express.Request & {
+	user: any,
+	session: any
+};
+
+function constructAuthorCredit(
+	authorCreditEditor: Record<string, AuthorCreditEditorT>
+) {
+	return _.map(
+		authorCreditEditor,
+		({author, joinPhrase, name}: AuthorCreditEditorT) =>
+			({authorBBID: author.id, joinPhrase, name})
+	);
+}
+
 function transformNewForm(data) {
 	const aliases = entityRoutes.constructAliases(
 		data.aliasEditor, data.nameSection
@@ -66,10 +92,19 @@ function transformNewForm(data) {
 	const languages = _.map(
 		data.editionSection.languages, (language) => language.value
 	);
+	let authorCredit = {};
+	if (!_.isNil(data.authorCredit)) {
+		// When merging entities, we use a separate reducer "authorCredit"
+		authorCredit = data.authorCredit.names;
+	}
+	else if (!_.isNil(data.authorCreditEditor)) {
+		authorCredit = constructAuthorCredit(data.authorCreditEditor);
+	}
 
 	return {
 		aliases,
 		annotation: data.annotationSection.content,
+		authorCredit,
 		depth: data.editionSection.depth &&
 			parseInt(data.editionSection.depth, 10),
 		disambiguation: data.nameSection.disambiguation,
@@ -127,7 +162,7 @@ router.get(
 	'/create', auth.isAuthenticated, middleware.loadIdentifierTypes,
 	middleware.loadEditionStatuses, middleware.loadEditionFormats,
 	middleware.loadLanguages, middleware.loadRelationshipTypes,
-	(req, res, next) => {
+	(req:PassportRequest, res, next) => {
 		const {EditionGroup, Publisher, Work} = req.app.locals.orm;
 		const propsPromise = generateEntityProps(
 			'edition', req, res, {}
@@ -216,6 +251,7 @@ router.param(
 	middleware.makeEntityLoader(
 		'Edition',
 		[
+			'authorCredit.names.author.defaultAlias',
 			'editionGroup.defaultAlias',
 			'languageSet.languages',
 			'editionFormat',
@@ -235,32 +271,32 @@ function _setEditionTitle(res) {
 	);
 }
 
-router.get('/:bbid', middleware.loadEntityRelationships, (req, res) => {
+router.get('/:bbid', middleware.loadEntityRelationships, (req:PassportRequest, res) => {
 	_setEditionTitle(res);
 	entityRoutes.displayEntity(req, res);
 });
 
-router.get('/:bbid/revisions', (req, res, next) => {
+router.get('/:bbid/revisions', (req:PassportRequest, res, next) => {
 	const {EditionRevision} = req.app.locals.orm;
 	_setEditionTitle(res);
 	entityRoutes.displayRevisions(req, res, next, EditionRevision);
 });
 
-router.get('/:bbid/revisions/revisions', (req, res, next) => {
+router.get('/:bbid/revisions/revisions', (req:PassportRequest, res, next) => {
 	const {EditionRevision} = req.app.locals.orm;
 	_setEditionTitle(res);
 	entityRoutes.updateDisplayedRevisions(req, res, next, EditionRevision);
 });
 
 
-router.get('/:bbid/delete', auth.isAuthenticated, (req, res) => {
+router.get('/:bbid/delete', auth.isAuthenticated, (req:PassportRequest, res) => {
 	_setEditionTitle(res);
 	entityRoutes.displayDeleteEntity(req, res);
 });
 
 router.post(
 	'/:bbid/delete/handler', auth.isAuthenticatedForHandler,
-	(req, res) => {
+	(req:PassportRequest, res) => {
 		const {orm} = req.app.locals;
 		const {EditionHeader, EditionRevision} = orm;
 		return entityRoutes.handleDelete(
@@ -296,6 +332,18 @@ function editionToFormState(edition) {
 	} : defaultAliasList[0];
 	nameSection.disambiguation =
 		edition.disambiguation && edition.disambiguation.comment;
+
+	const credits = edition.authorCredit ? edition.authorCredit.names.map(
+		({author, ...rest}) => ({
+			author: utils.entityToOption(author),
+			...rest
+		})
+	) : [];
+
+	const authorCreditEditor = {};
+	for (const credit of credits) {
+		authorCreditEditor[credit.position] = credit;
+	}
 
 	const identifiers = edition.identifierSet ?
 		edition.identifierSet.identifiers.map(({type, ...rest}) => ({
@@ -361,13 +409,14 @@ function editionToFormState(edition) {
 		}
 	));
 
-	const optionalSections = {};
+	const optionalSections:any = {};
 	if (edition.annotation) {
 		optionalSections.annotationSection = edition.annotation;
 	}
 
 	return {
 		aliasEditor,
+		authorCreditEditor,
 		buttonBar,
 		editionSection,
 		identifierEditor,
@@ -382,7 +431,7 @@ router.get(
 	middleware.loadEditionStatuses, middleware.loadEditionFormats,
 	middleware.loadLanguages, middleware.loadEntityRelationships,
 	middleware.loadRelationshipTypes,
-	(req, res) => {
+	(req:PassportRequest, res) => {
 		const {markup, props} = entityEditorMarkup(generateEntityProps(
 			'edition', req, res, {}, editionToFormState
 		));

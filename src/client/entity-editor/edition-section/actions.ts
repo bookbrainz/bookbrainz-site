@@ -15,7 +15,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+import type {AuthorCredit} from '../author-credit-editor/actions';
 
 type LanguageOption = {
 	name: string,
@@ -37,7 +37,6 @@ export type Action = {
 	type: string,
 	meta?: Record<string, unknown>
 };
-
 
 export const UPDATE_EDITION_GROUP = 'UPDATE_EDITION_GROUP';
 export const UPDATE_PUBLISHER = 'UPDATE_PUBLISHER';
@@ -252,3 +251,4 @@ export function debouncedUpdateDepth(value: number | null | undefined): Action {
 		type: UPDATE_DEPTH
 	};
 }
+

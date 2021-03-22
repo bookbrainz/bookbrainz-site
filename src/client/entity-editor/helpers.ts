@@ -29,6 +29,8 @@ import WorkSection from './work-section/work-section';
 import WorkSectionMerge from './work-section/work-section-merge';
 import aliasEditorReducer from './alias-editor/reducer';
 import annotationSectionReducer from './annotation-section/reducer';
+import authorCreditEditorReducer from './author-credit-editor/reducer';
+import authorCreditMergeReducer from './author-credit-editor/merge-reducer';
 import authorSectionReducer from './author-section/reducer';
 import buttonBarReducer from './button-bar/reducer';
 import {combineReducers} from 'redux-immutable';
@@ -113,11 +115,15 @@ function getEntitySectionReducerName(entityType: string): string {
 	return `${entityType}Section`;
 }
 
-export function createRootReducer(entityType: string) {
+function entityHasAuthorCredits(entityType: string): boolean {
+	return entityType === 'edition' || entityType === 'editionGroup';
+}
+
+export function createRootReducer(entityType: string, isMerge = false) {
 	const entityReducerKey = getEntitySectionReducerName(entityType);
 	const entityReducer = getEntitySectionReducer(entityType);
 
-	return combineReducers({
+	const reducers = {
 		aliasEditor: aliasEditorReducer,
 		annotationSection: annotationSectionReducer,
 		buttonBar: buttonBarReducer,
@@ -126,7 +132,16 @@ export function createRootReducer(entityType: string) {
 		nameSection: nameSectionReducer,
 		relationshipSection: relationshipSectionReducer,
 		submissionSection: submissionSectionReducer
-	});
+	};
+
+	if (entityHasAuthorCredits(entityType)) {
+		reducers.authorCreditEditor = authorCreditEditorReducer;
+	}
+	if (isMerge) {
+		reducers.authorCredit = authorCreditMergeReducer;
+	}
+
+	return combineReducers(reducers);
 }
 
 type ReduxWindow = typeof window & {__REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any};
