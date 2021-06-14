@@ -33,8 +33,16 @@ const _maxJitter = 75;
 
 let _client = null;
 
+async function getEntityWithAlias(orm, relEntity) {
+	const redirectBbid = await orm.func.entity.recursivelyGetRedirectBBID(orm, relEntity.bbid, null);
+	const model = commonUtils.getEntityModelByType(orm, relEntity.type);
+
+	return model.forge({bbid: redirectBbid})
+		.fetch({require: false, withRelated: ['defaultAlias']});
+}
+
 async function _fetchEntityModelsForESResults(orm, results) {
-	const {Area, Editor, UserCollection} = orm;
+	const {Area, Editor, UserCollection, Work, RelationshipSet} = orm;
 
 	if (!results.hits) {
 		return null;
@@ -82,6 +90,29 @@ async function _fetchEntityModelsForESResults(orm, results) {
 			collectionJSON.type = 'Collection';
 			collectionJSON.bbid = entityStub.bbid;
 			return collectionJSON;
+		}
+		if (entityStub.type === 'Work') {
+			const work = await Work.forge({bbid: entityStub.bbid})
+				.fetch({require: false, withRelated: ['defaultAlias.language', 'disambiguation', 'aliasSet.aliases']});
+			const workJSON = work?.toJSON();
+
+			const relationshipSet = await RelationshipSet.forge({id: workJSON.relationshipSetId})
+				.fetch({
+					require: false,
+					withRelated: [
+						'relationships.source',
+						'relationships.type'
+					]
+				});
+
+			workJSON.relationships = relationshipSet ? relationshipSet.related('relationships').toJSON() : [];
+
+			await Promise.all(workJSON.relationships.map(async (relationship) => {
+				const source = await getEntityWithAlias(orm, relationship.source);
+				relationship.source = source.toJSON();
+				return relationship;
+			}));
+			return workJSON;
 		}
 		// Regular entity
 		const model = commonUtils.getEntityModelByType(orm, entityStub.type);
