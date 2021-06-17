@@ -17,19 +17,16 @@
  */
 
 import {Col, Row} from 'react-bootstrap';
-import {
-	showAliasEditor,
-	showIdentifierEditor
-} from './actions';
-import {validateAliases, validateIdentifiers} from '../validators/common';
 
 import AliasButton from './alias-button';
-import IdentifierButton from './identifier-button';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {addAliasRow} from '../alias-editor/actions';
-import {addIdentifierRow} from '../identifier-editor/actions';
 import {connect} from 'react-redux';
+import {
+	showAliasEditor
+} from './actions';
+import {validateAliases} from '../validators/common';
 
 /**
  * Container component. This component renders three buttons in a horizontal
@@ -40,21 +37,14 @@ import {connect} from 'react-redux';
  * @param {Object} props - The properties passed to the component.
  * @param {number} props.numAliases - The number of aliases present in
  *        the AliasEditor - passed to the AliasButton component.
- * @param {number} props.numIdentifiers - The number of identifiers present in
- *        the IdentifierEditor - passed to the IdentiferButton component.
  * @param {Function} props.onAliasButtonClick - A function to be called when the
  *        AliasButton is clicked.
- * @param {Function} props.onIdentifierButtonClick - A function to be called
- *        when the IdentifierButton is clicked.
  * @returns {ReactElement} React element containing the rendered ButtonBar.
  */
 function ButtonBar({
 	aliasesInvalid,
-	identifiersInvalid,
 	numAliases,
-	numIdentifiers,
-	onAliasButtonClick,
-	onIdentifierButtonClick
+	onAliasButtonClick
 }) {
 	return (
 		<div>
@@ -66,13 +56,6 @@ function ButtonBar({
 						onClick={onAliasButtonClick}
 					/>
 				</Col>
-				<Col className="text-center" md={6}>
-					<IdentifierButton
-						identifiersInvalid={identifiersInvalid}
-						numIdentifiers={numIdentifiers}
-						onClick={onIdentifierButtonClick}
-					/>
-				</Col>
 			</Row>
 		</div>
 	);
@@ -80,21 +63,14 @@ function ButtonBar({
 ButtonBar.displayName = 'ButtonBar';
 ButtonBar.propTypes = {
 	aliasesInvalid: PropTypes.bool.isRequired,
-	identifiersInvalid: PropTypes.bool.isRequired,
 	numAliases: PropTypes.number.isRequired,
-	numIdentifiers: PropTypes.number.isRequired,
-	onAliasButtonClick: PropTypes.func.isRequired,
-	onIdentifierButtonClick: PropTypes.func.isRequired
+	onAliasButtonClick: PropTypes.func.isRequired
 };
 
-function mapStateToProps(rootState, {identifierTypes}) {
+function mapStateToProps(rootState) {
 	return {
 		aliasesInvalid: !validateAliases(rootState.get('aliasEditor')),
-		identifiersInvalid: !validateIdentifiers(
-			rootState.get('identifierEditor'), identifierTypes
-		),
-		numAliases: rootState.get('aliasEditor').size,
-		numIdentifiers: rootState.get('identifierEditor').size
+		numAliases: rootState.get('aliasEditor').size
 	};
 }
 
@@ -103,10 +79,6 @@ function mapDispatchToProps(dispatch) {
 		onAliasButtonClick: () => {
 			dispatch(showAliasEditor());
 			dispatch(addAliasRow());
-		},
-		onIdentifierButtonClick: () => {
-			dispatch(showIdentifierEditor());
-			dispatch(addIdentifierRow());
 		}
 	};
 }
